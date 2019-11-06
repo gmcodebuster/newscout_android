@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="NewscoutTheme" parent="Theme.AppCompat.Light.NoActionBar" >
+        <item name="colorPrimary">@color/primaryColorNs</item>
+        <item name="colorPrimaryDark">@color/primaryDarkColorNs</item>
+        <item name="android:textColorPrimary">@color/black</item>
+        <item name="android:textColorSecondary">@color/secondaryTextColorNs</item>
+        <item name="cardViewStyle">@style/CardView</item>
+        <item name="colorAccent">@color/secondaryColorNs</item>
+        <item name="newsHeadColor">@style/NewsHeadTextColor</item>
+        <item name="newsSourceColor">@style/NewsSourceTextColor</item>
+        <item name="newsTimeColor">@style/NewsTimeTextColor</item>
+        <item name="newsCategoryScreenTextColor">@style/CategoryScreenTextColor</item>
+        <item name="newsDescColor">@style/NewsDescTextColor</item>
+        <item name="actionOverflowButtonStyle">@style/MyOverflowButtonStyle</item>
+        <item name="actionOverflowMenuStyle">@style/OverflowMenu</item>
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
+
+    </style>
+
+    <style name="NightModeTheme" parent="Theme.AppCompat.Light.NoActionBar" >
+        <item name="colorPrimary">@color/primaryColorNs</item>
+        <item name="colorPrimaryDark">@color/primaryDarkColorNs</item>
+        <item name="android:textColor">@color/top_back_color</item>
+        <item name="android:textColorPrimary">@color/black</item>
+        <item name="android:textColorSecondary">@color/top_back_color</item>
+        <item name="cardViewStyle">@style/CardViewBackground</item>
+        <item name="colorAccent">@color/secondaryColorNs</item>
+        <item name="newsHeadColor">@style/NewsHeadTextColorNight</item>
+        <item name="newsSourceColor">@style/NewsSourceTextColorNight</item>
+        <item name="newsTimeColor">@style/NewsTimeTextColorNight</item>
+        <item name="newsCategoryScreenTextColor">@style/CategoryScreenTextColorNight</item>
+        <item name="newsDescColor">@style/NewsDescTextColorNight</item>
+        <item name="android:colorBackground">@color/grey_light</item>
+        <item name="android:windowBackground">@color/grey_light</item>
+        <item name="android:alertDialogTheme">@style/DialogFontPreference</item>
+        <item name="actionOverflowButtonStyle">@style/MyOverflowButtonStyle</item>
+        <item name="actionOverflowMenuStyle">@style/OverflowMenu</item>
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
+    </style>
+
+
+</resources>

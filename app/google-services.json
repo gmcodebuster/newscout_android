@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "274993417630",
+    "firebase_url": "https://newscoutdev.firebaseio.com",
+    "project_id": "newscoutdev",
+    "storage_bucket": "newscoutdev.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:274993417630:android:d673de22872362ec",
+        "android_client_info": {
+          "package_name": "com.fafadiatech.newscout"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "274993417630-cgn5e6l2n3dk2pafdu2jcu2p9pp49s0v.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.fafadiatech.newscout",
+            "certificate_hash": "13280f12c2e833a21e14e20f910ac0db3dae5a61"
+          }
+        },
+        {
+          "client_id": "274993417630-f8n7b7dvje2isetel37b23fiuuqatp0e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBr-hozzBRaJ91aEzTmPIqqfxp4_W_5lQU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "274993417630-f8n7b7dvje2isetel37b23fiuuqatp0e.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+        android:title="@string/general">
+        <ListPreference
+            android:key="@string/key_font_size_pref"
+            android:title="Text Size"
+            android:entries="@array/setting_screen_font"
+            android:entryValues="@array/setting_screen_font_category"
+            android:defaultValue="medium" >
+        </ListPreference>
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="@string/notification" >
+        <SwitchPreference
+            android:defaultValue="false"
+            android:title="@string/breaking_news"
+            android:key="@string/key_breaking_news" >
+        </SwitchPreference>
+        <SwitchPreference
+            android:defaultValue="true"
+            android:title="@string/daily_edition"
+            android:key="@string/key_daily_edition" >
+        </SwitchPreference>
+        <SwitchPreference
+            android:defaultValue="true"
+            android:title="@string/personalised"
+            android:key="@string/key_personalised" >
+        </SwitchPreference>
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="Profile">
+        <Preference
+            android:key="login"
+            android:title="Login"
+            android:summary="Tap to Login" />
+
+        <Preference
+            android:key="profile"
+            android:title="Profile" />
+        <Preference
+            android:key="share_app"
+            android:title="Share this app" />
+        <Preference
+            android:key="rate_app"
+            android:title="Rate this app" />
+        <Preference
+            android:key="about_us"
+            android:title="About Us" />
+        <Preference
+            android:key="version"
+            android:title="" />
+    </PreferenceCategory>
+</PreferenceScreen>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="language_type">
+        <item>English</item>
+        <item>Hindi</item>
+    </string-array>
+
+    <string-array name="no_of_entries">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+
+    <string-array name="setting_screen_items">
+        <item>Share the app</item>
+        <item>Rate this app</item>
+        <item>Feedback</item>
+        <item>Terms and Condition</item>
+        <item>Privacy</item>
+    </string-array>
+
+    <string-array name="catergory_screen_topics">
+        <item>Fifa World Cup </item>
+        <item>India </item>
+        <item>Business</item>
+        <item>Politics</item>
+        <item>Sports</item>
+        <item>Technology</item>
+        <item>Startups</item>
+        <item>Entertainment</item>
+        <item>Hatke</item>
+        <item>International</item>
+        <item>Automobile</item>
+        <item>Science</item>
+        <item>Travel</item>
+        <item>Miscellaneous</item>
+        <item>Fashion</item>
+        <item>Cricket</item>
+    </string-array>
+
+    <string-array name="category_screen_categories">
+        <item>MY FEED </item>
+        <item>TRENDING</item>
+        <item>ALL NEWS</item>
+        <item>TOP STORIES</item>
+        <item>BOOKMARKS</item>
+        <item>UNREAD</item>
+        <item>LIKED</item>
+        <item>Add Your Category</item>
+    </string-array>
+    
+    <string-array name="setting_screen_font">
+        <item>Small</item>
+        <item>Medium</item>
+        <item>Large</item>
+    </string-array>
+
+    <string-array name="setting_screen_font_category">
+        <item>small</item>
+        <item>medium</item>
+        <item>large</item>
+    </string-array>
+
+    <array name="array_dot_active">
+        <item>@color/dot_light_screen1</item>
+        <item>@color/dot_light_screen2</item>
+        <item>@color/dot_light_screen3</item>
+        <item>@color/dot_light_screen4</item>
+        <item>@color/dot_light_screen5</item>
+        <item>@color/dot_light_screen6</item>
+    </array>
+
+    <array name="array_dot_inactive">
+        <item>@color/dot_dark_screen1</item>
+        <item>@color/dot_dark_screen2</item>
+        <item>@color/dot_dark_screen3</item>
+        <item>@color/dot_dark_screen4</item>
+        <item>@color/dot_dark_screen5</item>
+        <item>@color/dot_dark_screen6</item>
+    </array>
+</resources>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_profile"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/toolbar_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/DefaultFontRegular"
+            android:layout_gravity="center"
+            android:text="@string/tv_profile_section"
+            android:textColor="@color/icon_color"
+            android:textSize="@dimen/font_xxlarge" />
+    </androidx.appcompat.widget.Toolbar>
+
+    <FrameLayout
+        android:id="@+id/frame_profile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_profile">
+
+        <ImageView
+            android:id="@+id/img_profile"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/size_250dp"
+            android:src="@color/grey_light" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/circular_img_profile"
+            android:layout_width="@dimen/margin_xxxlarge"
+            android:layout_height="@dimen/margin_xxxlarge"
+            android:layout_gravity="center"
+            android:src="@mipmap/newscout_icon" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/txt_profile_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/DefaultFontRegular"
+        android:layout_marginStart="@dimen/margin_large"
+        android:layout_marginTop="@dimen/margin_large"
+        android:text="@string/profile_name"
+        android:textSize="@dimen/font_large"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/frame_profile" />
+
+    <TextView
+        android:id="@+id/txt_profile_email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/DefaultFontRegular"
+        android:layout_marginStart="@dimen/margin_large"
+        android:layout_marginTop="@dimen/margin_large"
+        android:text="@string/profile_email"
+        android:textSize="@dimen/font_large"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/txt_profile_name" />
+
+    <Button
+        android:id="@+id/btn_change_password"
+        android:layout_width="@dimen/size_0dp"
+        android:layout_height="wrap_content"
+        style="@style/ButtonTextStyle"
+        android:layout_marginTop="@dimen/margin_xxlarge"
+        android:background="@drawable/circular_button"
+        android:text="@string/change_password"
+        android:textColor="@color/colorActive"
+        app:layout_constraintLeft_toRightOf="@id/guideline_start_profile_screen"
+        app:layout_constraintRight_toLeftOf="@id/guideline_end_profile_screen"
+        app:layout_constraintTop_toBottomOf="@id/txt_profile_email" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_start_profile_screen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.2" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_end_profile_screen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.8" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

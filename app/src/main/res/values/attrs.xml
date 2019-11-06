@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="newsHeadColor" format="reference"/>
+    <attr name="newsSourceColor" format="reference"/>
+    <attr name="newsTimeColor" format="reference"/>
+    <attr name="newsCategoryScreenTextColor" format="reference"/>
+    <attr name="newsDescColor" format="reference"/>
+    <attr name="textFont" format="reference"/>
+    <attr name="readMoreButtonColor" format="reference"/>
+    <attr name="newsCountFont" format="reference"/>
+    
+    <declare-styleable name="CustomFontTextView">
+        <attr name="textStyle" format="string"/>
+    </declare-styleable>
+
+</resources>

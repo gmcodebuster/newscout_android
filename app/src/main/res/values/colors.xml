@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="top_back_color">#ffffff</color>
+    <color name="icon_color">#ffffff</color>
+    <color name="colorActive">#FFFFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="primaryColorNs">#ed1c24</color>
+    <color name="primaryLightColorNs">#ff5f4e</color>
+    <color name="primaryDarkColorNs">#b20000</color>
+    <color name="secondaryColorNs">#ed1c24</color>
+    <color name="secondaryTextColorNs">#808080</color>
+    <color name="grey_light">#808080</color>
+    <color name="night_mode_background">#C0C0C0</color>
+    <color name="card_view_background">#A8A8A8</color>
+    <color name="night_mode_tab_background">#707070</color>
+    <color name="night_mode_profile_text_color">#bbbbbb</color>
+    <color name="grey_color">#c4c0be</color>
+
+    <color name="dot_dark_screen1">#d1395c</color>
+    <color name="dot_dark_screen2">#14a895</color>
+    <color name="dot_dark_screen3">#2278d4</color>
+    <color name="dot_dark_screen4">#a854d4</color>
+    <color name="dot_dark_screen5">#a7fa02</color>
+    <color name="dot_dark_screen6">#f78105</color>
+
+    <color name="dot_light_screen1">#f98da5</color>
+    <color name="dot_light_screen2">#8cf9eb</color>
+    <color name="dot_light_screen3">#93c6fd</color>
+    <color name="dot_light_screen4">#e4b5fc</color>
+    <color name="dot_light_screen5">#e8fcb5</color>
+    <color name="dot_light_screen6">#fce2b5</color>
+
+    <color name="tabbar_color">#40CCD6D5</color>
+    <color name="tabbar_endcolor">#40CCD6D5</color>
+    <color name="tabbar_selected_color">#E6CCD6D5</color>
+    <color name="tabbar_selected_endcolor">#40CCD6D5</color>
+    <color name="tab_text_border">#BE000000</color>
+    <color name="time_ago_color">#383839</color>
+    <color name="tab_rv_bg">#FFFFFF</color>
+    <color name="red">#FF0000</color>
+</resources>

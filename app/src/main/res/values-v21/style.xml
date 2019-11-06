@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="DialogFontPreference" parent="android:Theme.Material.Dialog">
+        <item name="android:colorAccent">@color/secondaryColorNs</item>
+        <item name="android:buttonBarNegativeButtonStyle">@style/NegativeDialogbuttonColor</item>
+    </style>
+</resources>

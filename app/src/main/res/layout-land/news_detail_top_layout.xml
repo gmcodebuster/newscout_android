@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/root_layout_detail_screen"
+    >
+
+    <ImageView
+        android:id="@+id/news_top_img_detail"
+        android:layout_width="@dimen/size_0dp"
+        android:layout_height="@dimen/size_180dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/image_not_found"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <TextView
+        android:id="@+id/news_heading_detail"
+        style="?newsHeadColor"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_medium"
+        android:layout_marginTop="@dimen/margin_medium"
+        android:lineSpacingExtra="@dimen/margin_small"
+        android:lines="@integer/title_lines"
+        android:text="@string/read_file"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/news_top_img_detail"
+        android:textStyle="bold"/>
+
+
+    <ImageButton
+        android:id="@+id/img_btn_bookmark_detail"
+        android:layout_width="@dimen/size_50dp"
+        android:layout_height="@dimen/size_50dp"
+        android:layout_marginEnd="@dimen/margin_medium"
+        android:background="@drawable/bookmark_button_selector"
+        android:padding="@dimen/margin_medium"
+        android:scaleType="centerCrop"
+        app:layout_constraintLeft_toRightOf="@id/news_heading_detail"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/news_heading_detail">
+
+    </ImageButton>
+
+    <Button
+        android:id="@+id/btn_read_more"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="?readMoreButtonColor"
+        android:layout_marginStart="@dimen/margin_large"
+        android:layout_marginEnd="@dimen/margin_large"
+        android:text="@string/read_more"
+        app:layout_constraintBottom_toTopOf="@id/layout_bottom_detail"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:background="@android:color/white"
+        android:layout_marginBottom="@dimen/margin_medium"
+
+    />
+
+    <TextView
+        android:id="@+id/news_desc_detail"
+        android:layout_width="@dimen/size_0dp"
+        android:layout_height="wrap_content"
+        style="?newsDescColor"
+        android:layout_marginTop="@dimen/margin_medium"
+        android:layout_marginEnd="@dimen/margin_medium"
+        android:ellipsize="end"
+        android:lineSpacingExtra="@dimen/margin_small"
+        android:lines="@integer/line_4"
+        android:text="@string/news_desc"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/news_heading_detail"
+        tools:text="@string/news_desc" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent=".65" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_bottom_detail"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_0dp"
+        android:layout_marginTop="@dimen/margin_medium"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline_horizontal">
+
+        <TextView
+            android:id="@+id/news_source_detail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="?newsSourceColor"
+            android:layout_marginStart="@dimen/margin_medium"
+            android:layout_marginTop="@dimen/margin_small"
+            android:text="@string/news_source"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+
+        <TextView
+            android:id="@+id/news_time_detail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="?newsTimeColor"
+            android:layout_marginEnd="@dimen/margin_medium"
+            android:layout_marginTop="@dimen/margin_small"
+            android:text="@string/news_item_time"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_suggested_news"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_medium"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent">
+
+        </androidx.recyclerview.widget.RecyclerView>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/bottom_layout_like_menu_bar"
+            android:layout_width="@dimen/size_0dp"
+            android:layout_height="@dimen/margin_xlarge"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/rv_suggested_news"
+            app:layout_constraintRight_toRightOf="parent"
+            android:background="@color/primaryColorNs"
+            >
+
+            <ImageButton
+                android:id="@+id/img_btn_shuffle"
+                android:layout_width="@dimen/size_24dp"
+                android:layout_height="@dimen/size_24dp"
+                android:layout_marginStart="16dp"
+                android:background="@android:color/transparent"
+                android:scaleType="fitXY"
+                android:src="@drawable/shuffle"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageButton
+                android:id="@+id/btn_bottom_share_detail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_share"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginEnd="@dimen/margin_medium"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

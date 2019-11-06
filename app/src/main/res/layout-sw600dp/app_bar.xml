@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_home_sc"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/toolbar_title_main"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="@string/app_name"
+                android:textColor="@color/icon_color"
+                android:textSize="@dimen/font_xxxlarge"
+                tools:layout_editor_absoluteX="@dimen/size_143dp"
+                tools:layout_editor_absoluteY="@dimen/size_13dp"
+                style="@style/DefaultFontRegular"
+                />
+        </LinearLayout>
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_top_heading"
+        android:layout_width="@dimen/size_0dp"
+        android:layout_height="@dimen/size_48dp"
+        android:paddingStart="@dimen/margin_medium"
+        android:paddingEnd="@dimen/margin_medium"
+        android:paddingBottom="@dimen/margin_small"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_home_sc">
+
+    </androidx.recyclerview.widget.RecyclerView>
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tab_layout"
+        android:layout_width="@dimen/size_0dp"
+        android:layout_height="@dimen/margin_xxlarge"
+        android:clipToPadding="false"
+        android:elevation="@dimen/size_1dp"
+        android:paddingLeft="@dimen/margin_small"
+        android:paddingRight="@dimen/margin_small"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/rv_top_heading"
+        app:tabGravity="fill"
+        app:tabIndicatorHeight="@dimen/size_0dp"
+        app:tabMinWidth="@dimen/size_50dp"
+        app:tabMode="scrollable"
+        app:tabPaddingBottom="@dimen/size_n1dp"
+        app:tabPaddingEnd="@dimen/size_0dp"
+        app:tabPaddingStart="@dimen/size_0dp"
+        app:tabPaddingTop="@dimen/size_n1dp"
+        app:tabRippleColor="@null"
+        app:tabSelectedTextColor="@color/primaryColorNs"
+        app:tabTextAppearance="@style/PagerTabFontLarge">
+
+    </com.google.android.material.tabs.TabLayout>
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/vPager_main"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tab_layout">
+
+    </androidx.viewpager.widget.ViewPager>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

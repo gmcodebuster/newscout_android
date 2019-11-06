@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" >
+
+    <item  android:id="@+id/ic_search"
+           android:icon="@drawable/ic_search_white_24dp"
+           android:title="@string/search"
+           app:showAsAction="always" />
+
+    <item
+        android:id="@+id/ic_menu"
+        android:title=""
+        app:showAsAction="always"
+        android:icon="@drawable/ic_three_dots_24dp">
+
+        <menu>
+            <item android:id="@+id/ic_setting"
+                  android:title="@string/action_settings"
+                  android:icon="@drawable/icon_settings"
+                  tools:icon="@drawable/icon_settings" />
+            <item android:id="@+id/ic_bookmark"
+                  android:title="@string/my_bookmarks"
+                  android:icon="@drawable/ic_bookmark_black_menu" />
+            <item android:id="@+id/switch_night_mode"
+                  android:title="@string/btn_mode" />
+
+        </menu>
+    </item>
+</menu>
