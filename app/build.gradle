@@ -20,14 +20,6 @@ androidExtensions {
 }
 
 android {
-    signingConfigs {
-        newscoutRelease {
-            keyAlias 'ns_key'
-            keyPassword 'newscout#123'
-            storeFile file('/media/gaurav/OFFICE/GauravD/_NewscoutData/Newscout data/keystore/newscout_keystore.jks')
-            storePassword 'newscout#123'
-        }
-    }
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.fafadiatech.newscout"
