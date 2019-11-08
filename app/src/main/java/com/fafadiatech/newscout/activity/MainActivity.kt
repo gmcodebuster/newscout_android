@@ -42,6 +42,7 @@ import com.google.android.material.tabs.TabLayout
 import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.iid.InstanceIdResult
 import com.google.gson.Gson
+import kotlinx.android.synthetic.main.activity_intro_screen.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -651,6 +652,7 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
                     }
                     adapterObj.notifyDataSetChanged()
                     setIconsTab(tabLayout)
+                    vPager.setCurrentItem(0)
                 }
             })
         }

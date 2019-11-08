@@ -11,6 +11,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
@@ -63,6 +65,10 @@ class NewsFragment() : Fragment(), ConnectivityReceiver.ConnectivityReceiverList
     lateinit var placeHolderListener: PlaceHolderImageListener
     lateinit var placeHolderImage: ImageView
     lateinit var imgViewNoDataFound: ImageView
+    var lessTen = false
+    var moreTen = true
+    lateinit var animFadein: Animation
+    lateinit var animFadeout : Animation
 
     companion object {
         var newsList = ArrayList<NewsEntity>()
@@ -114,6 +120,35 @@ class NewsFragment() : Fragment(), ConnectivityReceiver.ConnectivityReceiverList
         adapter = NewsAdapter(context!!, tagName)
         placeHolderImage.visibility = View.VISIBLE
         imgViewNoDataFound.visibility = View.GONE
+        fabReturnTop.visibility = View.INVISIBLE
+        animFadein = AnimationUtils.loadAnimation(activity, R.anim.fade_in)
+        animFadeout = AnimationUtils.loadAnimation(activity, R.anim.fade_out)
+
+        fragRecyclerview?.addOnScrollListener(object: RecyclerView.OnScrollListener(){
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+            }
+
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+
+                if(lastVisibleItemPosition > 10){
+                    if(moreTen) {
+                        fabReturnTop.startAnimation(animFadein)
+                        fabReturnTop.visibility = View.VISIBLE
+                        moreTen = false
+                        lessTen = true
+                    }
+                } else{
+                    if(lessTen) {
+                        fabReturnTop.visibility = View.INVISIBLE
+                        fabReturnTop.startAnimation(animFadeout)
+                        moreTen = true
+                        lessTen = false
+                    }
+                }
+            }
+        })
         val itemDecorator = DividerItemDecoration(context!!, DividerItemDecoration.VERTICAL)
 
         if (deviceWidthDp < 600) {
@@ -237,4 +272,7 @@ class NewsFragment() : Fragment(), ConnectivityReceiver.ConnectivityReceiverList
             placeHolderImage.visibility = View.GONE
         }
     }
+
+    private val lastVisibleItemPosition: Int
+        get() = (fragRecyclerview!!.layoutManager!! as LinearLayoutManager).findLastVisibleItemPosition()
 }
