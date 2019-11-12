@@ -10,6 +10,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
+import android.widget.ImageView
+import android.widget.ProgressBar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -33,15 +37,21 @@ class TrendingNewsFragment : Fragment() {
     lateinit var themePreference: SharedPreferences
     lateinit var tokenId: String
     lateinit var mContext: Context
-    lateinit var fragRecyclerview: RecyclerView
+    lateinit var rvNews: RecyclerView
     var deviceWidthDp: Float = 0f
     lateinit var tagName: String
     var tagId: Int = 0
     lateinit var adapter: TrendingNewsAdapter
     lateinit var layoutManager: RecyclerView.LayoutManager
     lateinit var fetchDataViewModel: FetchDataApiViewModel
+    lateinit var fabReturnTop: com.github.clans.fab.FloatingActionButton
     var checkInternet: Boolean = false
-
+    var lessThenTen = false
+    var moreThenTen = true
+    lateinit var animFadein: Animation
+    lateinit var animFadeout : Animation
+    var progressBar : ProgressBar? = null
+    lateinit var imgViewNoDataFound: ImageView
     override fun onAttach(context: Context) {
         super.onAttach(context)
         themePreference = context!!.getSharedPreferences(AppConstant.APPPREF, Context.MODE_PRIVATE)
@@ -75,7 +85,7 @@ class TrendingNewsFragment : Fragment() {
         }
 
         var view = LayoutInflater.from(context).inflate(R.layout.fragment_main, container, false)
-
+        fabReturnTop = view.findViewById(R.id.fab_return_top)
         var rootLayout = view.findViewById<ConstraintLayout>(R.id.root_layout_main_fragment)
         if (isNightModeEnable) {
             rootLayout.setBackgroundColor(context?.let { ContextCompat.getColor(it, R.color.night_mode_background) }!!)
@@ -86,7 +96,7 @@ class TrendingNewsFragment : Fragment() {
         var layoutSwipeRefresh = view.findViewById<SwipyRefreshLayout>(R.id.layout_swipe_refresh)
 
 
-        fragRecyclerview = view.findViewById<RecyclerView>(R.id.rv_frag_main)
+        rvNews = view.findViewById<RecyclerView>(R.id.rv_frag_main)
 
         tagName = arguments!!.getString("category_name", "")
         tagId = arguments!!.getInt("category_id", 0)
@@ -109,7 +119,42 @@ class TrendingNewsFragment : Fragment() {
             }
         }
 
-        fragRecyclerview.layoutManager = layoutManager
+        rvNews.layoutManager = layoutManager
+
+        animFadein = AnimationUtils.loadAnimation(activity, R.anim.fade_in)
+        animFadeout = AnimationUtils.loadAnimation(activity, R.anim.fade_out)
+        progressBar = view.findViewById<ProgressBar>(R.id.pbar_loading)
+        imgViewNoDataFound = view.findViewById<ImageView>(R.id.img_view_data_not_found)
+        imgViewNoDataFound.visibility = View.GONE
+        fabReturnTop.visibility = View.GONE
+        fabReturnTop.isClickable = false
+        rvNews?.addOnScrollListener(object: RecyclerView.OnScrollListener(){
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+            }
+
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+
+                if(lastVisibleItemPosition > 10){
+                    if(moreThenTen) {
+                        fabReturnTop.isClickable = true
+                        fabReturnTop.startAnimation(animFadein)
+                        fabReturnTop.visibility = View.VISIBLE
+                        moreThenTen = false
+                        lessThenTen = true
+                    }
+                } else{
+                    if(lessThenTen) {
+                        fabReturnTop.isClickable = false
+                        fabReturnTop.visibility = View.GONE
+                        fabReturnTop.startAnimation(animFadeout)
+                        moreThenTen = true
+                        lessThenTen = false
+                    }
+                }
+            }
+        })
 
         if (tagName.equals("Trending")) {
             fetchDataViewModel = ViewModelProviders.of(this).get(FetchDataApiViewModel::class.java)
@@ -117,6 +162,15 @@ class TrendingNewsFragment : Fragment() {
 
             fetchDataViewModel.getTrendingByClusterIdFromDb(clusterId).observe(this, object : androidx.lifecycle.Observer<List<NewsEntity>> {
                 override fun onChanged(list: List<NewsEntity>?) {
+                    progressBar?.visibility = View.GONE
+
+                   list?.let {
+                       if(list.size == 0){
+                           imgViewNoDataFound.visibility = View.VISIBLE
+                       }else{
+                           imgViewNoDataFound.visibility = View.GONE
+                       }
+                   }
                     var trendingList = list as ArrayList<NewsEntity>
 
                     adapter.setTrendingData(trendingList)
@@ -127,7 +181,7 @@ class TrendingNewsFragment : Fragment() {
 
 
 
-        fragRecyclerview.adapter = adapter
+        rvNews.adapter = adapter
 
         return view
     }
@@ -143,4 +197,7 @@ class TrendingNewsFragment : Fragment() {
     override fun onDetach() {
         super.onDetach()
     }
+
+    private val lastVisibleItemPosition: Int
+        get() = (rvNews!!.layoutManager!! as LinearLayoutManager).findLastVisibleItemPosition()
 }

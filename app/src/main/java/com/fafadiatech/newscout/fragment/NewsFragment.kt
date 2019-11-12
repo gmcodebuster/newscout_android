@@ -14,6 +14,7 @@ import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
+import android.widget.ProgressBar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -41,6 +42,7 @@ import com.fafadiatech.newscout.viewmodel.FetchDataApiViewModel
 import com.fafadiatech.newscout.viewmodel.ViewModelProviderFactory
 import com.omadahealth.github.swipyrefreshlayout.library.SwipyRefreshLayout
 import com.omadahealth.github.swipyrefreshlayout.library.SwipyRefreshLayoutDirection
+import kotlinx.android.synthetic.main.fragment_main.*
 
 
 class NewsFragment() : Fragment(), ConnectivityReceiver.ConnectivityReceiverListener, PlaceHolderImageListener {
@@ -65,10 +67,11 @@ class NewsFragment() : Fragment(), ConnectivityReceiver.ConnectivityReceiverList
     lateinit var placeHolderListener: PlaceHolderImageListener
     lateinit var placeHolderImage: ImageView
     lateinit var imgViewNoDataFound: ImageView
-    var lessTen = false
-    var moreTen = true
+    var lessThenTen = false
+    var moreThenTen = true
     lateinit var animFadein: Animation
     lateinit var animFadeout : Animation
+    var progressBar :ProgressBar? = null
 
     companion object {
         var newsList = ArrayList<NewsEntity>()
@@ -118,12 +121,12 @@ class NewsFragment() : Fragment(), ConnectivityReceiver.ConnectivityReceiverList
         tagName = arguments!!.getString("category_name", "")
         tagId = arguments!!.getInt("category_id", 0)
         adapter = NewsAdapter(context!!, tagName)
-        placeHolderImage.visibility = View.VISIBLE
         imgViewNoDataFound.visibility = View.GONE
-        fabReturnTop.visibility = View.INVISIBLE
+        fabReturnTop.visibility = View.GONE
+        fabReturnTop.isClickable = false
         animFadein = AnimationUtils.loadAnimation(activity, R.anim.fade_in)
         animFadeout = AnimationUtils.loadAnimation(activity, R.anim.fade_out)
-
+        progressBar = view.findViewById(R.id.pbar_loading)
         fragRecyclerview?.addOnScrollListener(object: RecyclerView.OnScrollListener(){
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
@@ -133,18 +136,20 @@ class NewsFragment() : Fragment(), ConnectivityReceiver.ConnectivityReceiverList
                 super.onScrollStateChanged(recyclerView, newState)
 
                 if(lastVisibleItemPosition > 10){
-                    if(moreTen) {
+                    if(moreThenTen) {
+                        fabReturnTop.isClickable = true
                         fabReturnTop.startAnimation(animFadein)
                         fabReturnTop.visibility = View.VISIBLE
-                        moreTen = false
-                        lessTen = true
+                        moreThenTen = false
+                        lessThenTen = true
                     }
                 } else{
-                    if(lessTen) {
+                    if(lessThenTen) {
+                        fabReturnTop.isClickable = false
                         fabReturnTop.visibility = View.INVISIBLE
                         fabReturnTop.startAnimation(animFadeout)
-                        moreTen = true
-                        lessTen = false
+                        moreThenTen = true
+                        lessThenTen = false
                     }
                 }
             }
@@ -264,12 +269,12 @@ class NewsFragment() : Fragment(), ConnectivityReceiver.ConnectivityReceiverList
     }
 
     override fun showPlaceHolder(size: Int?) {
+        progressBar?.visibility = View.GONE
         if (size!! > 0) {
-            placeHolderImage.visibility = View.GONE
             imgViewNoDataFound.visibility = View.GONE
+
         } else {
             imgViewNoDataFound.visibility = View.VISIBLE
-            placeHolderImage.visibility = View.GONE
         }
     }
 

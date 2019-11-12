@@ -7,6 +7,8 @@ import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.View
 import android.view.WindowManager
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
@@ -39,7 +41,7 @@ import com.fafadiatech.newscout.viewmodel.FetchDataApiViewModel
 class SearchActivity : AppCompatActivity(), ProgressBarListener {
 
     lateinit var searchView: SearchView
-    lateinit var recyclerViewSearch: RecyclerView
+    lateinit var rvNews: RecyclerView
     lateinit var query: String
     lateinit var apiInterface: ApiInterface
     lateinit var progressBar: ProgressBar
@@ -54,6 +56,10 @@ class SearchActivity : AppCompatActivity(), ProgressBarListener {
     lateinit var progressBarListener: ProgressBarListener
     var suggestionList = ArrayList<String>()
     lateinit var fabReturnTop: com.github.clans.fab.FloatingActionButton
+    lateinit var animFadein: Animation
+    lateinit var animFadeout : Animation
+    var lessThenTen = false
+    var moreThenTen = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,11 +82,43 @@ class SearchActivity : AppCompatActivity(), ProgressBarListener {
         var btnCross: ImageView = this.searchView.findViewById(androidx.appcompat.R.id.search_close_btn)
         btnCross.setImageResource(R.drawable.ic_clear_black_24dp)
         var searchEditText: EditText = this.searchView.findViewById(androidx.appcompat.R.id.search_src_text)
-        recyclerViewSearch = findViewById(R.id.news_item_search)
+        rvNews = findViewById(R.id.news_item_search)
         fabReturnTop = findViewById(R.id.fab_return_top)
+        fabReturnTop.visibility = View.GONE
+        fabReturnTop.isClickable = false
+        animFadein = AnimationUtils.loadAnimation(this@SearchActivity, R.anim.fade_in)
+        animFadeout = AnimationUtils.loadAnimation(this@SearchActivity, R.anim.fade_out)
         val searchAutoComplete = searchView.findViewById(androidx.appcompat.R.id.search_src_text)
                 as SearchView.SearchAutoComplete
         searchAutoComplete.threshold = 0
+
+        rvNews?.addOnScrollListener(object: RecyclerView.OnScrollListener(){
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+            }
+
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+
+                if(lastVisibleItemPosition > 10){
+                    if(moreThenTen) {
+                        fabReturnTop.isClickable = true
+                        fabReturnTop.startAnimation(animFadein)
+                        fabReturnTop.visibility = View.VISIBLE
+                        moreThenTen = false
+                        lessThenTen = true
+                    }
+                } else{
+                    if(lessThenTen) {
+                        fabReturnTop.isClickable = false
+                        fabReturnTop.visibility = View.GONE
+                        fabReturnTop.startAnimation(animFadeout)
+                        moreThenTen = true
+                        lessThenTen = false
+                    }
+                }
+            }
+        })
 
         fetchDataViewModel.getSearchSuggestedData().observe(this, object : androidx.lifecycle.Observer<List<String>> {
             override fun onChanged(list: List<String>?) {
@@ -115,7 +153,7 @@ class SearchActivity : AppCompatActivity(), ProgressBarListener {
                     var searchAdapter = SearchAdapter(this@SearchActivity, "Search", progressBarListener)
                     val itemDataSourceFactory = SearchDataSourceFactory(this@SearchActivity, query)
 
-                    recyclerViewSearch.adapter = searchAdapter
+                    rvNews.adapter = searchAdapter
                     liveDataSource = itemDataSourceFactory.itemLiveDataSource
 
                     val pagedListConfig = PagedList.Config.Builder()
@@ -169,11 +207,11 @@ class SearchActivity : AppCompatActivity(), ProgressBarListener {
             var divider = MyItemDecoration(ContextCompat.getDrawable(this, R.drawable.item_decorator_divider)!!)
         }
 
-        recyclerViewSearch.layoutManager = layoutManager
+        rvNews.layoutManager = layoutManager
         query = searchView.query.toString()
 
         fabReturnTop.setOnClickListener {
-            recyclerViewSearch.smoothScrollToPosition(0)
+            rvNews.smoothScrollToPosition(0)
         }
     }
 
@@ -193,4 +231,7 @@ class SearchActivity : AppCompatActivity(), ProgressBarListener {
     override fun onStop() {
         super.onStop()
     }
+
+    private val lastVisibleItemPosition: Int
+        get() = (rvNews!!.layoutManager!! as LinearLayoutManager).findLastVisibleItemPosition()
 }
