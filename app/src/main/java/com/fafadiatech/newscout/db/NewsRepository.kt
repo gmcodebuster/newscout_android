@@ -50,19 +50,7 @@ class NewsRepository(application: Application) {
     companion object {
         private const val DATABASE_PAGE_SIZE = 10
     }
-
-    fun insertNewsData(news: ArrayList<NewsEntity>) {
-        Log.d("news size", news.size.toString())
-        var insertNewsAsync = InsertNewsAsyncTask(newsDatabase)
-        insertNewsAsync.execute(news)
-    }
-
-    fun insertCategoryData(category: ArrayList<CategoryEntity>) {
-        var insertCategoryAsync = InsertCategoryAsyncTask(newsDatabase)
-        insertCategoryAsync.execute(category)
-    }
-
-
+    
     fun getRepoNews(): LiveData<List<NewsEntity>> {
         newsList = rNewsDao.getNewsFromDb()
         return newsList
@@ -76,34 +64,6 @@ class NewsRepository(application: Application) {
     fun getTitleBySearch(query: String): List<String> {
         var list = rNewsDao.getTitleBySearch(query)
         return list
-    }
-
-    class InsertCategoryAsyncTask(newsDatabase: NewsDatabase?) : AsyncTask<ArrayList<CategoryEntity>, Void, Void>() {
-        private var db: NewsDatabase? = null
-
-        init {
-            db = newsDatabase
-        }
-
-        override fun doInBackground(vararg params: ArrayList<CategoryEntity>): Void? {
-
-            db!!.newsDao().insertCategory(params[0])
-            return null
-        }
-    }
-
-    class InsertNewsAsyncTask(newsDatabase: NewsDatabase?) : AsyncTask<ArrayList<NewsEntity>, Void, Void>() {
-        private var db: NewsDatabase? = null
-
-        init {
-            db = newsDatabase
-        }
-
-        override fun doInBackground(vararg params: ArrayList<NewsEntity>): Void? {
-
-            db!!.newsDao().insertNews(params[0])
-            return null
-        }
     }
 
     fun getRepoDetailNewsFromDb(): LiveData<List<DetailNewsData>> {
