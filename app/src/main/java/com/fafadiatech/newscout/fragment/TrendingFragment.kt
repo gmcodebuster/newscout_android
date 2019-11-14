@@ -1,5 +1,7 @@
 package com.fafadiatech.newscout.fragment
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.Resources
@@ -9,7 +11,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.ImageView
+import android.widget.ProgressBar
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -60,7 +65,13 @@ class TrendingFragment : Fragment(), AddTrendingFragmentListener {
     var deviceWidthDp: Float = 0f
     lateinit var mContext: Context
     var pos: Int = 0
-    lateinit var imagePlaceHolder: ImageView
+
+    var lessThenTen = false
+    var moreThenTen = true
+    lateinit var animFadein: Animation
+    lateinit var animFadeout : Animation
+    var progressBar : ProgressBar? = null
+    lateinit var imgViewNoDataFound: ImageView
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -90,7 +101,11 @@ class TrendingFragment : Fragment(), AddTrendingFragmentListener {
         var isNightModeEnable = themePreference.getBoolean("night mode enable", false)
         rvTrending = view.findViewById(R.id.rv_trending)
         fabReturnTop = view.findViewById(R.id.fab_return_top)
-        imagePlaceHolder = view.findViewById<ImageView>(R.id.img_view_placeholder)
+        imgViewNoDataFound = view.findViewById<ImageView>(R.id.img_view_data_not_found)
+        progressBar = view.findViewById<ProgressBar>(R.id.pbar_loading)
+        animFadein = AnimationUtils.loadAnimation(activity, R.anim.fade_in)
+        animFadeout = AnimationUtils.loadAnimation(activity, R.anim.fade_out)
+        imgViewNoDataFound.visibility = View.GONE
         var tagId = arguments!!.getInt("category_id", 0)
         var categoryName = arguments!!.getString("category_name")
 
@@ -120,7 +135,35 @@ class TrendingFragment : Fragment(), AddTrendingFragmentListener {
         rvTrending.layoutManager = layoutManager
         rvTrending.adapter = trendingAdapter
         trendingAdapter.setCategory(categoryName, tagId)
-        imagePlaceHolder.visibility = View.VISIBLE
+        progressBar?.visibility = View.VISIBLE
+        fabReturnTop.visibility = View.GONE
+        fabReturnTop.isClickable = false
+        rvTrending?.addOnScrollListener(object: RecyclerView.OnScrollListener(){
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+            }
+
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                if(lastVisibleItemPosition > 5){
+                    if(moreThenTen) {
+                        fabReturnTop.isClickable = true
+                        fabReturnTop.startAnimation(animFadein)
+                        fabReturnTop.visibility = View.VISIBLE
+                        moreThenTen = false
+                        lessThenTen = true
+                    }
+                } else{
+                    if(lessThenTen) {
+                        fabReturnTop.isClickable = false
+                        fabReturnTop.visibility = View.GONE
+                        fabReturnTop.startAnimation(animFadeout)
+                        moreThenTen = true
+                        lessThenTen = false
+                    }
+                }
+            }
+        })
 
         fabReturnTop.setOnClickListener {
             rvTrending.smoothScrollToPosition(0)
@@ -142,10 +185,11 @@ class TrendingFragment : Fragment(), AddTrendingFragmentListener {
         fetchDataViewModel = ViewModelProviders.of(this).get(FetchDataApiViewModel::class.java)
         fetchDataViewModel.getTrendingData().observe(viewLifecycleOwner, Observer {
             var tNews = it as ArrayList<TrendingNewsData>
+            progressBar?.visibility = View.GONE
             if (tNews.size > 0) {
-                imagePlaceHolder.visibility = View.GONE
+                imgViewNoDataFound.visibility = View.GONE
             } else {
-                imagePlaceHolder.visibility = View.VISIBLE
+                imgViewNoDataFound.visibility = View.VISIBLE
             }
             trendingAdapter.setTrendingData(tNews)
 
@@ -219,37 +263,6 @@ class TrendingFragment : Fragment(), AddTrendingFragmentListener {
         })
     }
 
-    fun fetchAPIData() {
-        var call: Call<TrendingDataHeaderApi> = apiInterfaceObj.getNewsByTrendingAPI()
-        call.enqueue(object : Callback<TrendingDataHeaderApi> {
-            override fun onFailure(call: Call<TrendingDataHeaderApi>, t: Throwable) {
-
-            }
-
-            override fun onResponse(call: Call<TrendingDataHeaderApi>, response: Response<TrendingDataHeaderApi>) {
-                var trendingResultList = response.body()?.body?.results
-                var trendingArticleList = ArrayList<TrendingData>()
-                var newsId: Int = 0
-                trendingResultList?.let {
-                    articleNewsDao.deleteTrendingData()
-                    for (i in 0 until trendingResultList.size) {
-                        var id = trendingResultList.get(i).id
-                        var trendingList = trendingResultList.get(i).articles ?: arrayListOf()
-                        var domain = trendingResultList.get(i).domain ?: ""
-                        var created_at = trendingResultList.get(i).created_at ?: ""
-                        var modified_at = trendingResultList.get(i).modified_at ?: ""
-                        var active = trendingResultList.get(i).active ?: false
-                        var score = trendingResultList.get(i).score ?: 0.0f
-                        var data = TrendingData(id, trendingList, domain, created_at, modified_at, active, score)
-                        trendingArticleList.add(data)
-                    }
-                    articleNewsDao.insertTrendingAPIData(trendingArticleList)
-                }
-                refreshTrendingNews.isRefreshing = false
-            }
-        })
-    }
-
     override fun onDestroyView() {
         fetchDataViewModel.getTrendingDataFromDb().removeObservers(this)
         super.onDestroyView()
@@ -262,4 +275,7 @@ class TrendingFragment : Fragment(), AddTrendingFragmentListener {
     override fun onDetach() {
         super.onDetach()
     }
+
+    private val lastVisibleItemPosition: Int
+        get() = (rvTrending!!.layoutManager!! as LinearLayoutManager).findLastVisibleItemPosition()
 }
