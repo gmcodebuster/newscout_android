@@ -4,7 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root_layout_detail_screen"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/popupBackground"
+    >
 
     <ImageView
         android:id="@+id/news_top_img_detail"
@@ -106,10 +108,9 @@
         style="?readMoreButtonColor"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/margin_large"
-        android:layout_marginEnd="@dimen/margin_large"
+        android:layout_marginStart="@dimen/margin_medium"
+        android:layout_marginEnd="@dimen/margin_medium"
         android:layout_marginBottom="@dimen/margin_medium"
-        android:background="@drawable/read_more_btn_boundary"
         android:text="@string/read_more"
         android:textAllCaps="false"
         android:textStyle="bold"
@@ -129,7 +130,9 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/size_0dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent">
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:background="@color/colorPrimary"
+            >
 
         </androidx.recyclerview.widget.RecyclerView>
 
@@ -186,9 +189,3 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
-
-
-

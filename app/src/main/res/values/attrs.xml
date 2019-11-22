@@ -8,7 +8,8 @@
     <attr name="textFont" format="reference"/>
     <attr name="readMoreButtonColor" format="reference"/>
     <attr name="newsCountFont" format="reference"/>
-    
+    <attr name="suggestedNewsColor" format="reference" />
+
     <declare-styleable name="CustomFontTextView">
         <attr name="textStyle" format="string"/>
     </declare-styleable>

@@ -47,7 +47,7 @@ class ExpandListAdapter(
 
         val lblListHeader = view.findViewById<TextView>(R.id.lblListHeader)
         var imgViewMenu = view.findViewById<ImageView>(R.id.img_menu_item)
-        var selectedColor = ContextCompat.getColor(context, R.color.black)
+        var selectedColor = ContextCompat.getColor(context, R.color.primaryTextColor)
 
         if (groupPosition == 0) {
             imgViewMenu.setImageResource(R.drawable.trending_news)
@@ -68,7 +68,6 @@ class ExpandListAdapter(
         }
 
         lblListHeader.text = headerTitle
-        lblListHeader.setTextColor(ContextCompat.getColor(context, R.color.black))
         imgViewMenu.setColorFilter(selectedColor, PorterDuff.Mode.SRC_ATOP)
 
         return view

@@ -87,14 +87,8 @@ class TrendingNewsFragment : Fragment() {
         var view = LayoutInflater.from(context).inflate(R.layout.fragment_main, container, false)
         fabReturnTop = view.findViewById(R.id.fab_return_top)
         var rootLayout = view.findViewById<ConstraintLayout>(R.id.root_layout_main_fragment)
-        if (isNightModeEnable) {
-            rootLayout.setBackgroundColor(context?.let { ContextCompat.getColor(it, R.color.night_mode_background) }!!)
-        } else {
-            rootLayout.setBackgroundColor(context?.let { ContextCompat.getColor(it, R.color.top_back_color) }!!)
-        }
 
         var layoutSwipeRefresh = view.findViewById<SwipyRefreshLayout>(R.id.layout_swipe_refresh)
-
 
         rvNews = view.findViewById<RecyclerView>(R.id.rv_frag_main)
 

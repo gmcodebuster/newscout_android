@@ -17,10 +17,8 @@
             android:id="@+id/toolbar_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
             android:text="@string/bookmark_title"
-            android:textColor="@color/icon_color"
-            android:textSize="@dimen/font_xxlarge" />
+            style="@style/LoginTitle" />
     </androidx.appcompat.widget.Toolbar>
 
     <androidx.recyclerview.widget.RecyclerView

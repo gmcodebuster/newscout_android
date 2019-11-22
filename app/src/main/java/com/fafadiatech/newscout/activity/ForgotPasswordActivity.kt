@@ -1,12 +1,17 @@
 package com.fafadiatech.newscout.activity
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.widget.AppCompatEditText
 import com.fafadiatech.newscout.R
 import com.fafadiatech.newscout.api.ApiClient
 import com.fafadiatech.newscout.api.ApiInterface
+import com.fafadiatech.newscout.appconstants.AppConstant
 import com.fafadiatech.newscout.model.ForgotPasswordData
 import retrofit2.Call
 import retrofit2.Callback
@@ -17,12 +22,18 @@ class ForgotPasswordActivity : BaseActivity() {
     lateinit var interfaceObj: ApiInterface
     lateinit var emailText: String
     var status: Int? = null
+    lateinit var themePreference: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        themePreference = getSharedPreferences(AppConstant.APPPREF, Context.MODE_PRIVATE)
+        var themes: Int = themePreference.getInt("theme", R.style.DefaultMedium)
+        val defaultNightMode = themePreference.getInt("night_mode", AppCompatDelegate.MODE_NIGHT_NO)
+        getDelegate().setLocalNightMode(defaultNightMode)
+        this.setTheme(themes)
         setContentView(R.layout.activity_forgot_password)
         interfaceObj = ApiClient.getClient().create(ApiInterface::class.java)
-        var edTextEmail = findViewById<EditText>(R.id.et_email)
+        var edTextEmail = findViewById<AppCompatEditText>(R.id.et_email)
 
         var btnSubmit = findViewById<Button>(R.id.btn_enter_forgot_pass)
         var toolbarText = findViewById<TextView>(R.id.toolbar_title)

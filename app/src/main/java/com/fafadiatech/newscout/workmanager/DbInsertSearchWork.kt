@@ -30,7 +30,7 @@ class DbInsertSearchWork(context: Context, params: WorkerParameters) : Worker(co
 
     override fun doWork(): Result {
         var query: String? = inputData.getString("search_query")
-        var call: Call<NewsDataApi> = apiInterface.searchNewsFromApi(query!!)//
+        var call: Call<NewsDataApi> = apiInterface.searchNewsFromApi(query!!)
         try {
             var response: Response<NewsDataApi> = call.execute()
             var responseCode = response.code()

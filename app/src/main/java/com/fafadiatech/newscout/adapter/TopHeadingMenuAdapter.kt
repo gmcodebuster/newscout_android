@@ -59,8 +59,7 @@ class TopHeadingMenuAdapter(var context: Context, var clickListener: MenuHeaderC
         }
 
         holder.tView.text = headingDataList.get(position).name
-        var selectedColor = ContextCompat.getColor(context, R.color.black)
-        holder.tView.setTextColor(selectedColor)
+        var selectedColor = ContextCompat.getColor(context, R.color.primaryTextColor)
         holder.imgViewMenu.setColorFilter(selectedColor, PorterDuff.Mode.SRC_ATOP)
 
         holder.tView.setOnClickListener {
@@ -72,9 +71,11 @@ class TopHeadingMenuAdapter(var context: Context, var clickListener: MenuHeaderC
         }
 
         if (position == selectedItem) {
-            var selectedColor = ContextCompat.getColor(context, R.color.primaryColorNs)
-            holder.tView.setTextColor(selectedColor)
+            holder.tView.isSelected = true
+            var selectedColor = ContextCompat.getColor(context, R.color.colorPrimary)
             holder.imgViewMenu.setColorFilter(selectedColor, PorterDuff.Mode.SRC_ATOP)
+        }else{
+            holder.tView.isSelected = false
         }
     }
 

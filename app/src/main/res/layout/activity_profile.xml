@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-       xmlns:tools="http://schemas.android.com/tools"
-       android:layout_width="match_parent"
-       android:layout_height="match_parent"
-       xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    style="@style/ScreenBg">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_profile"
@@ -19,11 +20,9 @@
             android:id="@+id/toolbar_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/DefaultFontRegular"
-            android:layout_gravity="center"
+            style="@style/LoginTitle"
             android:text="@string/tv_profile_section"
-            android:textColor="@color/icon_color"
-            android:textSize="@dimen/font_xxlarge" />
+            />
     </androidx.appcompat.widget.Toolbar>
 
     <FrameLayout
@@ -32,12 +31,12 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/toolbar_profile"
         >
-    <ImageView
-        android:id="@+id/img_profile"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/size_250dp"
-        android:src="@color/grey_light"
-        android:contentDescription="@string/tv_profile_section" />
+        <ImageView
+            android:id="@+id/img_profile"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/size_250dp"
+            android:src="@color/grey_light"
+            android:contentDescription="@string/tv_profile_section" />
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/circular_img_profile"
             android:layout_height="@dimen/margin_xxxlarge"
@@ -51,7 +50,7 @@
         android:id="@+id/txt_profile_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="@style/DefaultFontRegular"
+        style="@style/SignupMsg"
         android:layout_marginTop="@dimen/margin_large"
         android:text="@string/profile_name"
         android:textSize="@dimen/font_xlarge"
@@ -64,7 +63,7 @@
         android:id="@+id/txt_profile_email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="@style/DefaultFontRegular"
+        style="@style/SignupMsg"
         android:text="@string/profile_email"
         android:textSize="@dimen/font_xlarge"
         app:layout_constraintTop_toBottomOf="@id/txt_profile_name"
@@ -77,14 +76,12 @@
         android:id="@+id/btn_change_password"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        style="@style/ButtonTextStyle"
         android:text="@string/change_password"
+        style="@style/LoginScreenButton"
         app:layout_constraintTop_toBottomOf="@id/txt_profile_email"
-        android:background="@drawable/circular_button"
         app:layout_constraintLeft_toRightOf="@id/guideline_start_profile_screen"
         app:layout_constraintRight_toLeftOf="@id/guideline_end_profile_screen"
         android:layout_marginTop="@dimen/margin_xxlarge"
-        android:textColor="@color/colorActive"
         />
 
     <androidx.constraintlayout.widget.Guideline

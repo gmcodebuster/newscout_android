@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorPrimary">#ed1c24</color>
+    <color name="colorPrimaryDark">#b20000</color>
     <color name="colorAccent">#FF4081</color>
     <color name="top_back_color">#ffffff</color>
     <color name="icon_color">#ffffff</color>
@@ -41,4 +41,44 @@
     <color name="time_ago_color">#383839</color>
     <color name="tab_rv_bg">#FFFFFF</color>
     <color name="red">#FF0000</color>
+
+    <color name="primaryLightColor">#E53935</color>
+    <color name="secondaryColor">#b0bec5</color>
+    <color name="secondaryDarkColor">#808e95</color>
+    <color name="secondaryLightColor">#e2f1f8</color>
+
+    <color name="primaryTextColor">#000000</color>
+    <color name="secondaryTextColor">#000000</color>
+
+    <color name="colorError">#EF5350</color>
+    <color name="colorOnError">#CD000000</color>
+
+    <color name="colorSurface">#BBBBBB</color>
+    <color name="colorOnSurface">#B2000000</color>
+
+    <color name="backgroundColor">#14121212</color>
+    <color name="colorOnBackground">#800000FF</color>
+
+    <color name="scrimBackground">#37FF001E</color>
+    <color name="windowBackground">#D1D1D1</color>
+
+    <color name="navigationBarColor">#5E00897B</color>
+    <color name="tertiaryTextColor">#FFFFFF</color>
+
+    <color name="rv_category_bg">#FFFFFF</color>
+    <color name="source_color">#808080</color>
+    <color name="news_description">#000000</color>
+
+    <color name="popupBackground">#FFFFFF</color>
+    <color name="nav_background">#FFFFFF</color>
+    <color name="detail_background">#FFFFFF</color>
+
+    <color name="toolbar_title">#FFFFFF</color>
+    <color name="screen_bg">#FFFFFF</color>
+
+    <color name="pref_primary_color">#00FF00</color>
+    <color name="pref_secondary_color">#FF00FF</color>
+    <color name="pref_text_color">#996633</color>
+    <color name="pref_surface_text_color">#996633</color>
+    <color name="pref_summary_text">#448855</color>
 </resources>

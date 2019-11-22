@@ -8,6 +8,9 @@ import android.util.DisplayMetrics
 import android.view.*
 import android.widget.ExpandableListView
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
+import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
@@ -42,7 +45,6 @@ import com.google.android.material.tabs.TabLayout
 import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.iid.InstanceIdResult
 import com.google.gson.Gson
-import kotlinx.android.synthetic.main.activity_intro_screen.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -86,6 +88,8 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
         super.onCreate(savedInstanceState)
         themePreference = getSharedPreferences(AppConstant.APPPREF, Context.MODE_PRIVATE)
         themes = themePreference.getInt("theme", R.style.DefaultMedium)
+        val defaultNightMode = themePreference.getInt("night_mode", AppCompatDelegate.MODE_NIGHT_NO)
+        getDelegate().setLocalNightMode(defaultNightMode)
         this.setTheme(themes)
         isNightMode = themePreference.getBoolean("night mode enable", false)
         var isThemeChange = themePreference.getBoolean("theme changed", false)
@@ -167,15 +171,6 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
         }
 
         tabLayout = findViewById<TabLayout>(R.id.tab_layout)
-        if (isNightMode == true) {
-            tabLayout.setTabTextColors(Color.parseColor("#000000"), Color.parseColor("#ffffff"))
-
-            tabLayout.background = ContextCompat.getDrawable(this, R.color.night_mode_tab_background)
-        } else {
-            tabLayout.setTabTextColors(Color.parseColor("#000000"), Color.parseColor("#ed1c24"))
-
-            tabLayout.background = ContextCompat.getDrawable(this, R.color.top_back_color)
-        }
         tabLayout.visibility = View.GONE
 
         setSupportActionBar(toolbar)
@@ -311,7 +306,7 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
             drawer_layout.openDrawer(Gravity.LEFT);
             return true
         }
-
+        var defaultTheme = MODE_NIGHT_NO
         when (item!!.itemId) {
             R.id.ic_bookmark -> {
                 val intent = Intent(this, BookmarkActivity::class.java)
@@ -340,18 +335,21 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
                     isNightMode = true
                     isNighModeEnabled = false
                     isThemeChanged = true
+                    defaultTheme = MODE_NIGHT_NO
                 } else {
                     item.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_moon_filled_black_24))
                     chooseDefaultTheme()
                     isNightMode = false
                     isNighModeEnabled = true
                     isThemeChanged = true
+                    defaultTheme =  MODE_NIGHT_YES
                 }
                 var editor = themePreference.edit()
                 editor.putInt("theme", themes)
                 editor.putBoolean("night mode enable", isNighModeEnabled)
                 editor.putBoolean("theme changed", isThemeChanged)
                 editor.putBoolean("night mode enable", isNightMode)
+                editor.putInt("night_mode", defaultTheme)
                 editor.apply()
 
                 recreate()
@@ -364,11 +362,11 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
     fun chooseNightTheme() {
         fontSize = themePreference.getString("text_font_size", "medium")
         if (fontSize.equals("small")) {
-            themes = R.style.NightSmall
+            themes = R.style.DefaultSmall
         } else if (fontSize.equals("medium")) {
-            themes = R.style.NightMedium
+            themes = R.style.DefaultMedium
         } else if (fontSize.equals("large")) {
-            themes = R.style.NightLarge
+            themes = R.style.DefaultLarge
         }
     }
 

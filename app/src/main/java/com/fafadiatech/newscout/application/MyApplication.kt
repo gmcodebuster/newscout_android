@@ -2,6 +2,8 @@ package com.fafadiatech.newscout.application
 
 import android.app.Application
 import android.content.Context
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
 import androidx.multidex.MultiDex
 import com.crashlytics.android.BuildConfig
 import com.crashlytics.android.Crashlytics
@@ -50,7 +52,7 @@ class MyApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-
+        AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_NO)
         val crashlyticsCore = CrashlyticsCore.Builder()
                 .disabled(BuildConfig.DEBUG)
                 .build()

@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:openDrawer="start">
+    tools:openDrawer="start"
+    >
 
     <include
         layout="@layout/app_bar"
@@ -19,25 +20,26 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
+        style="@style/NavigationDrawer"
         >
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             >
-        <include
-            layout="@layout/nav_header"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-        <ExpandableListView
-            android:id="@+id/expandableListView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_medium"
-            android:background="@android:color/white"
-            android:dividerHeight="@dimen/size_0dp"
-            android:groupIndicator="@null"
-            />
+            <include
+                layout="@layout/nav_header"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+            <ExpandableListView
+                android:id="@+id/expandableListView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_1dp"
+                android:dividerHeight="@dimen/size_0dp"
+                android:groupIndicator="@null"
+                style="@style/ExpandableList"
+                />
         </LinearLayout>
     </com.google.android.material.navigation.NavigationView>
 

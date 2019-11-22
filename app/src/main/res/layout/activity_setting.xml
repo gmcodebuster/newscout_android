@@ -19,12 +19,8 @@
             android:id="@+id/toolbar_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:background="@android:color/transparent"
             android:text="@string/action_settings"
-            android:textColor="@color/icon_color"
-            android:textSize="@dimen/font_xxlarge"
-            style="@style/DefaultFontRegular"
+            style="@style/LoginTitle"
             />
 
     </androidx.appcompat.widget.Toolbar>
@@ -38,7 +34,9 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar_setting_sc">
+        app:layout_constraintTop_toBottomOf="@id/toolbar_setting_sc"
+        android:background="@color/nav_background"
+        >
 
     </FrameLayout>
 

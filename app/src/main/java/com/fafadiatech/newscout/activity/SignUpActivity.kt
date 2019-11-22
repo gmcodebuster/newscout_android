@@ -5,9 +5,11 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.Button
-import android.widget.EditText
+
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.widget.AppCompatEditText
 import com.fafadiatech.newscout.R
 import com.fafadiatech.newscout.api.ApiClient
 import com.fafadiatech.newscout.api.ApiInterface
@@ -21,11 +23,11 @@ import retrofit2.Response
 
 class SignUpActivity : BaseActivity() {
 
-    lateinit var firstName: EditText
-    lateinit var lastName: EditText
-    lateinit var userEmail: EditText
-    lateinit var userPassWord: EditText
-    lateinit var retypePassword: EditText
+    lateinit var firstName: AppCompatEditText
+    lateinit var lastName: AppCompatEditText
+    lateinit var userEmail: AppCompatEditText
+    lateinit var userPassWord: AppCompatEditText
+    lateinit var retypePassword: AppCompatEditText
     lateinit var btnRegister: Button
     lateinit var firstNameText: String
     lateinit var lastNameText: String
@@ -40,6 +42,8 @@ class SignUpActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         themePreference = getSharedPreferences(AppConstant.APPPREF, Context.MODE_PRIVATE)
         var themes: Int = themePreference.getInt("theme", R.style.DefaultMedium)
+        val defaultNightMode = themePreference.getInt("night_mode", AppCompatDelegate.MODE_NIGHT_NO)
+        getDelegate().setLocalNightMode(defaultNightMode)
         this.setTheme(themes)
         setContentView(R.layout.activity_sign_up)
         var toolbarText = findViewById<TextView>(R.id.toolbar_title)

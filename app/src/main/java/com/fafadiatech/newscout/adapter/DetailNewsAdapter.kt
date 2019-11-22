@@ -111,7 +111,7 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
         val deviceHeight = displayMetrics.heightPixels
         deviceHeightInDp = deviceHeight / Resources.getSystem().getDisplayMetrics().density
         var deviceWidthDp = deviceWidth / Resources.getSystem().getDisplayMetrics().density
-        mResources = context.resources
+        mResources = context.resources  
         val imageHeightInPixel = deviceHeight / (16 / 9)
         imageHeightInDp = convertPxToDp(context, imageHeightInPixel)
         var themes: Int = themePreference.getInt("theme", R.style.DefaultMedium)
@@ -133,11 +133,7 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
         rvSuggestedNews = view.findViewById<RecyclerView>(R.id.rv_suggested_news)
         rootLayout = view.findViewById(R.id.root_layout_detail_screen)
         imgBtnShuffle = view.findViewById(R.id.img_btn_shuffle)
-        if (!isNightMode) {
-            rvSuggestedNews.setBackgroundColor(ContextCompat.getColor(context, R.color.top_back_color))
-        } else {
-            rvSuggestedNews.setBackgroundColor(ContextCompat.getColor(context, R.color.night_mode_background))
-        }
+
         val layoutManagerHz = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
         parentLayoutRvSuggested.visibility = View.INVISIBLE
         rvSuggestedNews.invalidate()
@@ -205,7 +201,7 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
         if (detailList.get(position).source != null) {
 
             var spannable = SpannableString(" via " + detailList.get(position).source) as Spannable
-            setColorForPath(spannable, arrayOf(detailList.get(position).source), ContextCompat.getColor(context, R.color.primaryColorNs))
+            setColorForPath(spannable, arrayOf(detailList.get(position).source), ContextCompat.getColor(context, R.color.colorPrimary))
             newsSource.text = spannable
         }
 
@@ -242,12 +238,6 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
             }
         } else {
             newsTime.text = ""
-        }
-
-        if (isNightMode == true) {
-            newsHeading.setTextColor(ContextCompat.getColor(context, R.color.top_back_color))
-        } else {
-            newsHeading.setTextColor(ContextCompat.getColor(context, R.color.black))
         }
 
         isBookmark = detailList.get(position).bookmark_status
