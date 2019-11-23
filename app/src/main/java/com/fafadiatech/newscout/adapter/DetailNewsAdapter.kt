@@ -6,8 +6,13 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.content.res.Resources
+import android.graphics.Bitmap
 import android.graphics.Typeface
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.LevelListDrawable
 import android.net.Uri
+import android.text.Html
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
@@ -24,10 +29,13 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.transition.Transition
 import androidx.viewpager.widget.PagerAdapter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.target.SimpleTarget
 import com.fafadiatech.newscout.R
 import com.fafadiatech.newscout.activity.NewsWebActivity
 import com.fafadiatech.newscout.activity.SignInActivity
@@ -180,7 +188,7 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
                 }
                 var lineCount = newsDescHeight / lineHeight
                 newsDesc.maxLines = floor(lineCount.toDouble()).toInt()
-                newsDesc.text = HtmlCompat.fromHtml(detailList.get(position).description.replace("\n", ""), FROM_HTML_MODE_LEGACY)
+                newsDesc.text = HtmlCompat.fromHtml(detailList.get(position).description.replace("\n", ""), FROM_HTML_MODE_LEGACY, MImageGetter(newsDesc, context), null)
 
                 if (detailList.get(position).cover_image.length > 0) {
                     var imageUrl = getImageURL(newsTopImage, detailList.get(position).cover_image)
@@ -447,3 +455,29 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
 }
 
 
+open class MImageGetter(internal var mTv: TextView, internal var mContext: Context) : Html.ImageGetter {
+    override fun getDrawable(source: String): Drawable {
+        val drawable = LevelListDrawable()
+        Glide.with(mContext)
+                .asBitmap()
+                .load(source)
+                .into(object : CustomTarget<Bitmap>() {
+                    override fun onResourceReady(resource: Bitmap, transition: com.bumptech.glide.request.transition.Transition<in Bitmap>?) {
+                        if (resource != null) {
+                            val bitmapDrawable = BitmapDrawable(mContext.resources, resource)
+                            drawable.addLevel(1, 1, bitmapDrawable)
+                            drawable.setBounds(0, 0, resource.width, resource.height)
+                            drawable.level = 1
+                            mTv.invalidate()
+                            mTv.text = mTv.text
+                        }
+                    }
+
+                    override fun onLoadCleared(placeholder: Drawable?) {
+
+                    }
+                })
+        return drawable
+    }
+
+}
