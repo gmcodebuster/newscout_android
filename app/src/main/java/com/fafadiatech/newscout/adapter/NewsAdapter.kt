@@ -84,11 +84,14 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<NewsEnt
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
 
         var inflater = LayoutInflater.from(parent.context)
-        return when (viewType % 2) {
 
+        return when (viewType){
             0 -> NewsAdapter.LeftItemViewHolder(inflater.inflate(R.layout.news_item_alternate, parent, false))
+            1 -> NewsAdapter.RightItemViewHolder(inflater.inflate(R.layout.news_item_main, parent, false))
+            2 -> AdsItemViewHolder(inflater.inflate(R.layout.item_promotion_ads, parent, false))
             else -> NewsAdapter.RightItemViewHolder(inflater.inflate(R.layout.news_item_main, parent, false))
         }
+
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -292,6 +295,10 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<NewsEnt
                     con.startActivity(detailIntent)
                 }
             }
+
+            2 -> {
+
+            }
         }
     }
 
@@ -321,10 +328,18 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<NewsEnt
         var newsTimeLeft = view.findViewById<TextView>(R.id.news_time_alternate)
     }
 
+    class AdsItemViewHolder(view:View) : RecyclerView.ViewHolder(view){
+
+    }
+
     override fun getItemViewType(position: Int): Int {
-        return when (position % 2) {
-            0 -> 0
-            else -> 1
+
+        if(position > 9 && position % 10 == 0 ){
+            return 2
+        }else if(position % 2 == 0){
+            return 0
+        }else{
+            return 1
         }
     }
 

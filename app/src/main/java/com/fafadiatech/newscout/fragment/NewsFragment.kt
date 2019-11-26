@@ -182,9 +182,15 @@ class NewsFragment() : Fragment(), ConnectivityReceiver.ConnectivityReceiverList
 
         if (!tagName.equals("Trending")) {
             fetchDataViewModel = ViewModelProviders.of(this, ViewModelProviderFactory(activity!!.application, tagId)).get(FetchDataApiViewModel::class.java)
-            fetchDataViewModel.initializeNews(tagId, 1).observe(this@NewsFragment, Observer<PagedList<NewsEntity>> {
+            fetchDataViewModel.initializeNews(tagId, 1).observe(viewLifecycleOwner, Observer<PagedList<NewsEntity>> {
 
                 adapter.setPlaceHolderImage(placeHolderListener)
+                //Add advertise view
+                if(it.size > 0) {
+                    it.run {
+                        it.add(10, null)
+                    }
+                }
                 adapter.submitList(it)
             })
         }
@@ -207,7 +213,7 @@ class NewsFragment() : Fragment(), ConnectivityReceiver.ConnectivityReceiverList
 
                         itemPagedList = LivePagedListBuilder(itemDataSourceFactory, pagedListConfig)
                                 .build()
-                        itemPagedList.observe(this@NewsFragment, Observer<PagedList<NewsEntity>> {
+                        itemPagedList.observe(viewLifecycleOwner, Observer<PagedList<NewsEntity>> {
                             adapter.submitList(it)
 
                         })
@@ -220,7 +226,7 @@ class NewsFragment() : Fragment(), ConnectivityReceiver.ConnectivityReceiverList
 
                     var tagsArray = arrayOfNulls<String>(tagItems.size)
                     tagItems.toArray(tagsArray)
-                    fetchDataViewModel.initializeNews(tagId, 1).observe(this@NewsFragment, Observer<PagedList<NewsEntity>> {
+                    fetchDataViewModel.initializeNews(tagId, 1).observe(viewLifecycleOwner, Observer<PagedList<NewsEntity>> {
 
                         adapter.submitList(it)
                     })
