@@ -6,6 +6,7 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import com.fafadiatech.newscout.R
 import com.fafadiatech.newscout.api.ApiClient
 import com.fafadiatech.newscout.api.ApiInterface
@@ -25,6 +26,8 @@ class SettingActivity : AppCompatActivity() {
         themePreference = getSharedPreferences(AppConstant.APPPREF, Context.MODE_PRIVATE)
         var themes: Int = themePreference.getInt("theme", R.style.DefaultMedium)
         isNightMode = themePreference.getBoolean("night mode enable", false)
+        val defaultNightMode = themePreference.getInt("night_mode", AppCompatDelegate.MODE_NIGHT_NO)
+        getDelegate().setLocalNightMode(defaultNightMode)
         this.setTheme(themes)
         setContentView(R.layout.activity_setting)
         var toolbarText = findViewById<TextView>(R.id.toolbar_title)

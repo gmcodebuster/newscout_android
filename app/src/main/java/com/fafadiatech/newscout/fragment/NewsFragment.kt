@@ -107,11 +107,6 @@ class NewsFragment() : Fragment(), ConnectivityReceiver.ConnectivityReceiverList
         deviceWidthDp = deviceWidth / Resources.getSystem().getDisplayMetrics().density
         var view = LayoutInflater.from(context).inflate(R.layout.fragment_main, container, false)
         var rootLayout = view.findViewById<ConstraintLayout>(R.id.root_layout_main_fragment)
-        if (isNightModeEnable) {
-            rootLayout.setBackgroundColor(context?.let { ContextCompat.getColor(it, R.color.night_mode_background) }!!)
-        } else {
-            rootLayout.setBackgroundColor(context?.let { ContextCompat.getColor(it, R.color.top_back_color) }!!)
-        }
 
         var layoutSwipeRefresh = view.findViewById<SwipyRefreshLayout>(R.id.layout_swipe_refresh)
         fragRecyclerview = view.findViewById(R.id.rv_frag_main)
@@ -168,11 +163,6 @@ class NewsFragment() : Fragment(), ConnectivityReceiver.ConnectivityReceiverList
             layoutManager = GridLayoutManager(context, 3, RecyclerView.VERTICAL, false)
             val hDivider = DividerItemDecoration(context, DividerItemDecoration.HORIZONTAL)
 
-            if (!isNightModeEnable) {
-                rootLayout.setBackgroundColor(context?.let { ContextCompat.getColor(it, R.color.tab_rv_bg) }!!)
-            } else {
-                rootLayout.setBackgroundColor(context?.let { ContextCompat.getColor(it, R.color.grey_light) }!!)
-            }
         }
 
         fragRecyclerview.layoutManager = object : LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false) {

@@ -7,7 +7,10 @@ import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.View
 import android.view.WindowManager
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -36,6 +39,10 @@ class BookmarkActivity : BaseActivity(), ConnectivityReceiver.ConnectivityReceiv
     var deviceWidthDp: Float = 0f
     lateinit var layoutManager: LinearLayoutManager
     lateinit var fabReturnTop: com.github.clans.fab.FloatingActionButton
+    var lessTen = false
+    var moreTen = true
+    lateinit var animFadein: Animation
+    lateinit var animFadeout: Animation
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,6 +54,8 @@ class BookmarkActivity : BaseActivity(), ConnectivityReceiver.ConnectivityReceiv
         themePreference = getSharedPreferences(AppConstant.APPPREF, Context.MODE_PRIVATE)
         token = themePreference.getString("token value", "")
         var themes: Int = themePreference.getInt("theme", R.style.DefaultMedium)
+        val defaultNightMode = themePreference.getInt("night_mode", AppCompatDelegate.MODE_NIGHT_NO)
+        getDelegate().setLocalNightMode(defaultNightMode)
         this.setTheme(themes)
         setContentView(R.layout.activity_bookmark)
         fetchDataViewModel = ViewModelProviders.of(this).get(FetchDataApiViewModel::class.java)
@@ -97,6 +106,35 @@ class BookmarkActivity : BaseActivity(), ConnectivityReceiver.ConnectivityReceiv
 
         rvBookmark.layoutManager = layoutManager
         rvBookmark.adapter = bookmarkAdapter
+
+        fabReturnTop.visibility = View.INVISIBLE
+        animFadein = AnimationUtils.loadAnimation(this@BookmarkActivity, R.anim.fade_in)
+        animFadeout = AnimationUtils.loadAnimation(this@BookmarkActivity, R.anim.fade_out)
+        rvBookmark?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+            }
+
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                if (lastVisibleItemPosition > 10) {
+                    if (moreTen) {
+                        fabReturnTop.startAnimation(animFadein)
+                        fabReturnTop.visibility = View.VISIBLE
+                        moreTen = false
+                        lessTen = true
+                    }
+                } else {
+                    if (lessTen) {
+                        fabReturnTop.visibility = View.INVISIBLE
+                        fabReturnTop.startAnimation(animFadeout)
+                        moreTen = true
+                        lessTen = false
+                    }
+                }
+            }
+        })
+
         fabReturnTop.setOnClickListener {
             rvBookmark.smoothScrollToPosition(0)
         }
@@ -123,4 +161,7 @@ class BookmarkActivity : BaseActivity(), ConnectivityReceiver.ConnectivityReceiv
     override fun onStop() {
         super.onStop()
     }
+
+    private val lastVisibleItemPosition: Int
+        get() = (rvBookmark!!.layoutManager!! as LinearLayoutManager).findLastVisibleItemPosition()
 }

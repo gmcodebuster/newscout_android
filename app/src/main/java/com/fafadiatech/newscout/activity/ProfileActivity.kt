@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatDelegate
 import com.fafadiatech.newscout.R
 import com.fafadiatech.newscout.appconstants.AppConstant
 
@@ -23,6 +24,8 @@ class ProfileActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         themePreference = getSharedPreferences(AppConstant.APPPREF, Context.MODE_PRIVATE)
         var themes: Int = themePreference.getInt("theme", R.style.DefaultMedium)
+        val defaultNightMode = themePreference.getInt("night_mode", AppCompatDelegate.MODE_NIGHT_NO)
+        getDelegate().setLocalNightMode(defaultNightMode)
         this.setTheme(themes)
         setContentView(R.layout.activity_profile)
         var toolbarText = findViewById<TextView>(R.id.toolbar_title)

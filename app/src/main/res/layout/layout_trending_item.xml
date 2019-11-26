@@ -96,7 +96,7 @@
         android:id="@+id/trend_image"
         android:layout_width="@dimen/size_14dp"
         android:layout_height="@dimen/size_14dp"
-        android:src="@drawable/newspaper_14"
+        android:src="@drawable/ic_newspaper"
         android:contentDescription="@string/placeholder"
         app:layout_constraintRight_toLeftOf="@id/trending_count"
         app:layout_constraintTop_toBottomOf="@id/tv_news_title"

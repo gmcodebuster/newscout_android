@@ -79,14 +79,14 @@ class SettingFragment() : PreferenceFragmentCompat() {
         addPreferencesFromResource(R.xml.setting_preference)
         var versionCode = BuildConfig.VERSION_CODE
         var versionName = BuildConfig.VERSION_NAME
-        fontSizeListPref = findPreference(this.getResources().getString(R.string.key_font_size_pref)) as ListPreference
-        preference = findPreference("login")
-        versionPreference = findPreference("version")
+        fontSizeListPref = findPreference<ListPreference>(this.getResources().getString(R.string.key_font_size_pref)) as ListPreference
+        preference = findPreference<Preference>("login") as Preference
+        versionPreference = findPreference<Preference>("version") as Preference
         versionPreference.title = "Version : " + versionName
 
-        var breakingNewsSwitch = findPreference(this.resources.getString(R.string.key_breaking_news)) as SwitchPreference
-        var dailyEditionSwitch = findPreference(this.resources.getString(R.string.key_daily_edition)) as SwitchPreference
-        var personalisedSwitch = findPreference(this.resources.getString(R.string.key_personalised)) as SwitchPreference
+        var breakingNewsSwitch = findPreference<SwitchPreferenceCompat>(this.resources.getString(R.string.key_breaking_news))
+        var dailyEditionSwitch = findPreference<SwitchPreferenceCompat>(this.resources.getString(R.string.key_daily_edition))
+        var personalisedSwitch = findPreference<SwitchPreferenceCompat>(this.resources.getString(R.string.key_personalised))
 
         var isBreakingNewsEnabled: Boolean
         var isDailyEditionEnabled: Boolean
@@ -116,9 +116,9 @@ class SettingFragment() : PreferenceFragmentCompat() {
             }
         }
 
-        breakingNewsSwitch.onPreferenceChangeListener = object : Preference.OnPreferenceChangeListener {
+        breakingNewsSwitch?.onPreferenceChangeListener = object : Preference.OnPreferenceChangeListener {
             override fun onPreferenceChange(p0: Preference?, p1: Any?): Boolean {
-                if (breakingNewsSwitch.isChecked) {
+                if (breakingNewsSwitch!!.isChecked) {
                     isBreakingNewsEnabled = false
                 } else {
                     isBreakingNewsEnabled = true
@@ -134,9 +134,9 @@ class SettingFragment() : PreferenceFragmentCompat() {
             }
         }
 
-        dailyEditionSwitch.onPreferenceChangeListener = object : Preference.OnPreferenceChangeListener {
+        dailyEditionSwitch?.onPreferenceChangeListener = object : Preference.OnPreferenceChangeListener {
             override fun onPreferenceChange(p0: Preference?, p1: Any?): Boolean {
-                if (dailyEditionSwitch.isChecked) {
+                if (dailyEditionSwitch!!.isChecked) {
                     isDailyEditionEnabled = false
                 } else {
                     isDailyEditionEnabled = true
@@ -152,9 +152,9 @@ class SettingFragment() : PreferenceFragmentCompat() {
             }
         }
 
-        personalisedSwitch.onPreferenceChangeListener = object : Preference.OnPreferenceChangeListener {
+        personalisedSwitch?.onPreferenceChangeListener = object : Preference.OnPreferenceChangeListener {
             override fun onPreferenceChange(p0: Preference?, p1: Any?): Boolean {
-                if (personalisedSwitch.isChecked) {
+                if (personalisedSwitch!!.isChecked) {
                     isPersonalisedEnabled = true
                 } else {
                     isPersonalisedEnabled = true
@@ -175,11 +175,11 @@ class SettingFragment() : PreferenceFragmentCompat() {
     fun chooseNightTheme() {
         fontSize = themepreference.getString("text_font_size", "medium")
         if (fontSize.equals("small")) {
-            themes = R.style.NightSmall
+            themes = R.style.DefaultSmall
         } else if (fontSize.equals("medium")) {
-            themes = R.style.NightMedium
+            themes = R.style.DefaultMedium
         } else if (fontSize.equals("large")) {
-            themes = R.style.NightLarge
+            themes = R.style.DefaultLarge
         }
     }
 

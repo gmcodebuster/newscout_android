@@ -2,7 +2,8 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    style="@style/ScreenBg" >
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_sign_up"
@@ -17,16 +18,14 @@
             android:id="@+id/toolbar_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/DefaultFontRegular"
-            android:layout_gravity="center"
+            style="@style/LoginTitle"
             android:text="@string/sign_up"
-            android:textColor="@color/icon_color"
-            android:textSize="@dimen/font_xxlarge" />
+            />
     </androidx.appcompat.widget.Toolbar>
 
-    <EditText
+    <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/ed_first_name"
-        style="@style/EditTextSignUpScreen"
+        style="@style/EditTextStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_xxxlarge"
@@ -35,9 +34,9 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar_sign_up" />
 
-    <EditText
+    <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/ed_last_name"
-        style="@style/EditTextSignUpScreen"
+        style="@style/EditTextStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/enter_last_name"
@@ -45,27 +44,27 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/ed_first_name" />
 
-    <EditText
+    <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/ed_enter_email"
-        style="@style/EditTextSignUpScreen"
+        style="@style/EditTextStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/enter_email"
         android:inputType="textEmailAddress"
         app:layout_constraintTop_toBottomOf="@id/ed_last_name" />
 
-    <EditText
+    <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/ed_password"
-        style="@style/EditTextSignUpScreen"
+        style="@style/EditTextStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/password"
         android:inputType="textPassword"
         app:layout_constraintTop_toBottomOf="@id/ed_enter_email" />
 
-    <EditText
+    <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/retype_ed_password"
-        style="@style/EditTextSignUpScreen"
+        style="@style/EditTextStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/retype_password"
@@ -76,11 +75,9 @@
         android:id="@+id/btn_register"
         android:layout_width="@dimen/size_0dp"
         android:layout_height="wrap_content"
-        style="@style/ButtonTextStyle"
         android:layout_marginTop="@dimen/margin_large"
-        android:background="@drawable/circular_button"
         android:text="@string/sign_up"
-        android:textColor="@color/colorActive"
+        style="@style/LoginScreenButton"
         app:layout_constraintLeft_toRightOf="@id/guideline_start_sign_up"
         app:layout_constraintRight_toLeftOf="@id/guideline_end_sign_up"
         app:layout_constraintTop_toBottomOf="@id/retype_ed_password" />
@@ -89,7 +86,7 @@
         android:id="@+id/txt_already_member"
         android:layout_width="@dimen/size_0dp"
         android:layout_height="wrap_content"
-        style="@style/DefaultFontRegular"
+        style="@style/SignupMsg"
         android:layout_marginTop="@dimen/margin_large"
         android:gravity="center_horizontal"
         android:text="@string/already_member"

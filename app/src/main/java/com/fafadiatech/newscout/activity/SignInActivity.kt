@@ -7,9 +7,10 @@ import android.content.SharedPreferences
 import android.graphics.Typeface
 import android.os.Bundle
 import android.widget.Button
-import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.widget.AppCompatEditText
 import androidx.lifecycle.ViewModelProviders
 import com.facebook.*
 import com.facebook.login.LoginResult
@@ -43,13 +44,13 @@ class SignInActivity : BaseActivity() {
     lateinit var passwordText: String
     var status: Int? = null
     lateinit var txtViewcreateAccount: TextView
-    lateinit var email: EditText
+    lateinit var email: AppCompatEditText
     private var mCallbackManager: CallbackManager? = null
     lateinit var mGoogleSignInClient: GoogleSignInClient
     val RC_SIGN_IN: Int = 9001
     var success: Int = 0
     lateinit var btnSignIn: Button
-    lateinit var password: EditText
+    lateinit var password: AppCompatEditText
     lateinit var themePreference: SharedPreferences
     var categoryListServer = ArrayList<String>()
     var isNetwork: Boolean = false
@@ -66,6 +67,8 @@ class SignInActivity : BaseActivity() {
         themePreference = getSharedPreferences(AppConstant.APPPREF, Context.MODE_PRIVATE)
         fetchDataViewModel = ViewModelProviders.of(this).get(FetchDataApiViewModel::class.java)
         var themes: Int = themePreference.getInt("theme", R.style.DefaultMedium)
+        val defaultNightMode = themePreference.getInt("night_mode", AppCompatDelegate.MODE_NIGHT_NO)
+        getDelegate().setLocalNightMode(defaultNightMode)
         this.setTheme(themes)
         position = intent.getIntExtra("detail_news_item_position", 0)
         setContentView(R.layout.activity_sign_in)
@@ -74,8 +77,8 @@ class SignInActivity : BaseActivity() {
 
         mCallbackManager = CallbackManager.Factory.create()
         interfaceObj = ApiClient.getClient().create(ApiInterface::class.java)
-        email = findViewById<EditText>(R.id.ed_enter_email_signIn)
-        password = findViewById<EditText>(R.id.ed_password_signIn)
+        email = findViewById<AppCompatEditText>(R.id.ed_enter_email_signIn)
+        password = findViewById<AppCompatEditText>(R.id.ed_password_signIn)
         btnSignIn = findViewById<Button>(R.id.btn_sign_in)
         var btnForgotPassword = findViewById<Button>(R.id.btn_forgot_password)
         val btnLoginFacebook = findViewById<LoginButton>(R.id.btn_login_facebook)

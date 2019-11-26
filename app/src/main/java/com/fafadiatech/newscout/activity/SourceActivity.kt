@@ -8,8 +8,11 @@ import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.View
 import android.view.WindowManager
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
@@ -46,6 +49,11 @@ class SourceActivity : AppCompatActivity(), PlaceHolderImageListener {
     lateinit var placeHolderListener: PlaceHolderImageListener
     lateinit var themePreference: SharedPreferences
     lateinit var fabReturnTop: com.github.clans.fab.FloatingActionButton
+    var lessTen = false
+    var moreTen = true
+    lateinit var animFadein: Animation
+    lateinit var animFadeout : Animation
+    lateinit var rvSource: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,15 +71,18 @@ class SourceActivity : AppCompatActivity(), PlaceHolderImageListener {
         themePreference = this.getSharedPreferences(AppConstant.APPPREF, Context.MODE_PRIVATE)
         var themes: Int = themePreference.getInt("theme", R.style.DefaultMedium)
         var isNightModeEnable = themePreference.getBoolean("night mode enable", false)
+        val defaultNightMode = themePreference.getInt("night_mode", AppCompatDelegate.MODE_NIGHT_NO)
+        getDelegate().setLocalNightMode(defaultNightMode)
         this.setTheme(themes)
         setContentView(R.layout.activity_source)
-        var rvSource = findViewById<RecyclerView>(R.id.rv_source)
+        rvSource = findViewById<RecyclerView>(R.id.rv_source)
         var emptyView = findViewById<TextView>(R.id.empty_view)
         var toolbarTitle = findViewById<TextView>(R.id.toolbar_title)
         emptyView.visibility = View.GONE
         interfaceObj = ApiClient.getClient().create(ApiInterface::class.java)
         var adapterObj = NewsAdapter(this, "Source")
         fabReturnTop = findViewById(R.id.fab_return_top)
+        fabReturnTop.visibility = View.INVISIBLE
         val itemDecorator = DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
 
         if (deviceWidthDp < 600) {
@@ -100,6 +111,35 @@ class SourceActivity : AppCompatActivity(), PlaceHolderImageListener {
             adapterObj.submitList(it)
         })
 
+        animFadein = AnimationUtils.loadAnimation(this@SourceActivity, R.anim.fade_in)
+        animFadeout = AnimationUtils.loadAnimation(this@SourceActivity, R.anim.fade_out)
+
+        rvSource?.addOnScrollListener(object: RecyclerView.OnScrollListener(){
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+            }
+
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+
+                if(lastVisibleItemPosition > 10){
+                    if(moreTen) {
+                        fabReturnTop.startAnimation(animFadein)
+                        fabReturnTop.visibility = View.VISIBLE
+                        moreTen = false
+                        lessTen = true
+                    }
+                } else{
+                    if(lessTen) {
+                        fabReturnTop.visibility = View.INVISIBLE
+                        fabReturnTop.startAnimation(animFadeout)
+                        moreTen = true
+                        lessTen = false
+                    }
+                }
+            }
+        })
+
         fabReturnTop.setOnClickListener {
             rvSource.smoothScrollToPosition(0)
         }
@@ -112,4 +152,7 @@ class SourceActivity : AppCompatActivity(), PlaceHolderImageListener {
     override fun onStop() {
         super.onStop()
     }
+
+    private val lastVisibleItemPosition: Int
+        get() = (rvSource!!.layoutManager!! as LinearLayoutManager).findLastVisibleItemPosition()
 }

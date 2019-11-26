@@ -12,6 +12,7 @@ import android.util.DisplayMetrics
 import android.view.MotionEvent
 import android.view.WindowManager
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ViewModelProviders
 import androidx.viewpager.widget.ViewPager
 import com.crashlytics.android.answers.Answers
@@ -45,6 +46,8 @@ class DetailNewsActivity : BaseActivity(), VerticalViewPager.SwiperListener {
         fetchDataViewModel = ViewModelProviders.of(this).get(FetchDataApiViewModel::class.java)
         themePreference = getSharedPreferences(AppConstant.APPPREF, Context.MODE_PRIVATE)
         var themes: Int = themePreference.getInt("theme", R.style.DefaultMedium)
+        val defaultNightMode = themePreference.getInt("night_mode", AppCompatDelegate.MODE_NIGHT_NO)
+        getDelegate().setLocalNightMode(defaultNightMode)
         token = themePreference.getString("token value", "")
         this.setTheme(themes)
         setContentView(R.layout.activity_news_detail)

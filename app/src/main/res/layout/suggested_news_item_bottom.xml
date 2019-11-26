@@ -26,7 +26,7 @@
 
     <TextView
         android:id="@+id/tv_title_suggested"
-        style="?newsHeadColor"
+        style="?suggestedNewsColor"
         android:layout_width="@dimen/size_160dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_small"
@@ -44,6 +44,3 @@
         app:layout_constraintTop_toBottomOf="@id/imgView_suggested"
         app:layout_constraintVertical_bias="1.0" />
 </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-

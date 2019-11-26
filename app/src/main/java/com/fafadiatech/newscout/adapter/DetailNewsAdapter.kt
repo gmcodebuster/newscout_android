@@ -6,8 +6,13 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.content.res.Resources
+import android.graphics.Bitmap
 import android.graphics.Typeface
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.LevelListDrawable
 import android.net.Uri
+import android.text.Html
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
@@ -17,6 +22,8 @@ import android.view.animation.TranslateAnimation
 import android.widget.*
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.text.HtmlCompat
+import androidx.core.text.HtmlCompat.FROM_HTML_MODE_LEGACY
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModelProviders
@@ -26,6 +33,7 @@ import androidx.viewpager.widget.PagerAdapter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.CustomTarget
 import com.fafadiatech.newscout.R
 import com.fafadiatech.newscout.activity.NewsWebActivity
 import com.fafadiatech.newscout.activity.SignInActivity
@@ -111,7 +119,7 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
         val deviceHeight = displayMetrics.heightPixels
         deviceHeightInDp = deviceHeight / Resources.getSystem().getDisplayMetrics().density
         var deviceWidthDp = deviceWidth / Resources.getSystem().getDisplayMetrics().density
-        mResources = context.resources
+        mResources = context.resources  
         val imageHeightInPixel = deviceHeight / (16 / 9)
         imageHeightInDp = convertPxToDp(context, imageHeightInPixel)
         var themes: Int = themePreference.getInt("theme", R.style.DefaultMedium)
@@ -133,11 +141,7 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
         rvSuggestedNews = view.findViewById<RecyclerView>(R.id.rv_suggested_news)
         rootLayout = view.findViewById(R.id.root_layout_detail_screen)
         imgBtnShuffle = view.findViewById(R.id.img_btn_shuffle)
-        if (!isNightMode) {
-            rvSuggestedNews.setBackgroundColor(ContextCompat.getColor(context, R.color.top_back_color))
-        } else {
-            rvSuggestedNews.setBackgroundColor(ContextCompat.getColor(context, R.color.night_mode_background))
-        }
+
         val layoutManagerHz = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
         parentLayoutRvSuggested.visibility = View.INVISIBLE
         rvSuggestedNews.invalidate()
@@ -182,7 +186,7 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
                 }
                 var lineCount = newsDescHeight / lineHeight
                 newsDesc.maxLines = floor(lineCount.toDouble()).toInt()
-                newsDesc.text = detailList.get(position).description.replace("\n", "")
+                newsDesc.text = HtmlCompat.fromHtml(detailList.get(position).description.replace("\n", ""), FROM_HTML_MODE_LEGACY, MImageGetter(newsDesc, context), null)
 
                 if (detailList.get(position).cover_image.length > 0) {
                     var imageUrl = getImageURL(newsTopImage, detailList.get(position).cover_image)
@@ -205,7 +209,7 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
         if (detailList.get(position).source != null) {
 
             var spannable = SpannableString(" via " + detailList.get(position).source) as Spannable
-            setColorForPath(spannable, arrayOf(detailList.get(position).source), ContextCompat.getColor(context, R.color.primaryColorNs))
+            setColorForPath(spannable, arrayOf(detailList.get(position).source), ContextCompat.getColor(context, R.color.colorPrimary))
             newsSource.text = spannable
         }
 
@@ -244,25 +248,11 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
             newsTime.text = ""
         }
 
-        if (isNightMode == true) {
-            newsHeading.setTextColor(ContextCompat.getColor(context, R.color.top_back_color))
-        } else {
-            newsHeading.setTextColor(ContextCompat.getColor(context, R.color.black))
-        }
-
         isBookmark = detailList.get(position).bookmark_status
         if (isBookmark == 1) {
-            if (isNightMode == true) {
-                imgBtnBookmark.setBackgroundResource(R.drawable.ic_bookmark_white_fill)
-            } else {
-                imgBtnBookmark.setBackgroundResource(R.drawable.ic_bookmark_black_fill)
-            }
+            imgBtnBookmark.setBackgroundResource(R.drawable.ic_bookmark_fill)
         } else if (isBookmark == 0) {
-            if (isNightMode == true) {
-                imgBtnBookmark.setBackgroundResource(R.drawable.ic_bookmark_white)
-            } else {
-                imgBtnBookmark.setBackgroundResource(R.drawable.ic_bookmark_black)
-            }
+            imgBtnBookmark.setBackgroundResource(R.drawable.ic_bookmark_empty)
         }
 
         newsId = detailList.get(position).article_id
@@ -304,12 +294,7 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
                         override fun onResponse(call: Call<BookmarkArticleData>, response: Response<BookmarkArticleData>) {
                             if (isBookmark == 0) {
                                 it as ImageButton
-                                if (isNightMode == true) {
-                                    it.setBackgroundResource(R.drawable.ic_bookmark_white_fill)
-                                } else {
-                                    it.setBackgroundResource(R.drawable.ic_bookmark_black_fill)
-                                }
-
+                                it.setBackgroundResource(R.drawable.ic_bookmark_fill)
                                 Toast.makeText(context, "Article bookmarked", Toast.LENGTH_SHORT).show()
                                 isBookmark = 1
                                 detailList.get(position).bookmark_status = 1
@@ -331,12 +316,7 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
                                 fetchDataViewModel.startBookmarkWorkManager(token, isBookmark, newsId)
                                 notifyDataSetChanged()
                             } else if (isBookmark == 1) {
-
-                                if (isNightMode == true) {
-                                    it.setBackgroundResource(R.drawable.ic_bookmark_white)
-                                } else {
-                                    it.setBackgroundResource(R.drawable.ic_bookmark_black)
-                                }
+                                it.setBackgroundResource(R.drawable.ic_bookmark_empty)
                                 Toast.makeText(context, "Article removed from bookmark", Toast.LENGTH_SHORT).show()
                                 isBookmark = 0
                                 detailList.get(position).bookmark_status = 0
@@ -455,3 +435,29 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
 }
 
 
+open class MImageGetter(internal var mTv: TextView, internal var mContext: Context) : Html.ImageGetter {
+    override fun getDrawable(source: String): Drawable {
+        val drawable = LevelListDrawable()
+        Glide.with(mContext)
+                .asBitmap()
+                .load(source)
+                .into(object : CustomTarget<Bitmap>() {
+                    override fun onResourceReady(resource: Bitmap, transition: com.bumptech.glide.request.transition.Transition<in Bitmap>?) {
+                        if (resource != null) {
+                            val bitmapDrawable = BitmapDrawable(mContext.resources, resource)
+                            drawable.addLevel(1, 1, bitmapDrawable)
+                            drawable.setBounds(0, 0, resource.width, resource.height)
+                            drawable.level = 1
+                            mTv.invalidate()
+                            mTv.text = mTv.text
+                        }
+                    }
+
+                    override fun onLoadCleared(placeholder: Drawable?) {
+
+                    }
+                })
+        return drawable
+    }
+
+}

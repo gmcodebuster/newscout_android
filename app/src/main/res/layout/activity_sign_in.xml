@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-   xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-   android:layout_width="match_parent"
-   android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    style="@style/ScreenBg"
+    >
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_sign_in"
@@ -19,17 +21,14 @@
             android:id="@+id/toolbar_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            style="@style/LoginTitle"
             android:text="@string/login"
-            android:textColor="@color/icon_color"
-            android:textSize="@dimen/font_xxlarge"
-            style="@style/DefaultFontRegular"
             />
     </androidx.appcompat.widget.Toolbar>
 
-    <EditText
+    <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/ed_enter_email_signIn"
-        style="@style/EditTextSignUpScreen"
+        style="@style/EditTextStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/enter_email"
@@ -38,9 +37,9 @@
         android:layout_marginTop="@dimen/margin_xxxlarge"
         />
 
-    <EditText
+    <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/ed_password_signIn"
-        style="@style/EditTextSignUpScreen"
+        style="@style/EditTextStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/password"
@@ -51,11 +50,9 @@
         android:id="@+id/btn_sign_in"
         android:layout_width="@dimen/size_0dp"
         android:layout_height="wrap_content"
-        style="@style/ButtonTextStyle"
         android:layout_marginTop="@dimen/margin_large"
-        android:background="@drawable/circular_button"
         android:text="@string/sign_in_title"
-        android:textColor="@color/colorActive"
+        style="@style/LoginScreenButton"
         app:layout_constraintLeft_toRightOf="@id/guideline_start_sign_in"
         app:layout_constraintRight_toLeftOf="@id/guideline_end_sign_in"
         app:layout_constraintTop_toBottomOf="@id/ed_password_signIn" />
@@ -64,11 +61,9 @@
         android:id="@+id/btn_forgot_password"
         android:layout_width="@dimen/size_0dp"
         android:layout_height="wrap_content"
-        style="@style/ButtonTextStyle"
         android:layout_marginTop="@dimen/margin_large"
-        android:background="@drawable/circular_button"
         android:text="@string/profile_forgot_pass"
-        android:textColor="@color/colorActive"
+        style="@style/LoginScreenButton"
         app:layout_constraintLeft_toRightOf="@id/guideline_start_sign_in"
         app:layout_constraintRight_toLeftOf="@id/guideline_end_sign_in"
         app:layout_constraintTop_toBottomOf="@id/btn_sign_in" />
@@ -91,13 +86,13 @@
         app:layout_constraintLeft_toRightOf="@id/guideline_start_sign_in"
         app:layout_constraintRight_toLeftOf="@id/guideline_end_sign_in"
         app:layout_constraintTop_toBottomOf="@+id/btn_login_google"
-    />
+        />
 
     <TextView
         android:id="@+id/create_Account"
         android:layout_width="@dimen/size_0dp"
         android:layout_height="wrap_content"
-        style="@style/DefaultFontRegular"
+        style="@style/SignupMsg"
         android:layout_marginTop="@dimen/margin_medium"
         android:gravity="center_horizontal"
         android:text="@string/create_account"

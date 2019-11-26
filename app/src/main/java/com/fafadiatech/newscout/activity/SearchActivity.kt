@@ -11,6 +11,7 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
@@ -70,6 +71,8 @@ class SearchActivity : AppCompatActivity(), ProgressBarListener {
         deviceWidthDp = deviceWidth / Resources.getSystem().getDisplayMetrics().density
         themePreference = this.getSharedPreferences(AppConstant.APPPREF, Context.MODE_PRIVATE)
         progressBarListener = this as ProgressBarListener
+        val defaultNightMode = themePreference.getInt("night_mode", AppCompatDelegate.MODE_NIGHT_NO)
+        getDelegate().setLocalNightMode(defaultNightMode)
         var themes: Int = themePreference.getInt("theme", R.style.DefaultMedium)
         var isNightModeEnable = themePreference.getBoolean("night mode enable", false)
         fetchDataViewModel = ViewModelProviders.of(this).get(FetchDataApiViewModel::class.java)
@@ -80,7 +83,7 @@ class SearchActivity : AppCompatActivity(), ProgressBarListener {
         progressBar = findViewById(R.id.progressBar_searchScreen)
         emptyText = findViewById(R.id.empty_message)
         var btnCross: ImageView = this.searchView.findViewById(androidx.appcompat.R.id.search_close_btn)
-        btnCross.setImageResource(R.drawable.ic_clear_black_24dp)
+
         var searchEditText: EditText = this.searchView.findViewById(androidx.appcompat.R.id.search_src_text)
         rvNews = findViewById(R.id.news_item_search)
         fabReturnTop = findViewById(R.id.fab_return_top)
@@ -125,7 +128,7 @@ class SearchActivity : AppCompatActivity(), ProgressBarListener {
                 suggestionList = list as ArrayList<String>
                 val suggestionAdapter = ArrayAdapter(this@SearchActivity, android.R.layout.simple_dropdown_item_1line, suggestionList)
                 searchAutoComplete.setAdapter(suggestionAdapter)
-                searchAutoComplete.setTextColor(ContextCompat.getColor(this@SearchActivity, R.color.black))
+
             }
         })
 
@@ -178,7 +181,7 @@ class SearchActivity : AppCompatActivity(), ProgressBarListener {
                     var titleList = fetchDataViewModel.getTitleBySearch(query)
                     val suggestionAdapter = ArrayAdapter(this@SearchActivity, android.R.layout.simple_dropdown_item_1line, titleList)
                     searchAutoComplete.setAdapter(suggestionAdapter)
-                    searchAutoComplete.setTextColor(ContextCompat.getColor(this@SearchActivity, R.color.black))
+
                 }
                 return false
             }
@@ -191,11 +194,7 @@ class SearchActivity : AppCompatActivity(), ProgressBarListener {
             emptyTextFlag = false
             val suggestionAdapter = ArrayAdapter(this@SearchActivity, android.R.layout.simple_dropdown_item_1line, suggestionList)
             searchAutoComplete.setAdapter(suggestionAdapter)
-            searchAutoComplete.setTextColor(ContextCompat.getColor(this@SearchActivity, R.color.black))
-        }
 
-        if (isNightModeEnable) {
-            searchView.background = ContextCompat.getDrawable(this, R.color.top_back_color)
         }
 
         apiInterface = ApiClient.getClient().create(ApiInterface::class.java)

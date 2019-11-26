@@ -74,7 +74,7 @@ class TrendingAdapter(var context: Context, var addTrendingFragmentListener: Add
 
         if (trendingList.get(position)!!.source != null) {
             var spannable = SpannableString(" via " + trendingList.get(position).source)
-            setColorForPath(spannable, arrayOf(trendingList.get(position).source), ContextCompat.getColor(context, R.color.primaryColorNs))
+            setColorForPath(spannable, arrayOf(trendingList.get(position).source), ContextCompat.getColor(context, R.color.colorPrimary))
             holder.newsSource.text = spannable
         }
 

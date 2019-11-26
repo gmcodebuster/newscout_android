@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <style name="DefaultSmall" parent="NewscoutTheme">
+        <item name="newsHeadColor">@style/textHeadSmallNight</item>
+        <item name="newsDescColor">@style/textDescSmallDefaultNight</item>
+        <item name="newsSourceColor">@style/textSourceSmallNight</item>
+        <item name="newsTimeColor">@style/textTimeSmallNight</item>
+        <item name="readMoreButtonColor">@style/ReadMoreButtonTextColor</item>
+        <item name="suggestedNewsColor">@style/SuggestedNewsSmallDefault</item>
+    </style>
+
+    <style name="DefaultMedium" parent="NewscoutTheme">
+        <item name="newsHeadColor">@style/textHeadMediumNight</item>
+        <item name="newsDescColor">@style/textDescMediumDefaultNight</item>
+        <item name="newsSourceColor">@style/textSourceMediumNight</item>
+        <item name="newsTimeColor">@style/textTimeMediumNight</item>
+        <item name="readMoreButtonColor">@style/ReadMoreButtonTextColor</item>
+        <item name="suggestedNewsColor">@style/SuggestedNewsMediumDefault</item>
+    </style>
+
+    <style name="DefaultLarge" parent="NewscoutTheme">
+        <item name="newsHeadColor">@style/textHeadLargeNight</item>
+        <item name="newsDescColor">@style/textDescLargeDefaultNight</item>
+        <item name="newsSourceColor">@style/textSourceLargeNight</item>
+        <item name="newsTimeColor">@style/textTimeLargeNight</item>
+        <item name="readMoreButtonColor">@style/ReadMoreButtonTextColor</item>
+        <item name="suggestedNewsColor">@style/SuggestedNewsLargeDefault</item>
+    </style>
+
+    <style name="NewsHeadTextColor" parent="DefaultFontRegular">
+        <item name="android:textColor">?attr/colorOnPrimary</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="NewsSourceTextColor" parent="DefaultFontRegular">
+        <item name="android:textColor">@color/source_color</item>
+    </style>
+
+    <style name="NewsTimeTextColor" parent="DefaultFontRegular">
+        <item name="android:textColor">@color/time_ago_color</item>
+    </style>
+
+    <style name="NewsDescTextColor" parent="DefaultFontRegular">
+        <item name="android:textColor">@color/news_description</item>
+    </style>
+
+    <style name="textHeadSmallNight" parent="NewsHeadTextColor">
+        <item name="android:textSize">@dimen/font_small</item>
+    </style>
+
+    <style name="textHeadMediumNight" parent="NewsHeadTextColor">
+        <item name="android:textSize">@dimen/font_19sp</item>
+    </style>
+
+    <style name="textHeadLargeNight" parent="NewsHeadTextColor">
+        <item name="android:textSize">@dimen/font_23sp</item>
+    </style>
+
+    <style name="textDescSmallDefaultNight" parent="NewsDescTextColor">
+        <item name="android:textSize">@dimen/font_13sp</item>
+    </style>
+
+    <style name="textDescMediumDefaultNight" parent="NewsDescTextColor">
+        <item name="android:textSize">@dimen/font_xsmall</item>
+    </style>
+
+    <style name="textDescLargeDefaultNight" parent="NewsDescTextColor">
+        <item name="android:textSize">@dimen/font_small</item>
+    </style>
+
+    <style name="textSourceSmallNight" parent="NewsSourceTextColor">
+        <item name="android:textSize">@dimen/font_xsmall</item>
+    </style>
+
+    <style name="textSourceMediumNight" parent="NewsSourceTextColor">
+        <item name="android:textSize">@dimen/font_xsmall</item>
+    </style>
+
+    <style name="textSourceLargeNight" parent="NewsSourceTextColor">
+        <item name="android:textSize">@dimen/font_xsmall</item>
+    </style>
+
+    <style name="textTimeSmallNight" parent="NewsTimeTextColor">
+        <item name="android:textSize">@dimen/font_xsmall</item>
+    </style>
+
+    <style name="textTimeMediumNight" parent="NewsTimeTextColor">
+        <item name="android:textSize">@dimen/font_xsmall</item>
+    </style>
+
+    <style name="textTimeLargeNight" parent="NewsTimeTextColor">
+        <item name="android:textSize">@dimen/font_xsmall</item>
+    </style>
+
+    <style name="ReadMoreButtonTextColor" parent="DefaultFontRegular" >
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:background">@drawable/read_more_btn_boundary</item>
+        <item name="android:textSize">@dimen/font_small</item>
+    </style>
+
+    <style name="RVCategory" >
+        <item name="android:background">@color/rv_category_bg</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat</item>
+    </style>
+
+    <style name="TextAppearance.AppCompat.RVCategory" parent="TextAppearance.AppCompat">
+        <item name="android:colorForeground">#34FFFFFF</item>
+    </style>
+
+    <style name="TabStyles" parent="@style/Widget.MaterialComponents.TabLayout">
+        <item name="android:background">@color/colorSurface</item>
+        <item name="tabTextAppearance">@style/PagerTabFont</item>
+        <item name="tabTextColor">@color/primaryColorNs</item>
+        <item name="tabRippleColor">@null</item>
+    </style>
+
+    <style name="ViewpagerStyle">
+        <item name="android:background">@color/backgroundColor</item>
+    </style>
+
+    <style name="PopupTheme" parent="ThemeOverlay.AppCompat.Dark">
+        <item name="android:colorBackground">@color/popupBackground</item>
+    </style>
+
+    <style name="NavigationDrawer">
+        <item name="android:background">@color/nav_background</item>
+    </style>
+
+    <style name="ExpandableList" parent="@android:style/Widget.ListView">
+        <item name="android:background">@color/nav_background</item>
+        <item name="android:textColor">@color/primaryTextColor</item>
+    </style>
+
+    <style name="GroupHeader" parent="DefaultFontRegular">
+        <item name="android:textColor">@color/primaryTextColor</item>
+        <item name="android:textSize">@dimen/font_small</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="DetailNews">
+        <item name="android:background">@color/colorPrimary</item>
+    </style>
+
+    <style name="button_text" parent="@style/Widget.MaterialComponents.Button">
+        <item name="android:textColor">@color/tertiaryTextColor</item>
+    </style>
+
+    <style name="SuggestedNewsTextColor" parent="DefaultFontRegular">
+        <item name="android:textColor">@color/detail_background</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="SuggestedNewsSmallDefault" parent="SuggestedNewsTextColor">
+        <item name="android:textSize">@dimen/font_small</item>
+    </style>
+
+    <style name="SuggestedNewsMediumDefault" parent="SuggestedNewsTextColor">
+        <item name="android:textSize">@dimen/font_19sp</item>
+    </style>
+
+    <style name="SuggestedNewsLargeDefault" parent="SuggestedNewsTextColor">
+        <item name="android:textSize">@dimen/font_23sp</item>
+    </style>
+
+    <style name="TitleAppearance" parent="DefaultFontRegular">
+        <item name="android:textColor">@color/toolbar_title</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">@dimen/font_xxlarge</item>
+    </style>
+
+    <style name="LoginTitle">
+        <item name="android:textAppearance">@style/TitleAppearance</item>
+        <item name="android:layout_gravity">center</item>
+    </style>
+
+    <style name="ScreenBg" parent="ThemeOverlay.MaterialComponents.Dark">
+
+    </style>
+
+    <style name="LoginScreenButton" parent="@style/Widget.AppCompat.Button.Colored">
+        <item name="android:textAllCaps">false</item>
+        <item name="android:background">@drawable/circular_button</item>
+        <item name="android:textColor">@color/toolbar_title</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">@dimen/font_small</item>
+
+    </style>
+
+    <style name="EditTextAppearance" parent="@style/TextAppearance.AppCompat.Medium.Inverse">
+
+        <item name="android:textColorHint">@color/material_on_surface_disabled</item>
+    </style>
+
+    <style name="EditTextAppearance.EditTextFont" parent="DefaultFontRegular">
+        <item name="android:textSize">@dimen/font_large</item>
+    </style>
+
+    <style name="EditTextStyle" parent="Widget.AppCompat.EditText">
+        <item name="android:layout_marginStart">@dimen/margin_medium</item>
+        <item name="android:layout_marginEnd">@dimen/margin_medium</item>
+
+        <item name="backgroundTint">@color/primaryTextColor</item>
+        <item name="android:textColor">@color/primaryTextColor</item>
+        <item name="android:textAppearance">@style/EditTextAppearance.EditTextFont</item>
+
+    </style>
+
+    <style name="SignupMsg" parent="DefaultFontRegular">
+        <item name="android:textColor">@color/primaryTextColor</item>
+    </style>
+
+    <style name="myAutoCompleteTextViewStyle" parent="Widget.AppCompat.Light.AutoCompleteTextView">
+        <item name="android:popupBackground">#121212</item>
+    </style>
+
+    <style name="mySearchResult" parent="TextAppearance.AppCompat.SearchResult.Title">
+        <item name="android:textColor">#ffffff</item>
+    </style>
+
+    <style name="SearchViewStyle" parent="Widget.AppCompat.SearchView">
+        <item name="android:background">@color/colorSurface</item>
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="android:textColorSecondary">@android:color/white</item>
+        <item name="android:textColorHint">@color/material_on_surface_disabled</item>
+        <item name="android:dropDownItemStyle">@style/myDropDownItemStyle</item>
+        <item name="android:dropDownListViewStyle">@style/myDropDownListViewStyle</item>
+    </style>
+
+    <style name="Widget.AppCompat.SearchView.MyAppSearchView" parent="NewscoutTheme" >
+        <item name="android:background">@color/scrimBackground</item>
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="android:textColorSecondary">@android:color/white</item>
+        <item name="android:textColorHint">@color/material_on_surface_disabled</item>
+
+    </style>
+
+    <style name="myDropDownItemStyle" parent="Widget.AppCompat.DropDownItem.Spinner">
+        <item name="android:textColor">@android:color/holo_green_dark</item>
+        <item name="android:textColorPrimary">@android:color/holo_orange_dark</item>
+        <item name="android:textSize">14dp</item>
+    </style>
+
+    <style name="myDropDownListViewStyle" parent="Widget.AppCompat.ListView.DropDown">
+        <item name="android:background">#FFF</item>
+    </style>
+
+</resources>

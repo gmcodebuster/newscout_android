@@ -1,58 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen
+<androidx.preference.PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
 
     <PreferenceCategory
-        android:title="@string/general">
+        app:title="@string/general"
+        app:layout="@layout/custom_preference_category"
+        >
         <ListPreference
-            android:key="@string/key_font_size_pref"
-            android:title="Text Size"
-            android:entries="@array/setting_screen_font"
-            android:entryValues="@array/setting_screen_font_category"
-            android:defaultValue="medium" >
+            app:key="@string/key_font_size_pref"
+            app:title="Text Size"
+            app:dialogTitle="Text Size"
+            app:entries="@array/setting_screen_font"
+            app:entryValues="@array/setting_screen_font_category"
+            app:defaultValue="medium" >
         </ListPreference>
     </PreferenceCategory>
     <PreferenceCategory
-        android:title="@string/notification" >
-        <SwitchPreference
-            android:defaultValue="false"
-            android:title="@string/breaking_news"
-            android:key="@string/key_breaking_news" >
-        </SwitchPreference>
-        <SwitchPreference
-            android:defaultValue="true"
-            android:title="@string/daily_edition"
-            android:key="@string/key_daily_edition" >
-        </SwitchPreference>
-        <SwitchPreference
-            android:defaultValue="true"
-            android:title="@string/personalised"
-            android:key="@string/key_personalised" >
-        </SwitchPreference>
+        app:title="@string/notification"
+        app:layout="@layout/custom_preference_category"
+        >
+        <SwitchPreferenceCompat
+            app:defaultValue="false"
+            app:title="@string/breaking_news"
+            app:key="@string/key_breaking_news" >
+        </SwitchPreferenceCompat>
+        <SwitchPreferenceCompat
+            app:defaultValue="true"
+            app:title="@string/daily_edition"
+            app:key="@string/key_daily_edition" >
+        </SwitchPreferenceCompat>
+        <SwitchPreferenceCompat
+            app:defaultValue="true"
+            app:title="@string/personalised"
+            app:key="@string/key_personalised" >
+        </SwitchPreferenceCompat>
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:title="Profile">
+        app:title="Profile"
+        app:layout="@layout/custom_preference_category">
         <Preference
-            android:key="login"
-            android:title="Login"
-            android:summary="Tap to Login" />
+            app:layout="@layout/preference_two_line"
+            app:key="login"
+            app:title="Login"
+            app:summary="Tap to Login" />
 
         <Preference
-            android:key="profile"
-            android:title="Profile" />
+            app:layout="@layout/preference_two_line"
+            app:key="profile"
+            app:title="Profile" />
         <Preference
-            android:key="share_app"
-            android:title="Share this app" />
+            app:layout="@layout/preference_two_line"
+            app:key="share_app"
+            app:title="Share this app" />
         <Preference
-            android:key="rate_app"
-            android:title="Rate this app" />
+            app:layout="@layout/preference_two_line"
+            app:key="rate_app"
+            app:title="Rate this app" />
         <Preference
-            android:key="about_us"
-            android:title="About Us" />
+            app:layout="@layout/preference_two_line"
+            app:key="about_us"
+            app:title="About Us" />
         <Preference
-            android:key="version"
-            android:title="" />
+            app:layout="@layout/preference_two_line"
+            app:key="version"
+            app:title="" />
     </PreferenceCategory>
-</PreferenceScreen>
+</androidx.preference.PreferenceScreen>
