@@ -54,7 +54,6 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
     lateinit var adapterObj: MainAdapter
     lateinit var dataNotFoundReceiver: BroadcastReceiver
     lateinit var gson: Gson
-    lateinit var themePreference: SharedPreferences
     lateinit var fetchDataViewModel: FetchDataApiViewModel
     lateinit var apiInterfaceObj: ApiInterface
     var token: String = ""
@@ -66,7 +65,6 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
     var subHeadList = ArrayList<String>()
     lateinit var toolbar: Toolbar
     var isNightMode: Boolean = false
-    var themes: Int = R.style.DefaultMedium
     lateinit var fontSize: String
     var deviceWidthDp: Float = 0f
     lateinit var articleNewsDao: NewsDao
@@ -86,11 +84,6 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        themePreference = getSharedPreferences(AppConstant.APPPREF, Context.MODE_PRIVATE)
-        themes = themePreference.getInt("theme", R.style.DefaultMedium)
-        val defaultNightMode = themePreference.getInt("night_mode", AppCompatDelegate.MODE_NIGHT_NO)
-        getDelegate().setLocalNightMode(defaultNightMode)
-        this.setTheme(themes)
         isNightMode = themePreference.getBoolean("night mode enable", false)
         var isThemeChange = themePreference.getBoolean("theme changed", false)
         token = themePreference.getString("token value", "")

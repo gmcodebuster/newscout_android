@@ -16,20 +16,13 @@ class ProfileActivity : BaseActivity() {
     lateinit var token: String
     lateinit var tvUserEmail: TextView
     lateinit var userEmail: String
-    lateinit var themePreference: SharedPreferences
     lateinit var tvUserName: TextView
     lateinit var userName: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        themePreference = getSharedPreferences(AppConstant.APPPREF, Context.MODE_PRIVATE)
-        var themes: Int = themePreference.getInt("theme", R.style.DefaultMedium)
-        val defaultNightMode = themePreference.getInt("night_mode", AppCompatDelegate.MODE_NIGHT_NO)
-        getDelegate().setLocalNightMode(defaultNightMode)
-        this.setTheme(themes)
         setContentView(R.layout.activity_profile)
         var toolbarText = findViewById<TextView>(R.id.toolbar_title)
-
         var btnChangePassword = findViewById<Button>(R.id.btn_change_password)
         tvUserEmail = findViewById<TextView>(R.id.txt_profile_email)
         tvUserName = findViewById(R.id.txt_profile_name)

@@ -33,7 +33,6 @@ class DetailNewsActivity : BaseActivity(), VerticalViewPager.SwiperListener {
     var newsListCategory: String? = null
     lateinit var vPagerDetail: VerticalViewPager
     lateinit var vPagerDetailAdapter: DetailNewsAdapter
-    lateinit var themePreference: SharedPreferences
     var index: Int = 0
     lateinit var fetchDataViewModel: FetchDataApiViewModel
     var categoryId: Int = 0
@@ -44,12 +43,7 @@ class DetailNewsActivity : BaseActivity(), VerticalViewPager.SwiperListener {
         super.onCreate(savedInstanceState)
         Fabric.with(this, Answers())
         fetchDataViewModel = ViewModelProviders.of(this).get(FetchDataApiViewModel::class.java)
-        themePreference = getSharedPreferences(AppConstant.APPPREF, Context.MODE_PRIVATE)
-        var themes: Int = themePreference.getInt("theme", R.style.DefaultMedium)
-        val defaultNightMode = themePreference.getInt("night_mode", AppCompatDelegate.MODE_NIGHT_NO)
-        getDelegate().setLocalNightMode(defaultNightMode)
         token = themePreference.getString("token value", "")
-        this.setTheme(themes)
         setContentView(R.layout.activity_news_detail)
 
         if (resources.configuration.orientation == ORIENTATION_PORTRAIT) {

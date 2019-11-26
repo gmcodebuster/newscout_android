@@ -22,15 +22,10 @@ class ForgotPasswordActivity : BaseActivity() {
     lateinit var interfaceObj: ApiInterface
     lateinit var emailText: String
     var status: Int? = null
-    lateinit var themePreference: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        themePreference = getSharedPreferences(AppConstant.APPPREF, Context.MODE_PRIVATE)
-        var themes: Int = themePreference.getInt("theme", R.style.DefaultMedium)
-        val defaultNightMode = themePreference.getInt("night_mode", AppCompatDelegate.MODE_NIGHT_NO)
-        getDelegate().setLocalNightMode(defaultNightMode)
-        this.setTheme(themes)
+
         setContentView(R.layout.activity_forgot_password)
         interfaceObj = ApiClient.getClient().create(ApiInterface::class.java)
         var edTextEmail = findViewById<AppCompatEditText>(R.id.et_email)

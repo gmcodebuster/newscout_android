@@ -51,7 +51,6 @@ class SignInActivity : BaseActivity() {
     var success: Int = 0
     lateinit var btnSignIn: Button
     lateinit var password: AppCompatEditText
-    lateinit var themePreference: SharedPreferences
     var categoryListServer = ArrayList<String>()
     var isNetwork: Boolean = false
     lateinit var fetchDataViewModel: FetchDataApiViewModel
@@ -64,12 +63,8 @@ class SignInActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        themePreference = getSharedPreferences(AppConstant.APPPREF, Context.MODE_PRIVATE)
         fetchDataViewModel = ViewModelProviders.of(this).get(FetchDataApiViewModel::class.java)
-        var themes: Int = themePreference.getInt("theme", R.style.DefaultMedium)
-        val defaultNightMode = themePreference.getInt("night_mode", AppCompatDelegate.MODE_NIGHT_NO)
-        getDelegate().setLocalNightMode(defaultNightMode)
-        this.setTheme(themes)
+
         position = intent.getIntExtra("detail_news_item_position", 0)
         setContentView(R.layout.activity_sign_in)
         var toolbarText = findViewById<TextView>(R.id.toolbar_title)

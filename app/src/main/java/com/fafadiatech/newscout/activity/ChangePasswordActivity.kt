@@ -32,16 +32,9 @@ class ChangePasswordActivity : BaseActivity() {
     var status: Int? = null
     lateinit var tvName: TextView
     var name: String = ""
-    var themes: Int = R.style.DefaultMedium
-    lateinit var themePreference: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        themePreference = getSharedPreferences(AppConstant.APPPREF, Context.MODE_PRIVATE)
-        themes = themePreference.getInt("theme", R.style.DefaultMedium)
-        val defaultNightMode = themePreference.getInt("night_mode", AppCompatDelegate.MODE_NIGHT_NO)
-        getDelegate().setLocalNightMode(defaultNightMode)
-        this.setTheme(themes)
         setContentView(R.layout.activity_change_password)
         var toolbarText = findViewById<TextView>(R.id.toolbar_title)
 

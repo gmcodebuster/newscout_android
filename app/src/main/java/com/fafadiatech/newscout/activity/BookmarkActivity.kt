@@ -30,7 +30,6 @@ class BookmarkActivity : BaseActivity(), ConnectivityReceiver.ConnectivityReceiv
 
     lateinit var rvBookmark: RecyclerView
     var bookmarkedList = ArrayList<DetailNewsData>()
-    lateinit var themePreference: SharedPreferences
     lateinit var emptyListTextView: TextView
     var category: String = ""
     lateinit var fetchDataViewModel: FetchDataApiViewModel
@@ -51,12 +50,8 @@ class BookmarkActivity : BaseActivity(), ConnectivityReceiver.ConnectivityReceiv
         windowmanager.defaultDisplay.getMetrics(displayMetrics)
         val deviceWidth = displayMetrics.widthPixels
         deviceWidthDp = deviceWidth / Resources.getSystem().getDisplayMetrics().density
-        themePreference = getSharedPreferences(AppConstant.APPPREF, Context.MODE_PRIVATE)
         token = themePreference.getString("token value", "")
-        var themes: Int = themePreference.getInt("theme", R.style.DefaultMedium)
-        val defaultNightMode = themePreference.getInt("night_mode", AppCompatDelegate.MODE_NIGHT_NO)
-        getDelegate().setLocalNightMode(defaultNightMode)
-        this.setTheme(themes)
+
         setContentView(R.layout.activity_bookmark)
         fetchDataViewModel = ViewModelProviders.of(this).get(FetchDataApiViewModel::class.java)
         emptyListTextView = findViewById(R.id.empty_message)

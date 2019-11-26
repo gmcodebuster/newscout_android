@@ -35,16 +35,10 @@ class SignUpActivity : BaseActivity() {
     lateinit var userPasswordText: String
     lateinit var apiInterfaceSignUp: ApiInterface
     var status: Int? = null
-    lateinit var themePreference: SharedPreferences
     var isNetwork: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        themePreference = getSharedPreferences(AppConstant.APPPREF, Context.MODE_PRIVATE)
-        var themes: Int = themePreference.getInt("theme", R.style.DefaultMedium)
-        val defaultNightMode = themePreference.getInt("night_mode", AppCompatDelegate.MODE_NIGHT_NO)
-        getDelegate().setLocalNightMode(defaultNightMode)
-        this.setTheme(themes)
         setContentView(R.layout.activity_sign_up)
         var toolbarText = findViewById<TextView>(R.id.toolbar_title)
         apiInterfaceSignUp = ApiClient.getClient().create(ApiInterface::class.java)
