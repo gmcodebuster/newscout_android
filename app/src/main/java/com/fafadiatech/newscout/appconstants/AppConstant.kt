@@ -7,7 +7,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-val BASE_URL = "http://192.168.2.100:8000/api/v1/" //www.newscout.in
+val BASE_URL = "http://www.newscout.in/api/v1/"
 const val TRACKING_URL = "http://t.fafadiatech.com/api/v1/track"
 val THUMBOR_IMG_URL = "http://d3fgx8oqv3lbgx.cloudfront.net/unsafe/"
 val KEY_NAME = "menu_name"

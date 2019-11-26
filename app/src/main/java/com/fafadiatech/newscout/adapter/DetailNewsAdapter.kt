@@ -29,13 +29,11 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.transition.Transition
 import androidx.viewpager.widget.PagerAdapter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.CustomTarget
-import com.bumptech.glide.request.target.SimpleTarget
 import com.fafadiatech.newscout.R
 import com.fafadiatech.newscout.activity.NewsWebActivity
 import com.fafadiatech.newscout.activity.SignInActivity
@@ -252,17 +250,9 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
 
         isBookmark = detailList.get(position).bookmark_status
         if (isBookmark == 1) {
-            if (isNightMode == true) {
-                imgBtnBookmark.setBackgroundResource(R.drawable.ic_bookmark_white_fill)
-            } else {
-                imgBtnBookmark.setBackgroundResource(R.drawable.ic_bookmark_black_fill)
-            }
+            imgBtnBookmark.setBackgroundResource(R.drawable.ic_bookmark_fill)
         } else if (isBookmark == 0) {
-            if (isNightMode == true) {
-                imgBtnBookmark.setBackgroundResource(R.drawable.ic_bookmark_white)
-            } else {
-                imgBtnBookmark.setBackgroundResource(R.drawable.ic_bookmark_black)
-            }
+            imgBtnBookmark.setBackgroundResource(R.drawable.ic_bookmark_empty)
         }
 
         newsId = detailList.get(position).article_id
@@ -304,12 +294,7 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
                         override fun onResponse(call: Call<BookmarkArticleData>, response: Response<BookmarkArticleData>) {
                             if (isBookmark == 0) {
                                 it as ImageButton
-                                if (isNightMode == true) {
-                                    it.setBackgroundResource(R.drawable.ic_bookmark_white_fill)
-                                } else {
-                                    it.setBackgroundResource(R.drawable.ic_bookmark_black_fill)
-                                }
-
+                                it.setBackgroundResource(R.drawable.ic_bookmark_fill)
                                 Toast.makeText(context, "Article bookmarked", Toast.LENGTH_SHORT).show()
                                 isBookmark = 1
                                 detailList.get(position).bookmark_status = 1
@@ -331,12 +316,7 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
                                 fetchDataViewModel.startBookmarkWorkManager(token, isBookmark, newsId)
                                 notifyDataSetChanged()
                             } else if (isBookmark == 1) {
-
-                                if (isNightMode == true) {
-                                    it.setBackgroundResource(R.drawable.ic_bookmark_white)
-                                } else {
-                                    it.setBackgroundResource(R.drawable.ic_bookmark_black)
-                                }
+                                it.setBackgroundResource(R.drawable.ic_bookmark_empty)
                                 Toast.makeText(context, "Article removed from bookmark", Toast.LENGTH_SHORT).show()
                                 isBookmark = 0
                                 detailList.get(position).bookmark_status = 0

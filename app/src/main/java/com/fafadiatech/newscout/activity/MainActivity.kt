@@ -292,9 +292,9 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
         var icon = menu!!.findItem(R.id.switch_night_mode)
         var isNightMode = themePreference.getBoolean("night mode enable", false)
         if (isNightMode) {
-            icon.setIcon(ContextCompat.getDrawable(this, R.drawable.moon_white_filled_24))
+            icon.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_moon_night))
         } else {
-            icon.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_moon_filled_black_24))
+            icon.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_moon))
         }
 
         return super.onCreateOptionsMenu(menu)
@@ -329,20 +329,20 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
                 var drawable = item.getIcon().constantState
 
 
-                if (drawable == ContextCompat.getDrawable(this, R.drawable.ic_moon_filled_black_24)?.constantState) {
-                    item.setIcon(ContextCompat.getDrawable(this, R.drawable.moon_white_filled_24))
+                if (drawable == ContextCompat.getDrawable(this, R.drawable.ic_moon)?.constantState) {
+                    item.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_moon_night))
                     chooseNightTheme()
                     isNightMode = true
                     isNighModeEnabled = false
                     isThemeChanged = true
-                    defaultTheme = MODE_NIGHT_NO
+                    defaultTheme = MODE_NIGHT_YES
                 } else {
-                    item.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_moon_filled_black_24))
+                    item.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_moon))
                     chooseDefaultTheme()
                     isNightMode = false
                     isNighModeEnabled = true
                     isThemeChanged = true
-                    defaultTheme =  MODE_NIGHT_YES
+                    defaultTheme =  MODE_NIGHT_NO
                 }
                 var editor = themePreference.edit()
                 editor.putInt("theme", themes)
