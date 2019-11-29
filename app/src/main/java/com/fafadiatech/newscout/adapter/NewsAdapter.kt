@@ -315,14 +315,14 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<NewsEnt
 
             2 -> {
                 var adsViewholder = holder as AdsItemViewHolder
-                //fetchDataViewModel.adsTitle.observe(, nameObserver)
-                nameObserver = Observer<NewsAdsBodyData>{
-                    holder?.adsTitle?.text = it.ad_text
-                    holder?.adsSubTitle.text = it.ad_url
-                }
-
+                fetchDataViewModel.getAdsTitle().observeOnce(con as LifecycleOwner, Observer<NewsAdsBodyData> {
+                    if (it != null) {
+                        holder?.adsTitle?.text = it?.ad_text
+                        holder?.adsSubTitle.text = it?.ad_url
+                    }
+                })
                 getAdsDetail(adsViewholder)
-                fetchDataViewModel.adsTitleVM.observe(con as LifecycleOwner, nameObserver)
+
 
             }
         }
@@ -411,7 +411,7 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<NewsEnt
     }
 
     fun getAdsDetail(holder : AdsItemViewHolder?){
-
+        //fetchDataViewModel.adsTitleVM.observe(con as LifecycleOwner, nameObserver)
         var call: Call<NewsAdsApi> = apiInterfaceObj.getAds()
         call.enqueue(object : Callback<NewsAdsApi> {
             override fun onFailure(call: Call<NewsAdsApi>, t: Throwable) {
@@ -422,39 +422,20 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<NewsEnt
                 //To change body of created functions use File | Settings | File Templates.
                 Log.d("TestMainActivity", "Inside Success")
                 val bodyData = response.body()
-                //liveDataAds.value = bodyData
-                //holder?.adsTitle?.text = bodyData?.body?.ad_text
-                holder?.adsSubTitle?.text = bodyData?.body?.ad_url
-                fetchDataViewModel.adsTitleVM.postValue(bodyData?.body)
+
+                fetchDataViewModel.setAdsTitle(bodyData!!.body)
+
             }
         })
     }
 
-
-
-    /*private val changeObserver = Observer*//*<NewsAdsApi>*//* { value ->
-        value?.let {
-            //write glide code
-            //ivAdsView.background = it
-            val adBody = it.body
-            val url = getImageURL(ivAdsView, adBody.media)
-            Log.d("TestMainActivity", ""+url)
-            val requestOptions = RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL)
-            Glide.with(this@MainActivity).load(adBody.media).apply(requestOptions)
-                    .apply(RequestOptions.timeoutOf(5 * 60 * 1000))
-                    .placeholder(R.drawable.image_not_found)
-                    .error(R.drawable.image_not_found)
-                    .into(ivAdsView)
-
-
-            ivAdsView.setOnClickListener {
-                var url = adBody.ad_url
-                val i = Intent(this@MainActivity, NewsWebActivity::class.java)
-                i.putExtra("url_link", url)
-                startActivity(i)
+    fun <T> LiveData<T>.observeOnce(lifecycleOwner: LifecycleOwner, observer: Observer<T>) {
+        observe(lifecycleOwner, object : Observer<T> {
+            override fun onChanged(t: T?) {
+                observer.onChanged(t)
+                removeObserver(this)
             }
-        }
-    }*/
-
+        })
+    }
 }
 
