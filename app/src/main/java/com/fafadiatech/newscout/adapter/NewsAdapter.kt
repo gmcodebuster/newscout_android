@@ -6,6 +6,7 @@ import android.content.SharedPreferences
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,7 +16,8 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.*
+import androidx.lifecycle.Observer
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -26,6 +28,7 @@ import com.crashlytics.android.answers.Answers
 import com.crashlytics.android.answers.CustomEvent
 import com.fafadiatech.newscout.R
 import com.fafadiatech.newscout.activity.DetailNewsActivity
+import com.fafadiatech.newscout.activity.NewsWebActivity
 import com.fafadiatech.newscout.api.ApiClient
 import com.fafadiatech.newscout.api.ApiInterface
 import com.fafadiatech.newscout.appconstants.AppConstant
@@ -34,9 +37,14 @@ import com.fafadiatech.newscout.appconstants.trackUserSelection
 import com.fafadiatech.newscout.db.NewsEntity
 import com.fafadiatech.newscout.interfaces.PlaceHolderImageListener
 import com.fafadiatech.newscout.model.DetailNewsData
+import com.fafadiatech.newscout.model.NewsAdsApi
+import com.fafadiatech.newscout.model.NewsAdsBodyData
 import com.fafadiatech.newscout.viewmodel.FetchDataApiViewModel
 import com.github.marlonlom.utilities.timeago.TimeAgo
 import com.github.marlonlom.utilities.timeago.TimeAgoMessages
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -54,6 +62,8 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<NewsEnt
     lateinit var apiInterfaceObj: ApiInterface
     lateinit var themePreference: SharedPreferences
     var placeHolderListener: PlaceHolderImageListener? = null
+    val liveDataAds = MutableLiveData<NewsAdsApi>()
+    lateinit var nameObserver : Observer<NewsAdsBodyData>
 
     companion object {
         var TAG: String = "NewsAdapter"
@@ -79,6 +89,8 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<NewsEnt
         } else {
             placeHolderListener = null
         }
+
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -86,9 +98,14 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<NewsEnt
         var inflater = LayoutInflater.from(parent.context)
 
         return when (viewType){
-            0 -> NewsAdapter.LeftItemViewHolder(inflater.inflate(R.layout.news_item_alternate, parent, false))
+            0 -> {
+                NewsAdapter.LeftItemViewHolder(inflater.inflate(R.layout.news_item_alternate, parent, false))
+            }
+
             1 -> NewsAdapter.RightItemViewHolder(inflater.inflate(R.layout.news_item_main, parent, false))
-            2 -> AdsItemViewHolder(inflater.inflate(R.layout.item_promotion_ads, parent, false))
+            2 -> {
+                AdsItemViewHolder(inflater.inflate(R.layout.item_promotion_ads, parent, false), con)
+            }
             else -> NewsAdapter.RightItemViewHolder(inflater.inflate(R.layout.news_item_main, parent, false))
         }
 
@@ -297,6 +314,15 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<NewsEnt
             }
 
             2 -> {
+                var adsViewholder = holder as AdsItemViewHolder
+                //fetchDataViewModel.adsTitle.observe(, nameObserver)
+                nameObserver = Observer<NewsAdsBodyData>{
+                    holder?.adsTitle?.text = it.ad_text
+                    holder?.adsSubTitle.text = it.ad_url
+                }
+
+                getAdsDetail(adsViewholder)
+                fetchDataViewModel.adsTitleVM.observe(con as LifecycleOwner, nameObserver)
 
             }
         }
@@ -328,7 +354,27 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<NewsEnt
         var newsTimeLeft = view.findViewById<TextView>(R.id.news_time_alternate)
     }
 
-    class AdsItemViewHolder(view:View) : RecyclerView.ViewHolder(view){
+    class AdsItemViewHolder(view:View, conn:Context) : RecyclerView.ViewHolder(view), LifecycleOwner {
+        private val lifecycleRegistry = LifecycleRegistry(this)
+
+        init {
+            lifecycleRegistry.markState(Lifecycle.State.INITIALIZED)
+        }
+        override fun getLifecycle(): Lifecycle {
+            return lifecycleRegistry
+        }
+
+        fun markAttach() {
+            lifecycleRegistry.markState(Lifecycle.State.STARTED)
+        }
+
+        fun markDetach() {
+            lifecycleRegistry.markState(Lifecycle.State.DESTROYED)
+        }
+
+        var adsTitle = view.findViewById<TextView>(R.id.ads_title)
+        var adsSubTitle = view.findViewById<TextView>(R.id.ads_sub_title)
+
 
     }
 
@@ -363,6 +409,52 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<NewsEnt
                 .putCustomAttribute("Category", category)
                 .putCustomAttribute("Title", title));
     }
-}
 
+    fun getAdsDetail(holder : AdsItemViewHolder?){
+
+        var call: Call<NewsAdsApi> = apiInterfaceObj.getAds()
+        call.enqueue(object : Callback<NewsAdsApi> {
+            override fun onFailure(call: Call<NewsAdsApi>, t: Throwable) {
+                Log.d("TestMainActivity", "Inside Failure")
+            }
+
+            override fun onResponse(call: Call<NewsAdsApi>, response: Response<NewsAdsApi>) {
+                //To change body of created functions use File | Settings | File Templates.
+                Log.d("TestMainActivity", "Inside Success")
+                val bodyData = response.body()
+                //liveDataAds.value = bodyData
+                //holder?.adsTitle?.text = bodyData?.body?.ad_text
+                holder?.adsSubTitle?.text = bodyData?.body?.ad_url
+                fetchDataViewModel.adsTitleVM.postValue(bodyData?.body)
+            }
+        })
+    }
+
+
+
+    /*private val changeObserver = Observer*//*<NewsAdsApi>*//* { value ->
+        value?.let {
+            //write glide code
+            //ivAdsView.background = it
+            val adBody = it.body
+            val url = getImageURL(ivAdsView, adBody.media)
+            Log.d("TestMainActivity", ""+url)
+            val requestOptions = RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL)
+            Glide.with(this@MainActivity).load(adBody.media).apply(requestOptions)
+                    .apply(RequestOptions.timeoutOf(5 * 60 * 1000))
+                    .placeholder(R.drawable.image_not_found)
+                    .error(R.drawable.image_not_found)
+                    .into(ivAdsView)
+
+
+            ivAdsView.setOnClickListener {
+                var url = adBody.ad_url
+                val i = Intent(this@MainActivity, NewsWebActivity::class.java)
+                i.putExtra("url_link", url)
+                startActivity(i)
+            }
+        }
+    }*/
+
+}
 

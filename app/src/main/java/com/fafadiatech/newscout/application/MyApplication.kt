@@ -2,6 +2,9 @@ package com.fafadiatech.newscout.application
 
 import android.app.Application
 import android.content.Context
+import android.content.pm.ApplicationInfo
+import android.content.pm.PackageManager
+import android.os.Bundle
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
 import androidx.multidex.MultiDex
@@ -58,6 +61,13 @@ class MyApplication : Application() {
                 .build()
         Fabric.with(this, Crashlytics())
         Sentry.init(SENTRY_KEY, AndroidSentryClientFactory(getApplicationContext()));
+
+        try{
+            var ai : ApplicationInfo = packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA)
+            var bundle : Bundle = ai.metaData
+        }catch (e:Exception){
+
+        }
     }
 
     override fun attachBaseContext(base: Context) {

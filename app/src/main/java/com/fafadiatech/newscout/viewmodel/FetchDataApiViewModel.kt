@@ -49,6 +49,10 @@ class FetchDataApiViewModel(application: Application, mParams: Int) : AndroidVie
     lateinit var newsItemPagedList: LiveData<PagedList<NewsEntity>>
     lateinit var ddnewsItemPagedList: LiveData<PagedList<DailyDigestEntity>>
 
+    val adsTitleVM: MutableLiveData<NewsAdsBodyData> by lazy {
+        MutableLiveData<NewsAdsBodyData>()
+    }
+
     init {
         newsDatabase = NewsDatabase.getInstance(application.baseContext)
         articleNewsDao = newsDatabase!!.newsDao()
@@ -283,5 +287,13 @@ class FetchDataApiViewModel(application: Application, mParams: Int) : AndroidVie
     fun getTrendingData(): LiveData<List<TrendingNewsData>> {
         var result = repository.getRepoTrendingDataFromDb()
         return result
+    }
+
+    fun setAdsTitle(data:NewsAdsBodyData){
+        adsTitleVM.postValue(data)
+    }
+
+    fun getAdsTitle():MutableLiveData<NewsAdsBodyData>{
+        return adsTitleVM
     }
 }
