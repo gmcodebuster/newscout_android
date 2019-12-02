@@ -135,6 +135,7 @@ class SearchActivity : AppCompatActivity(), ProgressBarListener {
         searchAutoComplete.setOnItemClickListener { parent, view, position, id ->
             var queryString = parent.getItemAtPosition(position) as String
             searchAutoComplete.setText(queryString)
+            searchEditText.setSelection(queryString.length)
         }
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
