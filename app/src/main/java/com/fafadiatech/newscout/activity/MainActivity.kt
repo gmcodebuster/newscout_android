@@ -289,12 +289,15 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         var inflater = menuInflater
         inflater.inflate(R.menu.toolbar_menu, menu)
-        var icon = menu!!.findItem(R.id.switch_night_mode)
+        var menuNight = menu!!.findItem(R.id.switch_night_mode)
+
         var isNightMode = themePreference.getBoolean("night mode enable", false)
         if (isNightMode) {
-            icon.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_moon_night))
+            menuNight.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_moon_night))
+            menuNight.title = "Day Mode"
         } else {
-            icon.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_moon))
+            menuNight.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_moon))
+            menuNight.title = "Night Mode"
         }
 
         return super.onCreateOptionsMenu(menu)
