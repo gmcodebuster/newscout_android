@@ -142,7 +142,7 @@
         android:id="@+id/bottom_layout_like_menu_bar"
         android:layout_width="@dimen/size_0dp"
         android:layout_height="@dimen/size_48dp"
-        android:background="@color/primaryColorNs"
+        android:background="@color/colorPrimary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent">

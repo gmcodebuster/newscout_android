@@ -79,8 +79,8 @@
     </style>
 
     <style name="NewscoutTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/primaryColorNs</item>
-        <item name="colorPrimaryDark">@color/primaryDarkColorNs</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorSecondary">@color/secondaryColor</item>
         <item name="colorSecondaryVariant">@color/secondaryLightColor</item>
         <item name="colorOnPrimary">@color/primaryTextColor</item>

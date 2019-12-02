@@ -21,7 +21,7 @@ class BaseAlertDialog {
 
             alertDialog.setOnShowListener(object : DialogInterface.OnShowListener {
                 override fun onShow(p0: DialogInterface?) {
-                    alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(context, R.color.primaryColorNs))
+                    alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(context, R.color.colorPrimary))
                 }
             })
             alertDialog.show()

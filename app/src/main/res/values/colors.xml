@@ -7,9 +7,7 @@
     <color name="icon_color">#ffffff</color>
     <color name="colorActive">#FFFFFFFF</color>
     <color name="black">#000000</color>
-    <color name="primaryColorNs">#ed1c24</color>
-    <color name="primaryLightColorNs">#ff5f4e</color>
-    <color name="primaryDarkColorNs">#b20000</color>
+
     <color name="secondaryColorNs">#ed1c24</color>
     <color name="secondaryTextColorNs">#808080</color>
     <color name="grey_light">#808080</color>

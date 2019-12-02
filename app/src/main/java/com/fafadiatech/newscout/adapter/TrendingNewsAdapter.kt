@@ -62,7 +62,7 @@ class TrendingNewsAdapter(context: Context, category: String) : RecyclerView.Ada
 
                 if (trendingList.get(position)!!.source != null) {
                     var spannable = SpannableString(" via " + trendingList.get(position).source)
-                    setColorForPath(spannable, arrayOf(trendingList.get(position).source), ContextCompat.getColor(con, R.color.primaryColorNs))
+                    setColorForPath(spannable, arrayOf(trendingList.get(position).source), ContextCompat.getColor(con, R.color.colorPrimary))
                     rightItemViewholder.newsSource.text = spannable
                 }
 
@@ -146,7 +146,7 @@ class TrendingNewsAdapter(context: Context, category: String) : RecyclerView.Ada
                 var leftItemViewholder = holder as TrendingNewsAdapter.LeftItemViewHolder
                 if (trendingList.get(position)!!.source != null) {
                     var spannable = SpannableString(" via " + trendingList.get(position).source)
-                    setColorForPath(spannable, arrayOf(trendingList.get(position).source), ContextCompat.getColor(con, R.color.primaryColorNs))
+                    setColorForPath(spannable, arrayOf(trendingList.get(position).source), ContextCompat.getColor(con, R.color.colorPrimary))
                     leftItemViewholder.newsSourceLeft.text = spannable
                 }
 

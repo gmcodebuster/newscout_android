@@ -74,7 +74,7 @@ class BookmarkedNewsAdapter(var con: Context, var category: String) : RecyclerVi
                 if (bookmarkedList.get(position)!!.source != null) {
 
                     var spannable = SpannableString(" via " + bookmarkedList.get(position).source)
-                    setColorForPath(spannable, arrayOf(bookmarkedList.get(position).source), ContextCompat.getColor(con, R.color.primaryColorNs))
+                    setColorForPath(spannable, arrayOf(bookmarkedList.get(position).source), ContextCompat.getColor(con, R.color.colorPrimary))
                     rightItemViewholder.newsSource.text = spannable
                 }
 
@@ -157,7 +157,7 @@ class BookmarkedNewsAdapter(var con: Context, var category: String) : RecyclerVi
                 var leftItemViewholder = holder as BookmarkedNewsAdapter.LeftItemViewHolder
                 if (bookmarkedList.get(position)!!.source != null) {
                     var spannable = SpannableString(" via " + bookmarkedList.get(position).source)
-                    setColorForPath(spannable, arrayOf(bookmarkedList.get(position).source), ContextCompat.getColor(con, R.color.primaryColorNs))
+                    setColorForPath(spannable, arrayOf(bookmarkedList.get(position).source), ContextCompat.getColor(con, R.color.colorPrimary))
                     leftItemViewholder.newsSourceLeft.text = spannable
                 }
                 leftItemViewholder.newsTitleLeft.text = bookmarkedList.get(position)?.title

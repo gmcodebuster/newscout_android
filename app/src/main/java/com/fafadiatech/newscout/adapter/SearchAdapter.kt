@@ -97,7 +97,7 @@ class SearchAdapter(context: Context, category: String, var progressBarListener:
                 getItem(position).let {
                     if (it!!.source != null) {
                         var spannable = SpannableString(" via " + it.source)
-                        setColorForPath(spannable, arrayOf(it.source), ContextCompat.getColor(con, R.color.primaryColorNs))
+                        setColorForPath(spannable, arrayOf(it.source), ContextCompat.getColor(con, R.color.colorPrimary))
                         rightItemViewholder.newsSource.text = spannable
                     }
 
@@ -190,7 +190,7 @@ class SearchAdapter(context: Context, category: String, var progressBarListener:
                 getItem(position).let {
                     if (it!!.source != null) {
                         var spannable = SpannableString(" via " + it.source)
-                        setColorForPath(spannable, arrayOf(it.source), ContextCompat.getColor(con, R.color.primaryColorNs))
+                        setColorForPath(spannable, arrayOf(it.source), ContextCompat.getColor(con, R.color.colorPrimary))
                         leftItemViewholder.newsSourceLeft.text = spannable
                     }
 

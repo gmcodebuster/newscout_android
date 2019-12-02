@@ -23,7 +23,7 @@
         android:layout_height="@dimen/margin_small"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/guideline_top"
-        android:background="@color/primaryColorNs"
+        android:background="@color/colorPrimary"
         />
 
     <androidx.constraintlayout.widget.Guideline

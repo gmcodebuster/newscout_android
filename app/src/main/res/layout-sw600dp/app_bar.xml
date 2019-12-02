@@ -68,7 +68,7 @@
         app:tabPaddingStart="@dimen/size_0dp"
         app:tabPaddingTop="@dimen/size_n1dp"
         app:tabRippleColor="@null"
-        app:tabSelectedTextColor="@color/primaryColorNs"
+        app:tabSelectedTextColor="@color/colorPrimary"
         app:tabTextAppearance="@style/PagerTabFontLarge">
 
     </com.google.android.material.tabs.TabLayout>
