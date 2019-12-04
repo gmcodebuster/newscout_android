@@ -4,6 +4,7 @@ import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.fafadiatech.newscout.model.INews
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
@@ -31,4 +32,4 @@ data class NewsEntity(
         @ColumnInfo(name = "hash_tags")
         var hashTags: ArrayList<String>
 
-) : Parcelable
+) : Parcelable, INews

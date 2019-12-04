@@ -5,7 +5,10 @@ import android.util.Log
 import androidx.paging.PageKeyedDataSource
 import com.fafadiatech.newscout.api.ApiClient
 import com.fafadiatech.newscout.api.ApiInterface
+import com.fafadiatech.newscout.appconstants.addAdsData
 import com.fafadiatech.newscout.db.*
+import com.fafadiatech.newscout.model.AdsData
+import com.fafadiatech.newscout.model.INews
 import com.fafadiatech.newscout.model.NewsDataApi
 import com.fafadiatech.newscout.model.TrendingDataApi
 import com.google.gson.Gson
@@ -14,7 +17,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.io.File
 
-class NewsItemDataSource(context: Context, queryTag: Int) : PageKeyedDataSource<Int, NewsEntity>() {
+class NewsItemDataSource(context: Context, queryTag: Int) : PageKeyedDataSource<Int, INews>() {
 
     lateinit var interfaceObj: ApiInterface
     var tagId: Int
@@ -23,6 +26,7 @@ class NewsItemDataSource(context: Context, queryTag: Int) : PageKeyedDataSource<
     val TAG: String = "NewsItemDataSource"
     lateinit var mContext: Context
     var gson = Gson()
+
     lateinit var file: File
 
     companion object {
@@ -41,10 +45,10 @@ class NewsItemDataSource(context: Context, queryTag: Int) : PageKeyedDataSource<
     var key: Int? = null
 
 
-    override fun loadInitial(params: LoadInitialParams<Int>, callback: LoadInitialCallback<Int, NewsEntity>) {
+    override fun loadInitial(params: LoadInitialParams<Int>, callback: LoadInitialCallback<Int, INews>) {
 
         if (tagId == -1) {
-            lateinit var articleList: ArrayList<NewsEntity>
+            lateinit var articleList: ArrayList<INews>
             var call: Call<TrendingDataApi> = interfaceObj.getNewsByTrending()
 
             call.enqueue(object : Callback<TrendingDataApi> {
@@ -53,7 +57,7 @@ class NewsItemDataSource(context: Context, queryTag: Int) : PageKeyedDataSource<
 
                 override fun onResponse(call: Call<TrendingDataApi>, response: Response<TrendingDataApi>) {
                     var trendingResultList = response.body()?.body?.results
-                    articleList = ArrayList<NewsEntity>()
+                    articleList = ArrayList<INews>()
                     var trendingNewsList = ArrayList<TrendingEntity>()
                     var newsId: Int = 0
                     trendingResultList?.let {
@@ -81,11 +85,15 @@ class NewsItemDataSource(context: Context, queryTag: Int) : PageKeyedDataSource<
                                 trendingNewsList.add(trendingObJ)
                             }
                         }
-                        articleNewsDao.insertNews(articleList)
+                        articleNewsDao.insertNews(articleList as ArrayList<NewsEntity>)
                         articleNewsDao.insertTrendingData(trendingNewsList)
+
+                        articleList = addAdsData(articleList)!!
                     }
                 }
             })
+
+
             callback.onResult(articleList, null, null)
             return
         }
@@ -97,7 +105,7 @@ class NewsItemDataSource(context: Context, queryTag: Int) : PageKeyedDataSource<
 
             override fun onResponse(call: Call<NewsDataApi>, response: Response<NewsDataApi>) {
                 if (response.body() != null) {
-                    val newsList = ArrayList<NewsEntity>()
+                    var newsList = ArrayList<INews>()
 
                     if (response.body()!!.body.next != null) {
                         key = FIRST_PAGE + 1
@@ -154,14 +162,14 @@ class NewsItemDataSource(context: Context, queryTag: Int) : PageKeyedDataSource<
                         }
 
                         try {
-                            articleNewsDao.insertNews(newsList)
+                            articleNewsDao.insertNews(newsList as ArrayList<NewsEntity>)
                             articleNewsDao.insertHashTagList(hashTagArrayList)
                             articleNewsDao.insertArticleMediaList(articleMediaArrayList)
                         } catch (e: Exception) {
 
                         }
+                        newsList = addAdsData(newsList)!!
                     }
-
 
                     try {
                         callback.onResult(newsList, null, key)
@@ -173,7 +181,7 @@ class NewsItemDataSource(context: Context, queryTag: Int) : PageKeyedDataSource<
         })
     }
 
-    override fun loadAfter(params: LoadParams<Int>, callback: LoadCallback<Int, NewsEntity>) {
+    override fun loadAfter(params: LoadParams<Int>, callback: LoadCallback<Int, INews>) {
         var call: Call<NewsDataApi> = interfaceObj.getNewsFromNodeIdByPage(params.key, tagId)
         call.enqueue(object : Callback<NewsDataApi> {
             override fun onFailure(call: Call<NewsDataApi>, t: Throwable) {
@@ -182,7 +190,7 @@ class NewsItemDataSource(context: Context, queryTag: Int) : PageKeyedDataSource<
             override fun onResponse(call: Call<NewsDataApi>, response: Response<NewsDataApi>) {
 
                 if (response.body() != null) {
-                    val newsList = ArrayList<NewsEntity>()
+                    var newsList = ArrayList<INews>()
                     var list = response.body()!!.body.results
                     if (response.body()!!.body.next != null) {
                         key = params.key + 1
@@ -235,12 +243,14 @@ class NewsItemDataSource(context: Context, queryTag: Int) : PageKeyedDataSource<
                             }
                         }
                         try {
-                            articleNewsDao.insertNews(newsList)
+                            articleNewsDao.insertNews(newsList as ArrayList<NewsEntity>)
                             articleNewsDao.insertHashTagList(hashTagArrayList)
                             articleNewsDao.insertArticleMediaList(articleMediaArrayList)
                         } catch (e: Exception) {
 
                         }
+
+                        newsList = addAdsData(newsList)!!
                     }
 
                     try {
@@ -253,14 +263,14 @@ class NewsItemDataSource(context: Context, queryTag: Int) : PageKeyedDataSource<
         })
     }
 
-    override fun loadBefore(params: LoadParams<Int>, callback: LoadCallback<Int, NewsEntity>) {
+    override fun loadBefore(params: LoadParams<Int>, callback: LoadCallback<Int, INews>) {
         var call: Call<NewsDataApi> = interfaceObj.getNewsFromNodeIdByPage(params.key, tagId)
         call.enqueue(object : Callback<NewsDataApi> {
             override fun onFailure(call: Call<NewsDataApi>, t: Throwable) {
             }
 
             override fun onResponse(call: Call<NewsDataApi>, response: Response<NewsDataApi>) {
-                var newsList = ArrayList<NewsEntity>()
+                var newsList = ArrayList<INews>()
                 var result = response.body()!!.body.results
 
                 result.let {

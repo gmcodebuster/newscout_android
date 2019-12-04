@@ -13,10 +13,7 @@ import com.fafadiatech.newscout.application.MyApplication
 import com.fafadiatech.newscout.db.dailydigest.DailyDigestEntity
 import com.fafadiatech.newscout.db.trending.TrendingData
 import com.fafadiatech.newscout.db.trending.TrendingNewsEntity
-import com.fafadiatech.newscout.model.DetailNewsData
-import com.fafadiatech.newscout.model.MenuHeading
-import com.fafadiatech.newscout.model.SubMenuResultData
-import com.fafadiatech.newscout.model.TrendingNewsData
+import com.fafadiatech.newscout.model.*
 import com.fafadiatech.newscout.paging.DBNewsDataSource
 import com.fafadiatech.newscout.paging.DDNewsDataSourceFactory
 import com.fafadiatech.newscout.paging.NewsDataSourceFactory
@@ -29,14 +26,14 @@ class NewsRepository(application: Application) {
     lateinit var categoryArticlesList: LiveData<List<NewsEntity>>
     lateinit var dataSourceFactory: NewsDataSourceFactory
     lateinit var dbData: DBNewsDataSource
-    lateinit var itemPagedList: LiveData<PagedList<NewsEntity>>
-    lateinit var liveDataSource: LiveData<PageKeyedDataSource<Int, NewsEntity>>
+    lateinit var itemPagedList: LiveData<PagedList<INews>>
+    lateinit var liveDataSource: LiveData<PageKeyedDataSource<Int, INews>>
     lateinit var ddLiveDataSource: LiveData<PageKeyedDataSource<Int, DailyDigestEntity>>
     lateinit var ddItemPagedList: LiveData<PagedList<DailyDigestEntity>>
     lateinit var application: Application
-    var newsPagedList: LiveData<PagedList<NewsEntity>>? = null
+    var newsPagedList: LiveData<PagedList<INews>>? = null
     var ddNewsPagedList: LiveData<PagedList<DailyDigestEntity>>? = null
-    lateinit var factory: DataSource.Factory<Int, NewsEntity>
+    lateinit var factory: DataSource.Factory<Int, INews>
     lateinit var ddfactory: DataSource.Factory<Int, DailyDigestEntity>
 
     init {
@@ -185,14 +182,14 @@ class NewsRepository(application: Application) {
         return articleList
     }
 
-    fun initializeNetworkCall(application: Application, queryTag: Int): LiveData<PagedList<NewsEntity>> {
+    fun initializeNetworkCall(application: Application, queryTag: Int): LiveData<PagedList<INews>> {
         var itemDataSourceFactory = NewsDataSourceFactory(application, queryTag)
         var PAGESIZE = 20
         if (queryTag == TRENDING_ID) {
             PAGESIZE = 30
         }
 
-        liveDataSource = itemDataSourceFactory.getNewsSorceData()
+        liveDataSource = itemDataSourceFactory.getNewsSourceData()
         val pagedListConfig = PagedList.Config.Builder()
                 .setEnablePlaceholders(false)
                 .setPageSize(NEWSPAGESIZE).build()
@@ -202,7 +199,8 @@ class NewsRepository(application: Application) {
         return itemPagedList
     }
 
-    fun initializedbDataSourceFactory(application: Application, cateId: Int): LiveData<PagedList<NewsEntity>> {
+
+    fun initializedbDataSourceFactory(application: Application, cateId: Int): LiveData<PagedList<INews>> {
         var PAGESIZE = 20
         if (cateId == TRENDING_ID) {
             PAGESIZE = 30
@@ -212,19 +210,19 @@ class NewsRepository(application: Application) {
                 .setPageSize(PAGESIZE).build()
 
         if (cateId > 0) {
-            factory = rNewsDao.getPagedNewsByNodeIdFromDb(cateId)
+            factory = rNewsDao.getPagedNewsByNodeIdFromDb(cateId) as DataSource.Factory<Int, INews>
         } else {
-            factory = rNewsDao.getPagedNewsByNodeIdFromDb(cateId)
+            factory = rNewsDao.getPagedNewsByNodeIdFromDb(cateId) as DataSource.Factory<Int, INews>
         }
 
         factory.toLiveData(pageListConfig)
-        val pagedListBuilder: LivePagedListBuilder<Int, NewsEntity> = LivePagedListBuilder<Int, NewsEntity>(factory,
+        val pagedListBuilder: LivePagedListBuilder<Int, INews> = LivePagedListBuilder<Int, INews>(factory,
                 pageListConfig)
         itemPagedList = pagedListBuilder.build()
         return itemPagedList
     }
 
-    fun selectSource(cateId: Int, pageNo: Int): LiveData<PagedList<NewsEntity>> {
+    fun selectSource(cateId: Int, pageNo: Int): LiveData<PagedList<INews>> {
 
         if (MyApplication.checkInternet) {
             newsPagedList = initializeNetworkCall(application, cateId)
@@ -248,7 +246,7 @@ class NewsRepository(application: Application) {
 
     fun initNwTrendingSF(queryTag: Int) {
         var itemDataSourceFactory = NewsDataSourceFactory(application, queryTag)
-        liveDataSource = itemDataSourceFactory.getNewsSorceData()
+        liveDataSource = itemDataSourceFactory.getNewsSourceData()
     }
 
     fun invalidateDataSourceFactory() {
@@ -294,7 +292,7 @@ class NewsRepository(application: Application) {
     fun initializeDDNetworkCall(application: Application, deviceId: String): LiveData<PagedList<DailyDigestEntity>> {
         var itemDataSourceFactory = DDNewsDataSourceFactory(application, deviceId)
         var PAGESIZE = 20
-        ddLiveDataSource = itemDataSourceFactory.getNewsSorceData()
+        ddLiveDataSource = itemDataSourceFactory.getNewsSourceData()
         val pagedListConfig = PagedList.Config.Builder()
                 .setEnablePlaceholders(false)
                 .setPageSize(NEWSPAGESIZE).build()

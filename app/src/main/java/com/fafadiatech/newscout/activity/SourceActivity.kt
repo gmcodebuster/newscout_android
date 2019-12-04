@@ -31,7 +31,9 @@ import com.fafadiatech.newscout.appconstants.AppConstant
 import com.fafadiatech.newscout.appconstants.NEWSPAGESIZE
 import com.fafadiatech.newscout.db.NewsEntity
 import com.fafadiatech.newscout.interfaces.PlaceHolderImageListener
+import com.fafadiatech.newscout.model.AdsData
 import com.fafadiatech.newscout.model.ArticlesData
+import com.fafadiatech.newscout.model.INews
 import com.fafadiatech.newscout.paging.SourceDataSourceFactory
 import com.fafadiatech.newscout.paging.SourceItemDataSource
 
@@ -108,6 +110,13 @@ class SourceActivity : AppCompatActivity(), PlaceHolderImageListener {
         itemPagedList = LivePagedListBuilder(itemDataSourceFactory, pagedListConfig)
                 .build()
         itemPagedList.observe(this, Observer<PagedList<NewsEntity>> {
+            val newsList = it as PagedList<INews>
+            for ((index, value) in newsList.withIndex()) {
+                println("$index: $value")
+                if(index % 10 == 0){
+                    newsList.add(index, AdsData("",""))
+                }
+            }
             adapterObj.submitList(it)
         })
 

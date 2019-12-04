@@ -22,7 +22,7 @@ class DDNewsDataSourceFactory(context: Context, deviceId: String) : DataSource.F
         return newsDataSource
     }
 
-    fun getNewsSorceData(): MutableLiveData<PageKeyedDataSource<Int, DailyDigestEntity>> {
+    fun getNewsSourceData(): MutableLiveData<PageKeyedDataSource<Int, DailyDigestEntity>> {
         return itemLiveDataSource
     }
 }

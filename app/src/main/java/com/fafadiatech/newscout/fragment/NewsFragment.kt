@@ -36,6 +36,8 @@ import com.fafadiatech.newscout.application.MyApplication
 import com.fafadiatech.newscout.broadcast.ConnectivityReceiver
 import com.fafadiatech.newscout.db.NewsEntity
 import com.fafadiatech.newscout.interfaces.PlaceHolderImageListener
+import com.fafadiatech.newscout.model.AdsData
+import com.fafadiatech.newscout.model.INews
 import com.fafadiatech.newscout.paging.NewsDataSourceFactory
 import com.fafadiatech.newscout.paging.NewsItemDataSource
 import com.fafadiatech.newscout.viewmodel.FetchDataApiViewModel
@@ -58,8 +60,8 @@ class NewsFragment() : Fragment(), ConnectivityReceiver.ConnectivityReceiverList
     lateinit var tagName: String
     var tagId: Int = 0
     lateinit var adapter: NewsAdapter
-    lateinit var itemPagedList: LiveData<PagedList<NewsEntity>>
-    lateinit var liveDataSource: LiveData<PageKeyedDataSource<Int, NewsEntity>>
+    lateinit var itemPagedList: LiveData<PagedList<INews>>
+    lateinit var liveDataSource: LiveData<PageKeyedDataSource<Int, INews>>
     var deviceWidthDp: Float = 0f
     lateinit var layoutManager: RecyclerView.LayoutManager
     lateinit var fabReturnTop: com.github.clans.fab.FloatingActionButton
@@ -182,16 +184,13 @@ class NewsFragment() : Fragment(), ConnectivityReceiver.ConnectivityReceiverList
 
         if (!tagName.equals("Trending")) {
             fetchDataViewModel = ViewModelProviders.of(this, ViewModelProviderFactory(activity!!.application, tagId)).get(FetchDataApiViewModel::class.java)
-            fetchDataViewModel.initializeNews(tagId, 1).observe(viewLifecycleOwner, Observer<PagedList<NewsEntity>> {
+            fetchDataViewModel.initializeNews(tagId, 1).observe(viewLifecycleOwner, Observer<PagedList<INews>> {
 
                 adapter.setPlaceHolderImage(placeHolderListener)
-                //Add advertise view
-                if(it.size > 0) {
-                    it.run {
-                        it.add(10, null)
-                    }
-                }
-                adapter.submitList(it)
+
+                val newsList = it
+
+                adapter.submitList(newsList)
             })
         }
 
@@ -213,9 +212,9 @@ class NewsFragment() : Fragment(), ConnectivityReceiver.ConnectivityReceiverList
 
                         itemPagedList = LivePagedListBuilder(itemDataSourceFactory, pagedListConfig)
                                 .build()
-                        itemPagedList.observe(viewLifecycleOwner, Observer<PagedList<NewsEntity>> {
-                            adapter.submitList(it)
-
+                        itemPagedList.observe(viewLifecycleOwner, Observer<PagedList<INews>> {
+                            val newsList = it
+                            adapter.submitList(newsList)
                         })
                     }
 
@@ -226,9 +225,9 @@ class NewsFragment() : Fragment(), ConnectivityReceiver.ConnectivityReceiverList
 
                     var tagsArray = arrayOfNulls<String>(tagItems.size)
                     tagItems.toArray(tagsArray)
-                    fetchDataViewModel.initializeNews(tagId, 1).observe(viewLifecycleOwner, Observer<PagedList<NewsEntity>> {
-
-                        adapter.submitList(it)
+                    fetchDataViewModel.initializeNews(tagId, 1).observe(viewLifecycleOwner, Observer<PagedList<INews>> {
+                        val newsList = it as PagedList<INews>
+                        adapter.submitList(newsList)
                     })
                 }
                 layoutSwipeRefresh.isRefreshing = false

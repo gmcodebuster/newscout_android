@@ -37,6 +37,7 @@ import com.fafadiatech.newscout.appconstants.trackUserSelection
 import com.fafadiatech.newscout.db.NewsEntity
 import com.fafadiatech.newscout.interfaces.PlaceHolderImageListener
 import com.fafadiatech.newscout.model.DetailNewsData
+import com.fafadiatech.newscout.model.INews
 import com.fafadiatech.newscout.model.NewsAdsApi
 import com.fafadiatech.newscout.model.NewsAdsBodyData
 import com.fafadiatech.newscout.viewmodel.FetchDataApiViewModel
@@ -49,7 +50,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
-class NewsAdapter(context: Context, category: String) : PagedListAdapter<NewsEntity, RecyclerView.ViewHolder>(DIFF_CALLBACK) {
+class NewsAdapter(context: Context, category: String) : PagedListAdapter<INews, RecyclerView.ViewHolder>(DIFF_CALLBACK) {
 
     var con: Context = context
     var itemIndex: Int? = null
@@ -68,13 +69,19 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<NewsEnt
     companion object {
         var TAG: String = "NewsAdapter"
 
-        val DIFF_CALLBACK: DiffUtil.ItemCallback<NewsEntity> = object : DiffUtil.ItemCallback<NewsEntity>() {
-            override fun areItemsTheSame(oldData: NewsEntity, newData: NewsEntity): Boolean {
-                return oldData.id == newData.id
+        val DIFF_CALLBACK: DiffUtil.ItemCallback<INews> = object : DiffUtil.ItemCallback<INews>() {
+            override fun areItemsTheSame(oldData: INews, newData: INews): Boolean {
+                if(oldData is NewsEntity && newData is NewsEntity) {
+                    return oldData.id == newData.id
+                }
+                return false
             }
 
-            override fun areContentsTheSame(oldData: NewsEntity, newData: NewsEntity): Boolean {
-                return oldData.equals(newData)
+            override fun areContentsTheSame(oldData: INews, newData: INews): Boolean {
+                if(oldData is NewsEntity && newData is NewsEntity) {
+                    return oldData.equals(newData)
+                }
+                return false
             }
         }
         val requestOptions = RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -115,8 +122,8 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<NewsEnt
         var pagedList = currentList
         var listSize = pagedList!!.size
         val currentItem = getItem(position)
-        var newsList: MutableList<NewsEntity> = pagedList!!.snapshot()
-        var sourceList = ArrayList<NewsEntity>()
+        var newsList: MutableList<INews> = pagedList!!.snapshot()
+        var sourceList = ArrayList<INews>()
         if (categoryType.equals("Source")) {
             sourceList.addAll(newsList)
         }
@@ -126,7 +133,8 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<NewsEnt
         when (holder.itemViewType) {
             1 -> {
                 var rightItemViewholder = holder as NewsAdapter.RightItemViewHolder
-                getItem(position)?.let {
+                val news = getItem(position) as NewsEntity
+                news?.let{
                     if (it!!.source != null) {
                         var spannable = SpannableString(" via " + it.source)
                         setColorForPath(spannable, arrayOf(it.source), ContextCompat.getColor(con, R.color.colorPrimary))
@@ -199,13 +207,13 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<NewsEnt
 
                     rightItemViewholder.itemRootView.setOnClickListener {
                         itemIndex = position
-                        fetchDataViewModel.setCurrentList(newsList)
-                        var id = getItem(position)!!.id
+                        fetchDataViewModel.setCurrentListNews(newsList)//setCurrentList(newsList)
+                        var id = news!!.id
                         fetchDataViewModel.startRecommendNewsWorkManager(id)
-                        categoryId = getItem(position)!!.category_id
-                        var itemTitle = getItem(position)!!.title
+                        categoryId = news!!.category_id
+                        var itemTitle = news!!.title
                         var deviceId = themePreference.getString("device_token", "")
-                        trackClick("News Click", getItem(position)!!.category, itemTitle)
+                        trackClick("News Click", news!!.category, itemTitle)
                         trackUserSelection(apiInterfaceObj, "item_detail", deviceId, "android", id, itemTitle)
                         var detailIntent = Intent(con, DetailNewsActivity::class.java)
                         detailIntent.putExtra("indexPosition", itemIndex!!)
@@ -220,7 +228,8 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<NewsEnt
 
             0 -> {
                 var leftItemViewholder = holder as NewsAdapter.LeftItemViewHolder
-                getItem(position)?.let {
+                val news = getItem(position) as NewsEntity
+                news?.let {
                     if (it!!.source != null) {
                         var spannable = SpannableString(" via " + it.source)
                         setColorForPath(spannable, arrayOf(it.source), ContextCompat.getColor(con, R.color.colorPrimary))
@@ -294,14 +303,14 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<NewsEnt
                 }
 
                 leftItemViewholder.itemRootView.setOnClickListener {
-                    fetchDataViewModel.setCurrentList(newsList)
+                    fetchDataViewModel.setCurrentListNews(newsList)//setCurrentList(newsList)
                     itemIndex = position
-                    var id = getItem(position)!!.id
+                    var id = news!!.id
                     fetchDataViewModel.startRecommendNewsWorkManager(id)
-                    categoryId = getItem(position)!!.category_id
-                    var itemTitle = getItem(position)!!.title
+                    categoryId = news!!.category_id
+                    var itemTitle = news!!.title
                     var deviceId = themePreference.getString("device_token", "")
-                    trackClick("News Click", getItem(position)!!.category, itemTitle)
+                    trackClick("News Click", news!!.category, itemTitle)
                     trackUserSelection(apiInterfaceObj, "item_detail", deviceId, "android", id, itemTitle)
                     var detailIntent = Intent(con, DetailNewsActivity::class.java)
                     detailIntent.putExtra("indexPosition", itemIndex!!)
@@ -380,12 +389,14 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<NewsEnt
 
     override fun getItemViewType(position: Int): Int {
 
-        if(position > 9 && position % 10 == 0 ){
-            return 2
-        }else if(position % 2 == 0){
-            return 0
+        if(getItem(position) is NewsEntity){
+            if(position % 2 == 0){
+                return 0
+            }else{
+                return 1
+            }
         }else{
-            return 1
+            return 2
         }
     }
 

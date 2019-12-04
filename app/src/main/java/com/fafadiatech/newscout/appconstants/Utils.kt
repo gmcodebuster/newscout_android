@@ -8,6 +8,8 @@ import android.widget.ImageView
 import com.fafadiatech.newscout.application.MyApplication
 import com.fafadiatech.newscout.db.NewsDao
 import com.fafadiatech.newscout.db.NewsDatabase
+import com.fafadiatech.newscout.model.AdsData
+import com.fafadiatech.newscout.model.INews
 import com.fafadiatech.newscout.model.SubMenuResultData
 
 fun convertDpToPx(context: Context, dp: Int): Int {
@@ -66,4 +68,16 @@ fun getLatestNewsID(newsDao: NewsDao): Int {
         newsCategoryId = 123
     }
     return newsCategoryId
+}
+
+fun addAdsData(newsList : ArrayList<INews>?): ArrayList<INews>?{
+
+    val newsIterator = newsList?.listIterator()
+    for ((index, value) in newsIterator?.withIndex()!!) {
+        if(index > 0 && (index + 1) % 10 == 0){
+            newsIterator.add(AdsData("",""))
+        }
+    }
+
+    return newsList
 }

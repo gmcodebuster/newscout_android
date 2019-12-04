@@ -41,12 +41,12 @@ class FetchDataApiViewModel(application: Application, mParams: Int) : AndroidVie
     var workManager: WorkManager = WorkManager.getInstance()
     private val repository = NewsRepository(application)
     var queryTag = 1
-    var itemPagedList: LiveData<PagedList<NewsEntity>>
-    var liveDataSource: LiveData<PageKeyedDataSource<Int, NewsEntity>>
+    var itemPagedList: LiveData<PagedList<INews>>
+    var liveDataSource: LiveData<PageKeyedDataSource<Int, INews>>
     var detailList = ArrayList<DetailNewsData>()
     lateinit var articleNewsDao: NewsDao
     var newsDatabase: NewsDatabase? = null
-    lateinit var newsItemPagedList: LiveData<PagedList<NewsEntity>>
+    lateinit var newsItemPagedList: LiveData<PagedList<INews>>
     lateinit var ddnewsItemPagedList: LiveData<PagedList<DailyDigestEntity>>
 
     val adsTitleVM: MutableLiveData<NewsAdsBodyData> by lazy {
@@ -58,7 +58,7 @@ class FetchDataApiViewModel(application: Application, mParams: Int) : AndroidVie
         articleNewsDao = newsDatabase!!.newsDao()
         queryTag = mParams
         var itemDataSourceFactory = NewsDataSourceFactory(application, queryTag)
-        liveDataSource = itemDataSourceFactory.getNewsSorceData()
+        liveDataSource = itemDataSourceFactory.getNewsSourceData()
         val pagedListConfig = PagedList.Config.Builder()
                 .setEnablePlaceholders(false)
                 .setPageSize(NEWSPAGESIZE).build()
@@ -254,7 +254,19 @@ class FetchDataApiViewModel(application: Application, mParams: Int) : AndroidVie
         this.detailList.addAll(listMap)
     }
 
-    fun initializeNews(cateId: Int, pageNo: Int): LiveData<PagedList<NewsEntity>> {
+    fun setCurrentListNews(mList: List<INews>) {
+        this.detailList.clear()
+
+        for(data in mList){
+            if(data is NewsEntity){
+                val d = data as NewsEntity
+                var mData = DetailNewsData(d.id, d.title, d.source, d.category, d.source_url, d.cover_image, d.blurb!!, d.published_on, 0, 0)
+                this.detailList.add(mData)
+            }
+        }
+    }
+
+    fun initializeNews(cateId: Int, pageNo: Int): LiveData<PagedList<INews>> {
         newsItemPagedList = repository.selectSource(cateId, pageNo)
         return newsItemPagedList
     }

@@ -9,10 +9,7 @@ import com.fafadiatech.newscout.db.dailydigest.DDHashTagEntity
 import com.fafadiatech.newscout.db.dailydigest.DailyDigestEntity
 import com.fafadiatech.newscout.db.trending.TrendingData
 import com.fafadiatech.newscout.db.trending.TrendingNewsEntity
-import com.fafadiatech.newscout.model.DetailNewsData
-import com.fafadiatech.newscout.model.MenuHeading
-import com.fafadiatech.newscout.model.SubMenuResultData
-import com.fafadiatech.newscout.model.TrendingNewsData
+import com.fafadiatech.newscout.model.*
 
 @Dao
 interface NewsDao {
