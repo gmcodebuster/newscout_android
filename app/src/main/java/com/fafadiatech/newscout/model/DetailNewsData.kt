@@ -14,4 +14,5 @@ data class DetailNewsData(
         var description: String,
         var published_on: String,
         var like_status: Int,
-        var bookmark_status: Int) : Parcelable
+        var bookmark_status: Int,
+        var article_score: Float) : Parcelable

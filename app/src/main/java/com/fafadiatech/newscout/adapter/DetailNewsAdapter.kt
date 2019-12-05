@@ -310,7 +310,8 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
                                     var publishedOn = obj.published_on
                                     var coverImage = obj.cover_image
                                     var hasTags = ArrayList<String>()
-                                    var newsEntity = NewsEntity(id, 0, title, source, category, sourceUrl, coverImage, desc, publishedOn, hasTags)
+                                    var articleScore = obj.article_score
+                                    var newsEntity = NewsEntity(id, 0, title, source, category, sourceUrl, coverImage, desc, publishedOn, hasTags, articleScore)
                                     newsDao.insertNewsEntity(newsEntity)
                                 }
                                 fetchDataViewModel.startBookmarkWorkManager(token, isBookmark, newsId)

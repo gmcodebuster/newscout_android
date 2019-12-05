@@ -32,10 +32,9 @@ data class NewsEntity(
         var published_on: String,
         @ColumnInfo(name = "hash_tags")
         var hashTags: ArrayList<String>,
-        @Ignore
         @ColumnInfo(name = "article_score")
-        var article_score: Float = 0.0f
+        var article_score: Float
 
 ) : Parcelable, INews{
-        constructor(): this(0,0,"","","","","","","", arrayListOf<String>())
+        //constructor(): this(0,0,"","","","","","","", arrayListOf<String>())
 }

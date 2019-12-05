@@ -25,6 +25,8 @@ data class RecommendedDataEntity(
         @ColumnInfo(name = "description")
         var blurb: String?,
         @ColumnInfo(name = "published_on")
-        var published_on: String
+        var published_on: String,
+        @ColumnInfo(name = "article_score")
+        var article_score: Float
 
 ) : Parcelable

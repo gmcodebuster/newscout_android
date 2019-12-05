@@ -30,7 +30,9 @@ data class TrendingNewsEntity(
         @ColumnInfo(name = "published_on")
         var published_on: String,
         @ColumnInfo(name = "hash_tags")
-        var hash_tags: ArrayList<String>
+        var hash_tags: ArrayList<String>,
+        @ColumnInfo(name = "article_score")
+        var article_score: Float = 0.0f
 
 ) : Parcelable {
 

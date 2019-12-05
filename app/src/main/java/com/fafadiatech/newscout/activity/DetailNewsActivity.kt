@@ -95,7 +95,7 @@ class DetailNewsActivity : BaseActivity(), VerticalViewPager.SwiperListener {
 
             for (i in 0 until list.size) {
                 var sourceItem = list.get(i)
-                var detailListItem = DetailNewsData(sourceItem.id, sourceItem.title, sourceItem.source, sourceItem.category, sourceItem.source_url, sourceItem.cover_image, sourceItem.blurb!!, sourceItem.published_on, 2, 0)
+                var detailListItem = DetailNewsData(sourceItem.id, sourceItem.title, sourceItem.source, sourceItem.category, sourceItem.source_url, sourceItem.cover_image, sourceItem.blurb!!, sourceItem.published_on, 2, 0, sourceItem.article_score)
                 detailList.add(detailListItem)
             }
 

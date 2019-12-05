@@ -250,7 +250,7 @@ class FetchDataApiViewModel(application: Application, mParams: Int) : AndroidVie
 
     fun setCurrentList(mList: List<NewsEntity>) {
         this.detailList.clear()
-        var listMap: List<DetailNewsData> = mList.map { DetailNewsData(it.id, it.title, it.source, it.category, it.source_url, it.cover_image, it.blurb!!, it.published_on, 0, 0) };
+        var listMap: List<DetailNewsData> = mList.map { DetailNewsData(it.id, it.title, it.source, it.category, it.source_url, it.cover_image, it.blurb!!, it.published_on, 0, 0, it.article_score) };
         this.detailList.addAll(listMap)
     }
 
@@ -260,7 +260,7 @@ class FetchDataApiViewModel(application: Application, mParams: Int) : AndroidVie
         for(data in mList){
             if(data is NewsEntity){
                 val d = data as NewsEntity
-                var mData = DetailNewsData(d.id, d.title, d.source, d.category, d.source_url, d.cover_image, d.blurb!!, d.published_on, 0, 0)
+                var mData = DetailNewsData(d.id, d.title, d.source, d.category, d.source_url, d.cover_image, d.blurb!!, d.published_on, 0, 0,d.article_score)
                 this.detailList.add(mData)
             }
         }

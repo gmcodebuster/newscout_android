@@ -47,7 +47,8 @@ class DbInsertRecommendedNewsWork(context: Context, params: WorkerParameters) : 
                         val urlToImage: String? = obj.cover_image
                         val description: String? = obj.blurb
                         val publishedOn: String = obj.published_on
-                        var entityObj = RecommendedDataEntity(newsId, title, source, category, sourceUrl, urlToImage, description, publishedOn)
+                        var articleScore = obj.article_score
+                        var entityObj = RecommendedDataEntity(newsId, title, source, category, sourceUrl, urlToImage, description, publishedOn, articleScore)
                         newsList.add(entityObj)
                     }
                     articleNewsDao.insertRecommendedNews(newsList)

@@ -1,12 +1,12 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 4,
-    "identityHash": "5e9289c673d95af4a9ca207589139d42",
+    "version": 6,
+    "identityHash": "992518b1f495496657fe7a77d7c364a8",
     "entities": [
       {
         "tableName": "ArticlesData",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`article_id` INTEGER NOT NULL, `category_id` INTEGER NOT NULL, `title` TEXT NOT NULL, `source` TEXT NOT NULL, `category` TEXT NOT NULL, `source_url` TEXT NOT NULL, `cover_image` TEXT NOT NULL, `description` TEXT, `published_on` TEXT NOT NULL, `hash_tags` TEXT NOT NULL, `article_score` REAL NOT NULL, PRIMARY KEY(`article_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`article_id` INTEGER NOT NULL, `category_id` INTEGER NOT NULL, `title` TEXT NOT NULL, `source` TEXT NOT NULL, `category` TEXT NOT NULL, `source_url` TEXT NOT NULL, `cover_image` TEXT NOT NULL, `description` TEXT, `published_on` TEXT NOT NULL, `hash_tags` TEXT NOT NULL, `article_score` TEXT NOT NULL, PRIMARY KEY(`article_id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -71,7 +71,7 @@
           {
             "fieldPath": "article_score",
             "columnName": "article_score",
-            "affinity": "REAL",
+            "affinity": "TEXT",
             "notNull": true
           }
         ],
@@ -291,7 +291,7 @@
       },
       {
         "tableName": "RecommendedData",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`article_id` INTEGER NOT NULL, `title` TEXT, `source` TEXT NOT NULL, `category` TEXT NOT NULL, `source_url` TEXT NOT NULL, `cover_image` TEXT, `description` TEXT, `published_on` TEXT NOT NULL, PRIMARY KEY(`article_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`article_id` INTEGER NOT NULL, `title` TEXT, `source` TEXT NOT NULL, `category` TEXT NOT NULL, `source_url` TEXT NOT NULL, `cover_image` TEXT, `description` TEXT, `published_on` TEXT NOT NULL, `article_score` REAL NOT NULL, PRIMARY KEY(`article_id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -339,6 +339,12 @@
             "fieldPath": "published_on",
             "columnName": "published_on",
             "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "article_score",
+            "columnName": "article_score",
+            "affinity": "REAL",
             "notNull": true
           }
         ],
@@ -727,7 +733,7 @@
       },
       {
         "tableName": "Dailydigest",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`article_id` INTEGER NOT NULL, `category_id` INTEGER NOT NULL, `title` TEXT NOT NULL, `source` TEXT NOT NULL, `category` TEXT NOT NULL, `source_url` TEXT NOT NULL, `cover_image` TEXT NOT NULL, `description` TEXT, `published_on` TEXT NOT NULL, `hash_tags` TEXT NOT NULL, PRIMARY KEY(`article_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`article_id` INTEGER NOT NULL, `category_id` INTEGER NOT NULL, `title` TEXT NOT NULL, `source` TEXT NOT NULL, `category` TEXT NOT NULL, `source_url` TEXT NOT NULL, `cover_image` TEXT NOT NULL, `description` TEXT, `published_on` TEXT NOT NULL, `hash_tags` TEXT NOT NULL, `article_score` REAL NOT NULL, PRIMARY KEY(`article_id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -787,6 +793,12 @@
             "fieldPath": "hashTags",
             "columnName": "hash_tags",
             "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "article_score",
+            "columnName": "article_score",
+            "affinity": "REAL",
             "notNull": true
           }
         ],
@@ -886,7 +898,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '5e9289c673d95af4a9ca207589139d42')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '992518b1f495496657fe7a77d7c364a8')"
     ]
   }
 }

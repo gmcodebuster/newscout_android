@@ -78,8 +78,10 @@ class NewsItemDataSource(context: Context, queryTag: Int) : PageKeyedDataSource<
                                 val description: String = obj.blurb
                                 val publishedOn: String = obj.published_on
                                 val hashTags = obj.hash_tags
+                                var articleScore = obj.article_score
+
                                 var entityObj =
-                                        NewsEntity(newsId, categoryId, title, source, category, url, urlToImage, description, publishedOn, hashTags!!)
+                                        NewsEntity(newsId, categoryId, title, source, category, url, urlToImage, description, publishedOn, hashTags!!, articleScore)
                                 articleList.add(entityObj)
                                 var trendingObJ = TrendingEntity(0, clusterId, newsId, trendingListCount)
                                 trendingNewsList.add(trendingObJ)
@@ -134,9 +136,10 @@ class NewsItemDataSource(context: Context, queryTag: Int) : PageKeyedDataSource<
                             val description: String = obj.blurb
                             val publishedOn: String = obj.published_on
                             val hashTags = obj.hash_tags
+                            var articleScore = obj.article_score
 
                             var entityObj =
-                                    NewsEntity(newsId, categoryId, title, source, category, url, urlToImage, description, publishedOn, hashTags!!)
+                                    NewsEntity(newsId, categoryId, title, source, category, url, urlToImage, description, publishedOn, hashTags!!, articleScore)
                             newsList.add(entityObj)
 
                             var hashTagList = list.get(i).hash_tags
@@ -216,9 +219,10 @@ class NewsItemDataSource(context: Context, queryTag: Int) : PageKeyedDataSource<
                             val description: String = obj.blurb
                             val publishedOn: String = obj.published_on
                             val hashTags = obj.hash_tags
+                            var articleScore = obj.article_score
 
                             var entityObj =
-                                    NewsEntity(newsId, categoryId, title, source, category, url, urlToImage, description, publishedOn, hashTags!!)
+                                    NewsEntity(newsId, categoryId, title, source, category, url, urlToImage, description, publishedOn, hashTags!!,articleScore)
                             newsList.add(entityObj)
 
                             var hashTagList = list.get(i).hash_tags
@@ -286,9 +290,10 @@ class NewsItemDataSource(context: Context, queryTag: Int) : PageKeyedDataSource<
                         val description: String = obj.blurb
                         val publishedOn: String = obj.published_on
                         val hashTags = obj.hash_tags
+                        var articleScore = obj.article_score
 
                         var entityObj =
-                                NewsEntity(newsId, categoryId, title, source, category, url, urlToImage, description, publishedOn, hashTags!!)
+                                NewsEntity(newsId, categoryId, title, source, category, url, urlToImage, description, publishedOn, hashTags!!, articleScore)
                         newsList.add(entityObj)
                     }
 

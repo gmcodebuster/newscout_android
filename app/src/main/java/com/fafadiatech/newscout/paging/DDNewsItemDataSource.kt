@@ -79,9 +79,10 @@ class DDNewsItemDataSource(context: Context, deviceId: String) : PageKeyedDataSo
                             val description: String = obj.blurb
                             val publishedOn: String = obj.published_on
                             val hashTags = obj.hash_tags
+                            var articleScore = obj.article_score
 
                             var entityObj =
-                                    DailyDigestEntity(newsId, categoryId, title, source, category, url, urlToImage, description, publishedOn, hashTags!!)
+                                    DailyDigestEntity(newsId, categoryId, title, source, category, url, urlToImage, description, publishedOn, hashTags!!, articleScore)
 
                             newsList.add(entityObj)
 

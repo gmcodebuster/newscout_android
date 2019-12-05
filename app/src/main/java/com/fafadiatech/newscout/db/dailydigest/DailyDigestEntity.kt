@@ -29,5 +29,7 @@ data class DailyDigestEntity(
         @ColumnInfo(name = "published_on")
         var published_on: String,
         @ColumnInfo(name = "hash_tags")
-        var hashTags: ArrayList<String>
+        var hashTags: ArrayList<String>,
+        @ColumnInfo(name = "article_score")
+        var article_score: Float
 ) : Parcelable {}

@@ -240,9 +240,10 @@ class TrendingFragment : Fragment(), AddTrendingFragmentListener {
                             val description: String = obj.blurb
                             val publishedOn: String = obj.published_on
                             val hashTags = obj.hash_tags
+                            var articleScore = obj.article_score
 
                             var entityObj =
-                                    NewsEntity(newsId, categoryId, title, source, category, url, urlToImage, description, publishedOn, hashTags!!)
+                                    NewsEntity(newsId, categoryId, title, source, category, url, urlToImage, description, publishedOn, hashTags!!, articleScore)
 
                             articleList.add(entityObj)
 
