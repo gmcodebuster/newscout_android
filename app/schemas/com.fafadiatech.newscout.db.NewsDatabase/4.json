@@ -1,12 +1,12 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 3,
-    "identityHash": "5348f5aa851177f93991d98ccdaa9ceb",
+    "version": 4,
+    "identityHash": "74f48598538abf5f93de0cdf634bccbf",
     "entities": [
       {
         "tableName": "ArticlesData",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`article_id` INTEGER NOT NULL, `category_id` INTEGER NOT NULL, `title` TEXT NOT NULL, `source` TEXT NOT NULL, `category` TEXT NOT NULL, `source_url` TEXT NOT NULL, `cover_image` TEXT NOT NULL, `description` TEXT, `published_on` TEXT NOT NULL, `hash_tags` TEXT NOT NULL, `article_score` REAL NOT NULL, PRIMARY KEY(`article_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`article_id` INTEGER NOT NULL, `category_id` INTEGER NOT NULL, `title` TEXT NOT NULL, `source` TEXT NOT NULL, `category` TEXT NOT NULL, `source_url` TEXT NOT NULL, `cover_image` TEXT NOT NULL, `description` TEXT, `published_on` TEXT NOT NULL, `hash_tags` TEXT NOT NULL, PRIMARY KEY(`article_id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -66,12 +66,6 @@
             "fieldPath": "hashTags",
             "columnName": "hash_tags",
             "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "article_score",
-            "columnName": "article_score",
-            "affinity": "REAL",
             "notNull": true
           }
         ],
@@ -874,7 +868,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '5348f5aa851177f93991d98ccdaa9ceb')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '74f48598538abf5f93de0cdf634bccbf')"
     ]
   }
 }

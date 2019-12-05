@@ -3,6 +3,7 @@ package com.fafadiatech.newscout.db
 import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import com.fafadiatech.newscout.model.INews
 import kotlinx.android.parcel.Parcelize
@@ -30,6 +31,11 @@ data class NewsEntity(
         @ColumnInfo(name = "published_on")
         var published_on: String,
         @ColumnInfo(name = "hash_tags")
-        var hashTags: ArrayList<String>
+        var hashTags: ArrayList<String>,
+        @Ignore
+        @ColumnInfo(name = "article_score")
+        var article_score: Float = 0.0f
 
-) : Parcelable, INews
+) : Parcelable, INews{
+        constructor(): this(0,0,"","","","","","","", arrayListOf<String>())
+}
