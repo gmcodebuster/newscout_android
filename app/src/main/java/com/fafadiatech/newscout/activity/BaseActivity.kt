@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import com.fafadiatech.newscout.R
 import com.fafadiatech.newscout.appconstants.AppConstant
+import com.fafadiatech.newscout.appconstants.getUniqueCode
 import com.fafadiatech.newscout.broadcast.ConnectivityReceiver
 
 open class BaseActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityReceiverListener {
@@ -25,6 +26,9 @@ open class BaseActivity : AppCompatActivity(), ConnectivityReceiver.Connectivity
         this.setTheme(themes)
         connectivityReceiver = ConnectivityReceiver()
         connectivityReceiver.setListener(this)
+        //call event tracking function
+        //generate Unique ID and save it into shared preferences
+        getUniqueCode(this, themePreference)
     }
 
     override fun onResume() {
@@ -45,5 +49,11 @@ open class BaseActivity : AppCompatActivity(), ConnectivityReceiver.Connectivity
     }
 
     override fun onNetworkConnectionChanged(isConnected: Boolean) {
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        //call event tracking function
+        //Remove old unique ID
     }
 }

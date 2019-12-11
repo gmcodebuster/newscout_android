@@ -91,11 +91,13 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         isNightMode = themePreference.getBoolean("night mode enable", false)
         var isThemeChange = themePreference.getBoolean("theme changed", false)
         token = themePreference.getString("token value", "")
         fetchDataViewModel = ViewModelProviders.of(this@MainActivity).get(FetchDataApiViewModel::class.java)
         apiInterfaceObj = ApiClient.getClient().create(ApiInterface::class.java)
+
         setContentView(R.layout.activity_main_page)
         newsDatabase = NewsDatabase.getInstance(this)
         articleNewsDao = newsDatabase!!.newsDao()
@@ -143,6 +145,20 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
                 }
             })
         }
+
+        val uniqueVal = getUniqueCode(this@MainActivity, themePreference)
+        var deviceId = themePreference.getString("device_token", "")
+        var tCall: Call<Void> = apiInterfaceObj.trackApp(0, "", 0, "", "", ActionType.APPOPEN.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type,getUniqueCode(this@MainActivity, themePreference))
+        tCall.enqueue(object: Callback<Void>{
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+
+            }
+
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+
+            }
+        })
+
 
         menuHeadinglayoutManager =
                 LinearLayoutManager(this@MainActivity, RecyclerView.HORIZONTAL, false)

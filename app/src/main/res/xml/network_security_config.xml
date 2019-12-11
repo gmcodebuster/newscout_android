@@ -2,6 +2,7 @@
 <network-security-config>
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="true">192.168.2.100:8000</domain>
+        <domain includeSubdomains="true">192.168.2.127:8000/</domain>
         <domain includeSubdomains="true">www.newscout.in</domain>
         <domain includeSubdomains="true">t.fafadiatech.com</domain>
         <domain includeSubdomains="true">images.newscout.in</domain>

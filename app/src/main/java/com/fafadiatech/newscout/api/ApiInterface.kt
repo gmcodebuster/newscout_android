@@ -118,4 +118,17 @@ interface ApiInterface {
     @GET("http://www.newscout.in/api/v1/get-ads/")
     fun getAds() : Call<NewsAdsApi>
 
+    @GET(TRACKING_URL + BuildConfig.DOMAIN_NAME)/*+ BuildConfig.DOMAIN_NAME */
+    fun trackApp(@Query("article_id") itemId:Int = 0,
+                 @Query("article_title") itemName:String = "",
+                 @Query("category_id") categoryId: Int = 0,
+                 @Query("category_name") categoryName: String = "",
+                 @Query("author_name") authorName:String = "",
+                 @Query("action") action:String,
+                 @Query("device_id") deviceId:String,
+                 @Query("plateform") plateform:String = "Android",
+                 @Query("type") type:String,
+                 /*@Query("domain_id") domainId : String,*/
+                 @Query("sid") sessionId:String
+                ): Call<Void>
 }
