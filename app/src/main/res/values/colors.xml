@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<!--    <color name="colorPrimary">#ed1c24</color>
+<!--
+    <color name="colorPrimary">#ed1c24</color>
     <color name="colorPrimaryDark">#b20000</color>
     <color name="colorAccent">#FF4081</color>
     <color name="top_back_color">#ffffff</color>
@@ -74,7 +75,12 @@
     <color name="toolbar_title">#FFFFFF</color>
     <color name="screen_bg">#FFFFFF</color>
 
-    <color name="pref_summary_text">#448855</color>-->
+    <color name="pref_summary_text">#448855</color>
+
+    <color name="pbstartcolor">#D8ED1C24</color>
+    <color name="pbcentercolor">#BEED1C24</color>
+    <color name="pbendcolor">#A6ED1C24</color>
+-->
 
     <!--<style name="AppTheme" parent="Theme.MaterialComponents.Light">
         <item name="colorPrimary">#212121</item>
@@ -107,6 +113,8 @@
     <color name="secondaryTextColor">#000000</color>
 
     -->
+
+    <!--Brown color theme-->
 
     <color name="colorPrimary">#5d4037</color>
     <color name="colorPrimaryDark">#321911</color>
@@ -177,5 +185,9 @@
     <color name="screen_bg">#FFFFFF</color>
 
     <color name="pref_summary_text">#448855</color>
+
+    <color name="pbstartcolor">#D85D4037</color>
+    <color name="pbcentercolor">#BE5D4037</color>
+    <color name="pbendcolor">#A65D4037</color>
 
 </resources>
