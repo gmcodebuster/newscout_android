@@ -1,4 +1,6 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
 
     <style name="MyOverflowButtonStyle" parent="Widget.AppCompat.ActionButton.Overflow">
         <item name="android:tint">@color/black</item>
@@ -108,6 +110,7 @@
         <item name="preferenceTheme">@style/PreferenceTheme</item>
         <!--<item name="autoCompleteTextViewStyle">@style/myAutoCompleteTextViewStyle</item>
         <item name="textAppearanceSearchResultTitle">@style/mySearchResult</item>-->
+        <item name="fab_colorNormal">@color/secondaryColor</item>
 
     </style>
 
