@@ -122,18 +122,6 @@ fun getUUID(): String{
     return uniqueID
 }
 
-/*fun trackingCallback(tCall: Call<Void>){
-    tCall.enqueue(object: Callback<Void> {
-        override fun onFailure(call: Call<Void>, t: Throwable) {
-            Log.e("Utils: ", "Error")
-        }
-
-        override fun onResponse(call: Call<Void>, response: Response<Void>) {
-            Log.d("Utils: ", "Success")
-        }
-    })
-}*/
-
 enum class ActionType(val type:String){
     PUBLISHED("published"),
     APPOPEN("app_open"),
@@ -161,6 +149,7 @@ enum class ActionType(val type:String){
     RATETHISAPP("rate_this_app"),
     ABOUTUS("about_us"),
     DEVELOPEDBY("devloped_by"),
+    PARENTCATEGORYCLICK("parent_category_change"),
     TRENDINGMENUCLICK("trending_menu_click"),
     TRENDINGGROUPCLICK("trending_group_click"),
     TRENDINGLISTCLICK("trending_list_click"),
@@ -174,7 +163,6 @@ enum class ActionType(val type:String){
     SCROLLTOTOP("scroll_to_top"),
     ADCLICK("ad_click")
 
-    //val actionType = ActionType.PUBLISHED.type
 }
 
 enum class ViewType(val type: String){
@@ -185,7 +173,6 @@ enum class ViewType(val type: String){
 
 fun trackingCallback(apiInterfaceObj: ApiInterface, themePreference: SharedPreferences, itemId:Int, itemName:String, categoryId: Int, categoryName: String, authorName:String, action:String, deviceId:String, plateform:String, type:String, sessionId:String, sourceName:String, sourceId:Int = 0, clusterId: Int = 0){
 
-    //var deviceId = themePreference.getString("device_token", "")
     var tCall: Call<Void> = apiInterfaceObj.trackApp(itemId, itemName, categoryId, categoryName, authorName, action, deviceId, plateform, type, sessionId, sourceName, sourceId, clusterId) //getUniqueCode(con, themePreference)
     tCall.enqueue(object: Callback<Void> {
         override fun onFailure(call: Call<Void>, t: Throwable) {
@@ -200,7 +187,6 @@ fun trackingCallback(apiInterfaceObj: ApiInterface, themePreference: SharedPrefe
 
 fun adsTrackingCallback(apiInterfaceObj: ApiInterface, themePreference: SharedPreferences, itemId:Int, itemName:String, categoryId: Int, categoryName: String, authorName:String, action:String, deviceId:String, plateform:String, type:String, sessionId:String, sourceName:String, sourceId:Int = 0, clusterId: Int = 0){
 
-    //var deviceId = themePreference.getString("device_token", "")
     var tCall: Call<Void> = apiInterfaceObj.trackApp(itemId, itemName, categoryId, categoryName, authorName, action, deviceId, plateform, type, sessionId, sourceName, sourceId, clusterId) //getUniqueCode(con, themePreference)
     tCall.enqueue(object: Callback<Void> {
         override fun onFailure(call: Call<Void>, t: Throwable) {
@@ -215,7 +201,6 @@ fun adsTrackingCallback(apiInterfaceObj: ApiInterface, themePreference: SharedPr
 
 fun signinTrackingCallback(apiInterfaceObj: ApiInterface, themePreference: SharedPreferences, action:String, deviceId:String, plateform:String, type:String, sessionId:String, firstname: String, lastname: String, token: String, email:String){
 
-    //var deviceId = themePreference.getString("device_token", "")
     var tCall: Call<Void> = apiInterfaceObj.signInTrackApp( action, deviceId, plateform, type, sessionId, firstname, lastname, token, email) //getUniqueCode(con, themePreference)
     tCall.enqueue(object: Callback<Void> {
         override fun onFailure(call: Call<Void>, t: Throwable) {
@@ -230,7 +215,6 @@ fun signinTrackingCallback(apiInterfaceObj: ApiInterface, themePreference: Share
 
 fun signupTrackingCallback(apiInterfaceObj: ApiInterface, themePreference: SharedPreferences, action:String, deviceId:String, plateform:String, type:String, sessionId:String, firstname: String, lastname: String, token: String, email:String){
 
-    //var deviceId = themePreference.getString("device_token", "")
     var tCall: Call<Void> = apiInterfaceObj.signInTrackApp( action, deviceId, plateform, type, sessionId, firstname, lastname, token, email) //getUniqueCode(con, themePreference)
     tCall.enqueue(object: Callback<Void> {
         override fun onFailure(call: Call<Void>, t: Throwable) {

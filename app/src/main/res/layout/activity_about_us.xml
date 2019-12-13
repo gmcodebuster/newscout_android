@@ -105,9 +105,11 @@
         android:layout_height="wrap_content"
         style="@style/DefaultFontRegular"
         android:layout_marginStart="8dp"
-        android:autoLink="web"
         android:text="@string/developed_by_value"
         android:textSize="@dimen/font_small"
+        android:onClick="developedValue"
+        android:textColor="@color/colorPrimary"
+        android:clickable="true"
         app:layout_constraintBaseline_toBaselineOf="@+id/tv_developed_by"
         app:layout_constraintLeft_toLeftOf="@id/tv_app_version_no"
         app:layout_constraintStart_toEndOf="@+id/tv_developed_by" />

@@ -645,8 +645,6 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
             adapterObj.notifyDataSetChanged()
 
             var deviceId = themePreference.getString("device_token", "")
-            //var tCall: Call<Void> = apiInterfaceObj.trackApp(0, "", TRENDING_ID, TRENDING_NAME, "", ActionType.MENUCHANGE.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type,getUniqueCode(this@MainActivity, themePreference))
-            //trackingCallback(tCall)
             val sessionId = getUniqueCode(this@MainActivity, themePreference)
             trackingCallback(apiInterfaceObj, themePreference, 0, "", TRENDING_ID, TRENDING_NAME, "", ActionType.TRENDINGMENUCLICK.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
 
@@ -664,8 +662,6 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
             adapterObj.notifyDataSetChanged()
 
             var deviceId = themePreference.getString("device_token", "")
-            //var tCall: Call<Void> = apiInterfaceObj.trackApp(0, "", newsCategoryId, LATESTNEWS_NAME, "", ActionType.MENUCHANGE.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type,getUniqueCode(this@MainActivity, themePreference))
-            //trackingCallback(tCall)
             val sessionId = getUniqueCode(this@MainActivity, themePreference)
             trackingCallback(apiInterfaceObj, themePreference, 0, "", newsCategoryId, LATESTNEWS_NAME, "", ActionType.MENUCHANGE.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId,"", 0)
 
@@ -682,20 +678,31 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
             adapterObj.notifyDataSetChanged()
 
             var deviceId = themePreference.getString("device_token", "")
-            //var tCall: Call<Void> = apiInterfaceObj.trackApp(0, "", DAILYDIGEST_ID, DAILYDIGEST_NAME, "", ActionType.MENUCHANGE.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type,getUniqueCode(this@MainActivity, themePreference))
-            //trackingCallback(tCall)
             val sessionId = getUniqueCode(this@MainActivity, themePreference)
             trackingCallback(apiInterfaceObj, themePreference, 0, "", DAILYDIGEST_ID, DAILYDIGEST_NAME, "", ActionType.DAILYDIGESTMENUCLICK.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
 
         } else {
             tabLayout.visibility = View.VISIBLE
             adapterObj.removeFragment()
+            var deviceId = themePreference.getString("device_token", "")
+            val sessionId = getUniqueCode(this@MainActivity, themePreference)
+            trackingCallback(apiInterfaceObj, themePreference, 0, "", headingData.id,headingData.category, "", ActionType.PARENTCATEGORYCLICK.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
 
             fetchDataViewModel.getSubMenuDataFromDb(headingData.id).observe(this, object : androidx.lifecycle.Observer<List<SubMenuResultData>> {
                 override fun onChanged(list: List<SubMenuResultData>?) {
                     var result = list as ArrayList<SubMenuResultData>
+                    var subMenuId:Int = 0
+                    var subMenuName:String = ""
                     if (result.size > 0) {
                         adapterObj.removeFragment()
+
+                        if (!subMenuName.equals(LATESTNEWS_FIELDNAME)) {
+                            subMenuId =  result.get(0).id
+                            subMenuName =  result.get(0).name
+                        }else{
+                            subMenuId =  result.get(1).id
+                            subMenuName =  result.get(1).name
+                        }
                     }
 
                     for (i in 0 until result.size) {
@@ -715,7 +722,7 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
                     adapterObj.notifyDataSetChanged()
                     setIconsTab(tabLayout)
                     vPager.setCurrentItem(0)
-
+                    trackingCallback(apiInterfaceObj, themePreference, 0, "", subMenuId, subMenuName, "", ActionType.PARENTCATEGORYCLICK.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
                 }
             })
         }
