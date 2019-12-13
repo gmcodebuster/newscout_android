@@ -28,9 +28,7 @@ import com.fafadiatech.newscout.R
 import com.fafadiatech.newscout.adapter.SearchAdapter
 import com.fafadiatech.newscout.api.ApiClient
 import com.fafadiatech.newscout.api.ApiInterface
-import com.fafadiatech.newscout.appconstants.AppConstant
-import com.fafadiatech.newscout.appconstants.NEWSPAGESIZE
-import com.fafadiatech.newscout.appconstants.trackUserSearch
+import com.fafadiatech.newscout.appconstants.*
 import com.fafadiatech.newscout.customcomponent.BaseAlertDialog
 import com.fafadiatech.newscout.customcomponent.MyItemDecoration
 import com.fafadiatech.newscout.db.NewsEntity
@@ -149,7 +147,7 @@ class SearchActivity : AppCompatActivity(), ProgressBarListener {
 
                     var deviceId = themePreference.getString("device_token", "")
                     fetchDataViewModel.startSearchSuggestionWorkManager(query)
-                    trackUserSearch(apiInterface, "search", deviceId, "android", query)
+                    //trackUserSearch(apiInterface, "search", deviceId, "android", query)
 
                     progressBar.visibility = View.VISIBLE
                     fetchDataViewModel.deleteSearchTableWork()
@@ -172,6 +170,9 @@ class SearchActivity : AppCompatActivity(), ProgressBarListener {
                         searchAdapter.submitList(it)
 
                     })
+                    val sessionId = getUniqueCode(this@SearchActivity, themePreference)
+                    trackingCallback(apiInterface, themePreference, 0, "", 0, "", "", ActionType.SEARCHQUERY.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId,"",0)
+
                 }
                 return false
             }

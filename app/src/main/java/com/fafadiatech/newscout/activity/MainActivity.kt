@@ -148,18 +148,10 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
 
         val uniqueVal = getUniqueCode(this@MainActivity, themePreference)
         var deviceId = themePreference.getString("device_token", "")
-        var tCall: Call<Void> = apiInterfaceObj.trackApp(0, "", 0, "", "", ActionType.APPOPEN.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type,getUniqueCode(this@MainActivity, themePreference))
-        tCall.enqueue(object: Callback<Void>{
-            override fun onFailure(call: Call<Void>, t: Throwable) {
-
-            }
-
-            override fun onResponse(call: Call<Void>, response: Response<Void>) {
-
-            }
-        })
-
-
+        //var tCall: Call<Void> = apiInterfaceObj.trackApp(0, "", 0, "", "", ActionType.APPOPEN.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type,getUniqueCode(this@MainActivity, themePreference))
+        //trackingCallback(tCall)
+        val sessionId = getUniqueCode(this@MainActivity, themePreference)
+        trackingCallback(apiInterfaceObj, themePreference, 0, "", 0, "", "", ActionType.APPOPEN.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
         menuHeadinglayoutManager =
                 LinearLayoutManager(this@MainActivity, RecyclerView.HORIZONTAL, false)
         recyclerTopHeadingAdapter = TopHeadingMenuAdapter(this@MainActivity, clickListener)
@@ -228,8 +220,13 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
 
                     }
 
+                    //var deviceId = themePreference.getString("device_token", "")
+                    //trackUserSelection(apiInterfaceObj, "sub_menu_click", deviceId, "android", itemId, subHeadName)
                     var deviceId = themePreference.getString("device_token", "")
-                    trackUserSelection(apiInterfaceObj, "sub_menu_click", deviceId, "android", itemId, subHeadName)
+                    //var tCall: Call<Void> = apiInterfaceObj.trackApp(0, "", itemId, subHeadName, "", ActionType.MENUCHANGE.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type,getUniqueCode(this@MainActivity, themePreference))
+                    //trackingCallback(tCall)
+                    val sessionId = getUniqueCode(this@MainActivity, themePreference)
+                    trackingCallback(apiInterfaceObj, themePreference, 0, "", itemId, subHeadName, "", ActionType.MENUCHANGE.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId,"",0)
                 }
             }
         })
@@ -321,28 +318,45 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
 
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        var deviceId = themePreference.getString("device_token", "")
         if (item?.getItemId() == android.R.id.home) {
+            val sessionId = getUniqueCode(this@MainActivity, themePreference)
+            trackingCallback(apiInterfaceObj, themePreference, 0, "", 0, "", "", ActionType.BURGERICON.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId,"", 0)
+            //burger menu click
             drawer_layout.openDrawer(Gravity.LEFT);
             return true
         }
         var defaultTheme = MODE_NIGHT_NO
+
+        val sessionId = getUniqueCode(this@MainActivity, themePreference)
+        trackingCallback(apiInterfaceObj, themePreference, 0, "", 0, "", "", ActionType.OPTIONMENU.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, ", 0")
         when (item!!.itemId) {
             R.id.ic_bookmark -> {
+
+                val sessionId = getUniqueCode(this@MainActivity, themePreference)
+                trackingCallback(apiInterfaceObj, themePreference, 0, "", 0, "", "", ActionType.BOOKMARKMENUCLICK.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId,"", 0)
                 val intent = Intent(this, BookmarkActivity::class.java)
                 startActivity(intent)
             }
 
             R.id.ic_setting -> {
+
+                val sessionId = getUniqueCode(this@MainActivity, themePreference)
+                trackingCallback(apiInterfaceObj, themePreference, 0, "", 0, "", "", ActionType.SETTINGSMENUCLICK.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, ", 0")
                 val intent = Intent(this, SettingActivity::class.java)
                 startActivity(intent)
             }
 
             R.id.ic_search -> {
+
+                val sessionId = getUniqueCode(this@MainActivity, themePreference)
+                trackingCallback(apiInterfaceObj, themePreference, 0, "", 0, "", "", ActionType.SEARCHMENUCLICK.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, ", 0")
                 val intent = Intent(this, SearchActivity::class.java)
                 startActivity(intent)
             }
 
             R.id.switch_night_mode -> {
+
                 var isNighModeEnabled: Boolean
                 var isThemeChanged: Boolean
                 var drawable = item.getIcon().constantState
@@ -355,6 +369,8 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
                     isNighModeEnabled = false
                     isThemeChanged = true
                     defaultTheme = MODE_NIGHT_YES
+                    val sessionId = getUniqueCode(this@MainActivity, themePreference)
+                    trackingCallback(apiInterfaceObj, themePreference, 0, "", 0, "", "", ActionType.MODECHANGE.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
                 } else {
                     item.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_moon))
                     chooseDefaultTheme()
@@ -362,6 +378,8 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
                     isNighModeEnabled = true
                     isThemeChanged = true
                     defaultTheme =  MODE_NIGHT_NO
+                    val sessionId = getUniqueCode(this@MainActivity, themePreference)
+                    trackingCallback(apiInterfaceObj, themePreference, 0, "", 0, "", "", ActionType.MODECHANGE.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
                 }
                 var editor = themePreference.edit()
                 editor.putInt("theme", themes)
@@ -522,8 +540,14 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
         expandableListView.setAdapter(expandableListAdapter)
         expandableListView.setOnGroupClickListener(object : ExpandableListView.OnGroupClickListener {
             override fun onGroupClick(parent: ExpandableListView?, view: View?, groupPosition: Int, childPosition: Long): Boolean {
+
+
                 var data = topMenuResult.get(groupPosition)
                 var headingData = TopHeadingData(data.id, groupPosition, data.name)
+
+                var deviceId = themePreference.getString("device_token", "")
+                val sessionId = getUniqueCode(this@MainActivity, themePreference)
+                trackingCallback(apiInterfaceObj, themePreference, 0, "", data.id, data.name, "", ActionType.BURGERMENUCLICK.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
 
                 recyclerViewTopHeading.scrollToPosition(groupPosition)
                 recyclerTopHeadingAdapter.selectedItem = groupPosition
@@ -619,6 +643,13 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
             adapterObj.removeFragment()
             adapterObj.addFragment(0, rootFrag, bundle)
             adapterObj.notifyDataSetChanged()
+
+            var deviceId = themePreference.getString("device_token", "")
+            //var tCall: Call<Void> = apiInterfaceObj.trackApp(0, "", TRENDING_ID, TRENDING_NAME, "", ActionType.MENUCHANGE.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type,getUniqueCode(this@MainActivity, themePreference))
+            //trackingCallback(tCall)
+            val sessionId = getUniqueCode(this@MainActivity, themePreference)
+            trackingCallback(apiInterfaceObj, themePreference, 0, "", TRENDING_ID, TRENDING_NAME, "", ActionType.TRENDINGMENUCLICK.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
+
         } else if (headingData.category.equals(LATESTNEWS_NAME)) {
             tabLayout.visibility = View.GONE
             var newsCategoryId: Int = getLatestNewsID(articleNewsDao)
@@ -631,6 +662,13 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
             adapterObj.removeFragment()
             adapterObj.addFragment(0, newsFrag, bundle)
             adapterObj.notifyDataSetChanged()
+
+            var deviceId = themePreference.getString("device_token", "")
+            //var tCall: Call<Void> = apiInterfaceObj.trackApp(0, "", newsCategoryId, LATESTNEWS_NAME, "", ActionType.MENUCHANGE.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type,getUniqueCode(this@MainActivity, themePreference))
+            //trackingCallback(tCall)
+            val sessionId = getUniqueCode(this@MainActivity, themePreference)
+            trackingCallback(apiInterfaceObj, themePreference, 0, "", newsCategoryId, LATESTNEWS_NAME, "", ActionType.MENUCHANGE.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId,"", 0)
+
         } else if (headingData.category.equals(DAILYDIGEST_NAME)) {
             tabLayout.visibility = View.GONE
             var bundle = Bundle()
@@ -642,6 +680,13 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
             adapterObj.removeFragment()
             adapterObj.addFragment(0, newsFrag, bundle)
             adapterObj.notifyDataSetChanged()
+
+            var deviceId = themePreference.getString("device_token", "")
+            //var tCall: Call<Void> = apiInterfaceObj.trackApp(0, "", DAILYDIGEST_ID, DAILYDIGEST_NAME, "", ActionType.MENUCHANGE.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type,getUniqueCode(this@MainActivity, themePreference))
+            //trackingCallback(tCall)
+            val sessionId = getUniqueCode(this@MainActivity, themePreference)
+            trackingCallback(apiInterfaceObj, themePreference, 0, "", DAILYDIGEST_ID, DAILYDIGEST_NAME, "", ActionType.DAILYDIGESTMENUCLICK.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
+
         } else {
             tabLayout.visibility = View.VISIBLE
             adapterObj.removeFragment()
@@ -670,6 +715,7 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
                     adapterObj.notifyDataSetChanged()
                     setIconsTab(tabLayout)
                     vPager.setCurrentItem(0)
+
                 }
             })
         }
@@ -677,5 +723,12 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
             drawer_layout.closeDrawer(GravityCompat.START)
         }
         scrollToCenter(pos)
+    }
+
+    override fun onDestroy() {
+        var deviceId = themePreference.getString("device_token", "")
+        val sessionId = getUniqueCode(this@MainActivity, themePreference)
+        trackingCallback(apiInterfaceObj, themePreference, 0, "", 0, "", "", ActionType.APPCLOSE.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
+        super.onDestroy()
     }
 }

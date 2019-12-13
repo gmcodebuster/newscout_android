@@ -141,7 +141,7 @@ class SignInActivity : BaseActivity() {
                     override fun onResponse(call: Call<MessageLoginData>, response: Response<MessageLoginData>) {
                         var responseCode = response.code()
                         if (responseCode >= 200 && responseCode <= 399) {
-
+//Add signin tracking
                             var token = response.body()!!.body.user.token
                             token = "Token " + token
                             fetchDataViewModel.startVoteServerDataWorkManager(token)
@@ -204,6 +204,8 @@ class SignInActivity : BaseActivity() {
                 override fun onResponse(call: Call<MessageLoginData>, response: Response<MessageLoginData>) {
                     var responseCode = response.code()
                     if (responseCode >= 200 && responseCode < 400) {
+//Add signin tracking
+
                         status = response.body()?.header?.status
                         Toast.makeText(this@SignInActivity, "Login Successful", Toast.LENGTH_SHORT).show()
                         token = response.body()?.body?.user?.token
@@ -269,7 +271,7 @@ class SignInActivity : BaseActivity() {
             editor.putString("login success", email)
             editor.commit()
             var deviceId = themePreference.getString("device_token", "")
-
+//Add signin tracking
             Toast.makeText(this, "Login Successful using Google", Toast.LENGTH_SHORT).show()
             var call: Call<MessageLoginData> = interfaceObj.loginBySocial("google", deviceId, "android", webToken!!)
             call.enqueue(object : Callback<MessageLoginData> {

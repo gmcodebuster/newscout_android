@@ -28,9 +28,7 @@ import com.fafadiatech.newscout.R
 import com.fafadiatech.newscout.activity.DetailNewsActivity
 import com.fafadiatech.newscout.api.ApiClient
 import com.fafadiatech.newscout.api.ApiInterface
-import com.fafadiatech.newscout.appconstants.AppConstant
-import com.fafadiatech.newscout.appconstants.getImageURL
-import com.fafadiatech.newscout.appconstants.trackUserSelection
+import com.fafadiatech.newscout.appconstants.*
 import com.fafadiatech.newscout.db.dailydigest.DailyDigestEntity
 import com.fafadiatech.newscout.interfaces.PlaceHolderImageListener
 import com.fafadiatech.newscout.model.DetailNewsData
@@ -187,7 +185,12 @@ class DDNewsAdapter(context: Context) : PagedListAdapter<DailyDigestEntity, Recy
                         var itemTitle = getItem(position)!!.title
                         var deviceId = themePreference.getString("device_token", "")
                         trackClick("News Click", getItem(position)!!.category, itemTitle)
-                        trackUserSelection(apiInterfaceObj, "item_detail", deviceId, "android", id, itemTitle)
+
+                        val sessionId = getUniqueCode(con, themePreference)
+                        val cName = getItem(position)!!.category
+                        val source = getItem(position)!!.source
+                        trackingCallback(apiInterfaceObj, themePreference, id, itemTitle, categoryId, cName, "", ActionType.DAILYDIGESTLISTCLICK.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, source, 0)
+
                         var detailIntent = Intent(con, DetailNewsActivity::class.java)
                         detailIntent.putExtra("indexPosition", itemIndex!!)
                         detailIntent.putParcelableArrayListExtra("source_list", sourceList)
@@ -289,7 +292,12 @@ class DDNewsAdapter(context: Context) : PagedListAdapter<DailyDigestEntity, Recy
                     var itemTitle = getItem(position)!!.title
                     var deviceId = themePreference.getString("device_token", "")
                     trackClick("News Click", getItem(position)!!.category, itemTitle)
-                    trackUserSelection(apiInterfaceObj, "item_detail", deviceId, "android", id, itemTitle)
+
+                    val sessionId = getUniqueCode(con, themePreference)
+                    val cName = getItem(position)!!.category
+                    val source = getItem(position)!!.source
+                    trackingCallback(apiInterfaceObj, themePreference, id, itemTitle, categoryId, cName, "", ActionType.DAILYDIGESTLISTCLICK.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, source, 0)
+
                     var detailIntent = Intent(con, DetailNewsActivity::class.java)
                     detailIntent.putExtra("indexPosition", itemIndex!!)
                     detailIntent.putParcelableArrayListExtra("source_list", sourceList)

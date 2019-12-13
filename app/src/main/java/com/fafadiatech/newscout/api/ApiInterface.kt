@@ -129,6 +129,9 @@ interface ApiInterface {
                  @Query("plateform") plateform:String = "Android",
                  @Query("type") type:String,
                  /*@Query("domain_id") domainId : String,*/
-                 @Query("sid") sessionId:String
+                 @Query("sid") sessionId:String,
+                 @Query("source_name") sourceName:String,
+                 @Query("source_id") sourceId:Int,
+                 @Query("cluster_id") clusterId: Int
                 ): Call<Void>
 }

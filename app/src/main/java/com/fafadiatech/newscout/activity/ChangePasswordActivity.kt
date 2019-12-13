@@ -11,7 +11,7 @@ import androidx.appcompat.widget.AppCompatEditText
 import com.fafadiatech.newscout.R
 import com.fafadiatech.newscout.api.ApiClient
 import com.fafadiatech.newscout.api.ApiInterface
-import com.fafadiatech.newscout.appconstants.AppConstant
+import com.fafadiatech.newscout.appconstants.*
 import com.fafadiatech.newscout.model.ChangePasswordData
 import retrofit2.Call
 import retrofit2.Callback
@@ -67,6 +67,10 @@ class ChangePasswordActivity : BaseActivity() {
 
                     status = response.body()?.header?.status
                     if (status == 1) {
+
+                        var deviceId = themePreference.getString("device_token", "")
+                        val sessionId = getUniqueCode(this@ChangePasswordActivity, themePreference)
+                        trackingCallback(interfaceObj, themePreference, 0, "", 0, "", "", ActionType.CHANGEPASSWORD.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
                         val resultMessage: String? = response.body()?.body?.Msg
                     } else if (status == 0) {
 

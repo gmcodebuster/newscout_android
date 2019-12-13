@@ -13,7 +13,7 @@ import androidx.appcompat.widget.AppCompatEditText
 import com.fafadiatech.newscout.R
 import com.fafadiatech.newscout.api.ApiClient
 import com.fafadiatech.newscout.api.ApiInterface
-import com.fafadiatech.newscout.appconstants.AppConstant
+import com.fafadiatech.newscout.appconstants.*
 import com.fafadiatech.newscout.customcomponent.BaseAlertDialog
 import com.fafadiatech.newscout.model.SignUpErrorData
 import com.fafadiatech.newscout.model.SignUpMessageData
@@ -76,6 +76,9 @@ class SignUpActivity : BaseActivity() {
                 override fun onResponse(call: Call<SignUpMessageData>, response: Response<SignUpMessageData>) {
                     var responseCode = response.code()
                     if (responseCode >= 200 && responseCode < 400) {
+                        var deviceId = themePreference.getString("device_token", "")
+                        val sessionId = getUniqueCode(this@SignUpActivity, themePreference)
+                        trackingCallback(apiInterfaceSignUp, themePreference, 0, "", 0, "", "", ActionType.SIGNUP.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
                         status = response.body()?.header?.status
                         var result: String = response.body()?.body!!.Msg
                         Toast.makeText(this@SignUpActivity, result, Toast.LENGTH_SHORT).show()

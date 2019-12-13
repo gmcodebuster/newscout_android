@@ -2,6 +2,7 @@ package com.fafadiatech.newscout.adapter
 
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -16,7 +17,10 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.fafadiatech.newscout.R
 import com.fafadiatech.newscout.activity.DetailNewsActivity
-import com.fafadiatech.newscout.appconstants.getImageURL
+import com.fafadiatech.newscout.api.ApiClient
+import com.fafadiatech.newscout.api.ApiInterface
+import com.fafadiatech.newscout.appconstants.*
+import com.fafadiatech.newscout.application.MyApplication
 import com.fafadiatech.newscout.model.DetailNewsData
 
 class SuggestedNewsAdapter(val context: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -26,10 +30,14 @@ class SuggestedNewsAdapter(val context: Context) : RecyclerView.Adapter<Recycler
     var widthInPixel: Int = 0
     var heightInPixel: Int = 0
     val requestOptions = RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL)
+    lateinit var themePreference: SharedPreferences
+    var interfaceObj: ApiInterface
 
     init {
         widthInPixel = convertDpToPx(context, 160)
         heightInPixel = convertDpToPx(context, 80)
+        interfaceObj = ApiClient.getClient().create(ApiInterface::class.java)
+        themePreference = context.getSharedPreferences(AppConstant.APPPREF, Context.MODE_PRIVATE)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -83,11 +91,21 @@ class SuggestedNewsAdapter(val context: Context) : RecyclerView.Adapter<Recycler
 
                 viewHolderItem.parentLayout.setOnClickListener {
                     itemIndex = position - 1
+                    var deviceId = themePreference.getString("device_token", "")
+                    val newsId = detailList.get(itemIndex).article_id
+                    val itemName = detailList.get(itemIndex).title
+                    val cName = detailList.get(itemIndex).category
+                    val cId = MyApplication.categoryIdHashMap.get(cName) ?: 0
+                    val sourceName = detailList.get(itemIndex).source
+
                     var detailIntent = Intent(context, DetailNewsActivity::class.java)
                     detailIntent.putExtra("indexPosition", itemIndex)
                     if (detailList.isNotEmpty()) {
                         detailIntent.putParcelableArrayListExtra("arrayList", detailList)
                     }
+                    val sessionId = getUniqueCode(context, themePreference)
+                    trackingCallback(interfaceObj, themePreference, newsId, itemName, cId,cName,"", ActionType.RECOMMENDATION.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, sourceName, 0)
+
                     context.startActivity(detailIntent)
                 }
             }

@@ -40,9 +40,7 @@ import com.fafadiatech.newscout.activity.SignInActivity
 import com.fafadiatech.newscout.activity.SourceActivity
 import com.fafadiatech.newscout.api.ApiClient
 import com.fafadiatech.newscout.api.ApiInterface
-import com.fafadiatech.newscout.appconstants.AppConstant
-import com.fafadiatech.newscout.appconstants.getImageURL
-import com.fafadiatech.newscout.appconstants.trackUserSelection
+import com.fafadiatech.newscout.appconstants.*
 import com.fafadiatech.newscout.application.MyApplication
 import com.fafadiatech.newscout.customcomponent.BaseAlertDialog
 import com.fafadiatech.newscout.db.NewsDao
@@ -263,6 +261,13 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
             var sentViaMessage = "Sent via NewsCout"
             var newsUrl = detailList.get(position).source_url
             var image = Uri.parse(detailList.get(position).cover_image)
+            val cName = detailList.get(position).category
+            val cId = MyApplication.categoryIdHashMap.get(cName) ?: 0
+            var deviceId = themePreference.getString("device_token", "")
+            var sourceName = detailList.get(position).source
+            val sessionId = getUniqueCode(context, themePreference)
+            trackingCallback(interfaceObj, themePreference, newsId, newsTitle, cId, cName, "", ActionType.SHAREARTICLE.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId,sourceName,0)
+
             var sendIntent = Intent().apply {
                 action = Intent.ACTION_SEND_MULTIPLE
 
@@ -298,13 +303,16 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
                                 Toast.makeText(context, "Article bookmarked", Toast.LENGTH_SHORT).show()
                                 isBookmark = 1
                                 detailList.get(position).bookmark_status = 1
+                                var obj = detailList.get(position)
+                                var id = obj.article_id
+                                var category = obj.category?.let { it } ?: ""
+                                var title = obj.title
+                                var source = obj.source
+
+
 
                                 if (categoryName.equals("Search")) {
-                                    var obj = detailList.get(position)
-                                    var id = obj.article_id
-                                    var category = obj.category?.let { it } ?: ""
-                                    var title = obj.title
-                                    var source = obj.source
+
                                     var sourceUrl = obj.source_url
                                     var desc = obj.description
                                     var publishedOn = obj.published_on
@@ -314,6 +322,13 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
                                     var newsEntity = NewsEntity(id, 0, title, source, category, sourceUrl, coverImage, desc, publishedOn, hasTags, articleScore)
                                     newsDao.insertNewsEntity(newsEntity)
                                 }
+
+
+                                var deviceId = themePreference.getString("device_token", "")
+                                val sessionId = getUniqueCode(context, themePreference)
+                                val cId = MyApplication.categoryIdHashMap.get(category) ?: 0
+                                trackingCallback(interfaceObj, themePreference, id, title, cId, category, "", ActionType.BOOKMARK.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, source, 0)
+
                                 fetchDataViewModel.startBookmarkWorkManager(token, isBookmark, newsId)
                                 notifyDataSetChanged()
                             } else if (isBookmark == 1) {
@@ -339,7 +354,12 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
         newsSource.setOnClickListener {
             var deviceId = themePreference.getString("device_token", "")
             var sourceName = detailList.get(position).source
-            trackUserSelection(interfaceObj, "item_view_source", deviceId, "android", 0, sourceName)
+            val category = detailList.get(position).category
+            val itemName = detailList.get(position).title
+            val cName = detailList.get(position).category
+            val cId = MyApplication.categoryIdHashMap.get(cName) ?: 0
+            val sessionId = getUniqueCode(context, themePreference)
+            trackingCallback(interfaceObj, themePreference, newsId, itemName, cId,cName,"", ActionType.SOURCECLICK.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, sourceName, 0)
             var intent = Intent(context, SourceActivity::class.java)
             var source = detailList.get(position).source
             intent.putExtra("source_from_detail", source)
@@ -347,6 +367,12 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
         }
 
         btnReadMore.setOnClickListener {
+            val itemName = detailList.get(position).title
+            var deviceId = themePreference.getString("device_token", "")
+            val cName = detailList.get(position).category
+            val cId = MyApplication.categoryIdHashMap.get(cName) ?: 0
+            val sessionId = getUniqueCode(context, themePreference)
+            trackingCallback(interfaceObj, themePreference, newsId, itemName, cId, cName, "", ActionType.READMORE.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId,"",0)
             var url = detailList.get(position).source_url
             val i = Intent(context, NewsWebActivity::class.java)
             i.putExtra("url_link", url)

@@ -2,6 +2,7 @@ package com.fafadiatech.newscout.adapter
 
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
@@ -19,7 +20,10 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.fafadiatech.newscout.R
 import com.fafadiatech.newscout.activity.DetailNewsActivity
-import com.fafadiatech.newscout.appconstants.getImageURL
+import com.fafadiatech.newscout.api.ApiClient
+import com.fafadiatech.newscout.api.ApiInterface
+import com.fafadiatech.newscout.appconstants.*
+import com.fafadiatech.newscout.application.MyApplication
 import com.fafadiatech.newscout.model.DetailNewsData
 import com.github.marlonlom.utilities.timeago.TimeAgo
 import com.github.marlonlom.utilities.timeago.TimeAgoMessages
@@ -34,10 +38,13 @@ class BookmarkedNewsAdapter(var con: Context, var category: String) : RecyclerVi
     var heightInPixel: Int = 0
     var bookmarkedList = ArrayList<DetailNewsData>()
     val requestOptions = RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL)
-
+    lateinit var apiInterfaceObj: ApiInterface
+    lateinit var themePreference: SharedPreferences
     init {
         widthInPixel = convertDpToPx(con, 75)
         heightInPixel = convertDpToPx(con, 75)
+        apiInterfaceObj = ApiClient.getClient().create(ApiInterface::class.java)
+        themePreference = con.getSharedPreferences(AppConstant.APPPREF, Context.MODE_PRIVATE)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -146,6 +153,15 @@ class BookmarkedNewsAdapter(var con: Context, var category: String) : RecyclerVi
 
                 rightItemViewholder.itemRootView.setOnClickListener {
 
+                    val sessionId = getUniqueCode(con, themePreference)
+                    var deviceId = themePreference.getString("device_token", "")
+                    val id = bookmarkedList.get(position)!!.article_id
+                    val title = bookmarkedList.get(position)!!.title
+                    val cName = bookmarkedList.get(position)!!.category
+                    val categoryId = MyApplication.categoryIdHashMap.get(cName) ?: 0
+                    val source = bookmarkedList.get(position)!!.source
+                    trackingCallback(apiInterfaceObj, themePreference, id, title, categoryId, cName, "", ActionType.BOOKMARKARTICLEDETAIL.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, source, 0)
+
                     var detailIntent = Intent(con, DetailNewsActivity::class.java)
                     detailIntent.putExtra("indexPosition", position)
                     detailIntent.putExtra("category_of_newslist", "Bookmark")
@@ -220,6 +236,16 @@ class BookmarkedNewsAdapter(var con: Context, var category: String) : RecyclerVi
                 }
 
                 leftItemViewholder.itemRootView.setOnClickListener {
+
+                    val sessionId = getUniqueCode(con, themePreference)
+                    var deviceId = themePreference.getString("device_token", "")
+                    val id = bookmarkedList.get(position)!!.article_id
+                    val title = bookmarkedList.get(position)!!.title
+                    val cName = bookmarkedList.get(position)!!.category
+                    val categoryId = MyApplication.categoryIdHashMap.get(cName) ?: 0
+                    val source = bookmarkedList.get(position)!!.source
+                    trackingCallback(apiInterfaceObj, themePreference, id, title, categoryId, cName, "", ActionType.BOOKMARKARTICLEDETAIL.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, source, 0)
+
                     var detailIntent = Intent(con, DetailNewsActivity::class.java)
                     detailIntent.putExtra("indexPosition", position)
                     detailIntent.putExtra("category_of_newslist", "Bookmark")

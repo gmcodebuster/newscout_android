@@ -2,6 +2,7 @@ package com.fafadiatech.newscout.adapter
 
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
@@ -19,8 +20,11 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.fafadiatech.newscout.R
 import com.fafadiatech.newscout.activity.DetailNewsActivity
-import com.fafadiatech.newscout.appconstants.getImageURL
+import com.fafadiatech.newscout.api.ApiClient
+import com.fafadiatech.newscout.api.ApiInterface
+import com.fafadiatech.newscout.appconstants.*
 import com.fafadiatech.newscout.db.NewsEntity
+import com.fafadiatech.newscout.interfaces.PlaceHolderImageListener
 import com.github.marlonlom.utilities.timeago.TimeAgo
 import com.github.marlonlom.utilities.timeago.TimeAgoMessages
 import java.text.SimpleDateFormat
@@ -37,6 +41,12 @@ class TrendingNewsAdapter(context: Context, category: String) : RecyclerView.Ada
     var categoryType = category
     var clusterId: Int = 0
     val requestOptions = RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL)
+    lateinit var themePreference: SharedPreferences
+    lateinit var apiInterfaceObj: ApiInterface
+    init {
+        apiInterfaceObj = ApiClient.getClient().create(ApiInterface::class.java)
+        themePreference = context.getSharedPreferences(AppConstant.APPPREF, Context.MODE_PRIVATE)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         var inflater = LayoutInflater.from(parent.context)
@@ -129,9 +139,16 @@ class TrendingNewsAdapter(context: Context, category: String) : RecyclerView.Ada
 
                 rightItemViewholder.itemRootView.setOnClickListener {
                     itemIndex = position
+                    var deviceId = themePreference.getString("device_token", "")
                     var id = trendingList.get(position)!!.id
                     categoryId = trendingList.get(position)!!.category_id
                     var itemTitle = trendingList.get(position)!!.title
+                    val sessionId = getUniqueCode(con, themePreference)
+                    val source = trendingList.get(position)!!.source
+                    val cName = trendingList.get(position)!!.category
+
+                    trackingCallback(apiInterfaceObj, themePreference, id, itemTitle, categoryId, cName, "", ActionType.TRENDINGLISTCLICK.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, source, 0)
+
                     var detailIntent = Intent(con, DetailNewsActivity::class.java)
                     detailIntent.putExtra("indexPosition", itemIndex!!)
                     detailIntent.putExtra("cluster_id", clusterId)
@@ -215,6 +232,13 @@ class TrendingNewsAdapter(context: Context, category: String) : RecyclerView.Ada
                     var id = trendingList.get(position)!!.id
                     categoryId = trendingList.get(position).category_id
                     var itemTitle = trendingList.get(position).title
+                    var deviceId = themePreference.getString("device_token", "")
+                    val sessionId = getUniqueCode(con, themePreference)
+                    val source = trendingList.get(position)!!.source
+                    val cName = trendingList.get(position)!!.category
+
+                    trackingCallback(apiInterfaceObj, themePreference, id, itemTitle, categoryId, cName, "", ActionType.TRENDINGLISTCLICK.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, source, 0)
+
                     var detailIntent = Intent(con, DetailNewsActivity::class.java)
                     detailIntent.putExtra("indexPosition", itemIndex!!)
                     detailIntent.putExtra("cluster_id", clusterId)

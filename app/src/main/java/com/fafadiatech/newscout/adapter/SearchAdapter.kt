@@ -26,9 +26,8 @@ import com.fafadiatech.newscout.R
 import com.fafadiatech.newscout.activity.DetailNewsActivity
 import com.fafadiatech.newscout.api.ApiClient
 import com.fafadiatech.newscout.api.ApiInterface
-import com.fafadiatech.newscout.appconstants.AppConstant
-import com.fafadiatech.newscout.appconstants.getImageURL
-import com.fafadiatech.newscout.appconstants.trackUserSelection
+import com.fafadiatech.newscout.appconstants.*
+import com.fafadiatech.newscout.application.MyApplication
 import com.fafadiatech.newscout.db.NewsEntity
 import com.fafadiatech.newscout.interfaces.ProgressBarListener
 import com.fafadiatech.newscout.viewmodel.FetchDataApiViewModel
@@ -174,7 +173,14 @@ class SearchAdapter(context: Context, category: String, var progressBarListener:
                         categoryId = getItem(position)!!.category_id
                         var itemTitle = getItem(position)!!.title
                         var deviceId = themePreference.getString("device_token", "")
-                        trackUserSelection(apiInterfaceObj, "item_detail", deviceId, "android", id, itemTitle)
+
+                        val sessionId = getUniqueCode(con, themePreference)
+                        val title = getItem(position)!!.title
+                        val cName = getItem(position)!!.category
+                        val categoryId = getItem(position)!!.category_id
+                        val source = getItem(position)!!.source
+                        trackingCallback(apiInterfaceObj, themePreference, id, title, categoryId, cName, "", ActionType.ARTICLESEARCHDETAIL.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, source, 0)
+
                         var detailIntent = Intent(con, DetailNewsActivity::class.java)
                         detailIntent.putExtra("indexPosition", itemIndex!!)
                         detailIntent.putParcelableArrayListExtra("source_list", sourceList)
@@ -266,7 +272,14 @@ class SearchAdapter(context: Context, category: String, var progressBarListener:
                     categoryId = getItem(position)!!.category_id
                     var itemTitle = getItem(position)!!.title
                     var deviceId = themePreference.getString("device_token", "")
-                    trackUserSelection(apiInterfaceObj, "item_detail", deviceId, "android", id, itemTitle)
+
+                    val sessionId = getUniqueCode(con, themePreference)
+                    val title = getItem(position)!!.title
+                    val cName = getItem(position)!!.category
+                    val categoryId = getItem(position)!!.category_id
+                    val source = getItem(position)!!.source
+                    trackingCallback(apiInterfaceObj, themePreference, id, title, categoryId, cName, "", ActionType.ARTICLESEARCHDETAIL.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, source, 0)
+
                     var detailIntent = Intent(con, DetailNewsActivity::class.java)
                     detailIntent.putExtra("indexPosition", itemIndex!!)
                     detailIntent.putParcelableArrayListExtra("source_list", sourceList)

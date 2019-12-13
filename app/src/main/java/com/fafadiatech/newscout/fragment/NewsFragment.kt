@@ -30,8 +30,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.fafadiatech.newscout.R
 import com.fafadiatech.newscout.adapter.NewsAdapter
-import com.fafadiatech.newscout.appconstants.AppConstant
-import com.fafadiatech.newscout.appconstants.NEWSPAGESIZE
+import com.fafadiatech.newscout.api.ApiClient
+import com.fafadiatech.newscout.api.ApiInterface
+import com.fafadiatech.newscout.appconstants.*
 import com.fafadiatech.newscout.application.MyApplication
 import com.fafadiatech.newscout.broadcast.ConnectivityReceiver
 import com.fafadiatech.newscout.db.NewsEntity
@@ -45,6 +46,7 @@ import com.fafadiatech.newscout.viewmodel.ViewModelProviderFactory
 import com.omadahealth.github.swipyrefreshlayout.library.SwipyRefreshLayout
 import com.omadahealth.github.swipyrefreshlayout.library.SwipyRefreshLayoutDirection
 import kotlinx.android.synthetic.main.fragment_main.*
+import retrofit2.Call
 
 
 class NewsFragment() : Fragment(), ConnectivityReceiver.ConnectivityReceiverListener, PlaceHolderImageListener {
@@ -124,6 +126,8 @@ class NewsFragment() : Fragment(), ConnectivityReceiver.ConnectivityReceiverList
         animFadein = AnimationUtils.loadAnimation(activity, R.anim.fade_in)
         animFadeout = AnimationUtils.loadAnimation(activity, R.anim.fade_out)
         progressBar = view.findViewById(R.id.pbar_loading)
+        val apiInterfaceObj = ApiClient.getClient().create(ApiInterface::class.java)
+
         fragRecyclerview?.addOnScrollListener(object: RecyclerView.OnScrollListener(){
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
@@ -177,6 +181,11 @@ class NewsFragment() : Fragment(), ConnectivityReceiver.ConnectivityReceiverList
         }
 
         fabReturnTop.setOnClickListener {
+            var deviceId = themePreference.getString("device_token", "")
+            //var tCall: Call<Void> = apiInterfaceObj.trackApp(0, "", 0, "", "", ActionType.SCROLLTOTOP.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type,getUniqueCode(activity!!.baseContext, themePreference))
+            //trackingCallback(tCall)
+            val sessionId = getUniqueCode(activity!!.baseContext, themePreference)
+            trackingCallback(apiInterfaceObj, themePreference, 0, "", 0, "", "", ActionType.SCROLLTOTOP.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
             fragRecyclerview.smoothScrollToPosition(0)
         }
 

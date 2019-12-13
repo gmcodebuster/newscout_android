@@ -63,6 +63,7 @@ class DbInsertMenuWork(context: Context, params: WorkerParameters) : Worker(cont
                     }
                     MyApplication.tagDataHashMap.put(subCategory, tagList)
                     MyApplication.categoryIdHashMap.put(subCategory, subCategoryId)
+                    MyApplication.categoryNameHashMap.put(subCategoryId, subCategory)
                 }
                 headingList.add(category)
             }

@@ -16,7 +16,7 @@ import com.fafadiatech.newscout.activity.ProfileActivity
 import com.fafadiatech.newscout.activity.SignInActivity
 import com.fafadiatech.newscout.api.ApiClient
 import com.fafadiatech.newscout.api.ApiInterface
-import com.fafadiatech.newscout.appconstants.AppConstant
+import com.fafadiatech.newscout.appconstants.*
 import com.fafadiatech.newscout.db.NewsDao
 import com.fafadiatech.newscout.db.NewsDatabase
 import com.fafadiatech.newscout.model.VoteArticleData
@@ -29,7 +29,7 @@ import retrofit2.Response
 
 class SettingFragment() : PreferenceFragmentCompat() {
 
-    lateinit var themepreference: SharedPreferences
+    lateinit var themePreference: SharedPreferences
     var nightModeEnable: Boolean = false
     lateinit var fontSize: String
     var themes: Int = R.style.DefaultMedium
@@ -53,8 +53,8 @@ class SettingFragment() : PreferenceFragmentCompat() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        themepreference = this.activity!!.getSharedPreferences(AppConstant.APPPREF, Context.MODE_PRIVATE)
-        nightModeEnable = themepreference.getBoolean("night mode enable", false)
+        themePreference = this.activity!!.getSharedPreferences(AppConstant.APPPREF, Context.MODE_PRIVATE)
+        nightModeEnable = themePreference.getBoolean("night mode enable", false)
         apiInterfaceObj = ApiClient.getClient().create(ApiInterface::class.java)
         newsDao = newsDatabase!!.newsDao()
 
@@ -72,8 +72,8 @@ class SettingFragment() : PreferenceFragmentCompat() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        themes = themepreference.getInt("theme", R.style.DefaultMedium)
-        mEditor = themepreference.edit()
+        themes = themePreference.getInt("theme", R.style.DefaultMedium)
+        mEditor = themePreference.edit()
         activity!!.setTheme(getSavedTheme(themes))
         PreferenceManager.getDefaultSharedPreferences(this.activity)
         addPreferencesFromResource(R.xml.setting_preference)
@@ -92,14 +92,14 @@ class SettingFragment() : PreferenceFragmentCompat() {
         var isDailyEditionEnabled: Boolean
         var isPersonalisedEnabled: Boolean
 
-        var name = themepreference.getString("text_font_size", "Small")
+        var name = themePreference.getString("text_font_size", "Small")
         fontSizeListPref.title = name.capitalize()
         fontSizeListPref.setSummary("Text Size")
 
         fontSizeListPref.onPreferenceChangeListener = object : Preference.OnPreferenceChangeListener {
             override fun onPreferenceChange(p0: Preference?, p1: Any?): Boolean {
                 var fontSize: String = p1 as String
-                var editor = themepreference.edit()
+                var editor = themePreference.edit()
                 editor.putString("text_font_size", fontSize)
                 editor.commit()
                 if (nightModeEnable) {
@@ -107,7 +107,7 @@ class SettingFragment() : PreferenceFragmentCompat() {
                 } else {
                     chooseDefaultTheme()
                 }
-                mEditor = themepreference.edit()
+                mEditor = themePreference.edit()
                 mEditor.putInt("theme", themes)
 
                 mEditor.commit()
@@ -123,12 +123,12 @@ class SettingFragment() : PreferenceFragmentCompat() {
                 } else {
                     isBreakingNewsEnabled = true
                 }
-                var editor = themepreference.edit()
+                var editor = themePreference.edit()
                 editor.putBoolean("breaking_news_state", isBreakingNewsEnabled)
                 editor.apply()
-                var deviceId = themepreference.getString("device_token", "")
-                var isPersonalised = themepreference.getBoolean("personalised_news_state", false)
-                var isDailyEdition = themepreference.getBoolean("daily_edition_news_state", false)
+                var deviceId = themePreference.getString("device_token", "")
+                var isPersonalised = themePreference.getBoolean("personalised_news_state", false)
+                var isDailyEdition = themePreference.getBoolean("daily_edition_news_state", false)
 
                 return true
             }
@@ -141,12 +141,12 @@ class SettingFragment() : PreferenceFragmentCompat() {
                 } else {
                     isDailyEditionEnabled = true
                 }
-                var editor = themepreference.edit()
+                var editor = themePreference.edit()
                 editor.putBoolean("daily_edition_news_state", isDailyEditionEnabled)
                 editor.apply()
-                var deviceId = themepreference.getString("device_token", "")
-                var isBreakingNews = themepreference.getBoolean("breaking_news_state", false)
-                var isPersonalised = themepreference.getBoolean("personalised_news_state", false)
+                var deviceId = themePreference.getString("device_token", "")
+                var isBreakingNews = themePreference.getBoolean("breaking_news_state", false)
+                var isPersonalised = themePreference.getBoolean("personalised_news_state", false)
 
                 return true
             }
@@ -159,12 +159,12 @@ class SettingFragment() : PreferenceFragmentCompat() {
                 } else {
                     isPersonalisedEnabled = true
                 }
-                var editor = themepreference.edit()
+                var editor = themePreference.edit()
                 editor.putBoolean("personalised_news_state", isPersonalisedEnabled)
                 editor.apply()
-                var deviceId = themepreference.getString("device_token", "")
-                var isBreakingNews = themepreference.getBoolean("breaking_news_state", false)
-                var isDailyEdition = themepreference.getBoolean("daily_edition_news_state", false)
+                var deviceId = themePreference.getString("device_token", "")
+                var isBreakingNews = themePreference.getBoolean("breaking_news_state", false)
+                var isDailyEdition = themePreference.getBoolean("daily_edition_news_state", false)
 
                 return true
             }
@@ -173,7 +173,7 @@ class SettingFragment() : PreferenceFragmentCompat() {
     }
 
     fun chooseNightTheme() {
-        fontSize = themepreference.getString("text_font_size", "medium")
+        fontSize = themePreference.getString("text_font_size", "medium")
         if (fontSize.equals("small")) {
             themes = R.style.DefaultSmall
         } else if (fontSize.equals("medium")) {
@@ -184,7 +184,7 @@ class SettingFragment() : PreferenceFragmentCompat() {
     }
 
     fun chooseDefaultTheme() {
-        fontSize = themepreference.getString("text_font_size", "medium")
+        fontSize = themePreference.getString("text_font_size", "medium")
         if (fontSize.equals("small")) {
             themes = R.style.DefaultSmall
         } else if (fontSize.equals("medium")) {
@@ -197,11 +197,15 @@ class SettingFragment() : PreferenceFragmentCompat() {
     override fun onPreferenceTreeClick(preference: Preference?): Boolean {
         val key = preference!!.key
         if (key == "login") {
-            val token = themepreference.getString("token value", "")
+            val token = themePreference.getString("token value", "")
             if (preference.title.equals("Login")) {
                 val intent = Intent(activity, SignInActivity::class.java)
                 startActivity(intent)
             } else if (preference.summary.contains("Logout")) {
+                var deviceId = themePreference.getString("device_token", "")
+                val sessionId = getUniqueCode(activity!!.baseContext, themePreference)
+                trackingCallback(apiInterfaceObj, themePreference, 0, "", 0, "", "", ActionType.LOGOUT.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
+
                 LoginManager.getInstance().logOut()
                 if (mGoogleApiClient != null) {
                     Auth.GoogleSignInApi.signOut(mGoogleApiClient)
@@ -217,10 +221,19 @@ class SettingFragment() : PreferenceFragmentCompat() {
 
             return true
         } else if (key == "profile") {
+            var deviceId = themePreference.getString("device_token", "")
+            val sessionId = getUniqueCode(activity!!.baseContext, themePreference)
+            trackingCallback(apiInterfaceObj, themePreference, 0, "", 0, "", "", ActionType.PROFILEVIEW.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
+
             val i = Intent(activity, ProfileActivity::class.java)
             startActivity(i)
             return true
         } else if (key == "share_app") {
+
+            var deviceId = themePreference.getString("device_token", "")
+            val sessionId = getUniqueCode(activity!!.baseContext, themePreference)
+            trackingCallback(apiInterfaceObj, themePreference, 0, "", 0, "", "", ActionType.SHARETHISAPP.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
+
             var sendIntent = Intent()
             sendIntent.action = Intent.ACTION_SEND
             sendIntent.putExtra(Intent.EXTRA_TEXT, "Check my app at play.google/fafadiatech")
@@ -228,8 +241,16 @@ class SettingFragment() : PreferenceFragmentCompat() {
             startActivity(sendIntent)
             return true
         } else if (key == "rate_app") {
+            var deviceId = themePreference.getString("device_token", "")
+            val sessionId = getUniqueCode(activity!!.baseContext, themePreference)
+            trackingCallback(apiInterfaceObj, themePreference, 0, "", 0, "", "", ActionType.RATETHISAPP.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
+
             return true
         } else if (key == "about_us") {
+
+            var deviceId = themePreference.getString("device_token", "")
+            val sessionId = getUniqueCode(activity!!.baseContext, themePreference)
+            trackingCallback(apiInterfaceObj, themePreference, 0, "", 0, "", "", ActionType.ABOUTUS.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
             var aboutIntent = Intent(activity, AboutUsActivity::class.java)
             startActivity(aboutIntent)
             return true
@@ -238,7 +259,7 @@ class SettingFragment() : PreferenceFragmentCompat() {
 
     override fun onResume() {
         super.onResume()
-        val token = themepreference.getString("token value", "")
+        val token = themePreference.getString("token value", "")
         if (token.isNullOrBlank()) {
             preference.title = "Login"
         } else {
@@ -249,7 +270,7 @@ class SettingFragment() : PreferenceFragmentCompat() {
             preference.title = "Login"
             preference.summary = "Tap to Login"
         } else {
-            val emailId = themepreference.getString("login success", "")
+            val emailId = themePreference.getString("login success", "")
             preference.title = emailId
             preference.summary = "Tap to Logout"
         }
@@ -268,8 +289,8 @@ class SettingFragment() : PreferenceFragmentCompat() {
                     if (nightModeEnable == true) {
 
                     }
-                    themepreference.edit().remove("token value").apply()
-                    themepreference.edit().putString("login success", "").apply()
+                    themePreference.edit().remove("token value").apply()
+                    themePreference.edit().putString("login success", "").apply()
                 }
             })
         } catch (e: Throwable) {

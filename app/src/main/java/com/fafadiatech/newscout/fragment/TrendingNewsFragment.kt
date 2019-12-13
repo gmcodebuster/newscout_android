@@ -24,7 +24,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.fafadiatech.newscout.R
 import com.fafadiatech.newscout.adapter.TrendingNewsAdapter
-import com.fafadiatech.newscout.appconstants.AppConstant
+import com.fafadiatech.newscout.api.ApiClient
+import com.fafadiatech.newscout.api.ApiInterface
+import com.fafadiatech.newscout.appconstants.*
 import com.fafadiatech.newscout.application.MyApplication
 import com.fafadiatech.newscout.customcomponent.MyItemDecoration
 import com.fafadiatech.newscout.db.NewsEntity
@@ -45,6 +47,7 @@ class TrendingNewsFragment : Fragment() {
     lateinit var layoutManager: RecyclerView.LayoutManager
     lateinit var fetchDataViewModel: FetchDataApiViewModel
     lateinit var fabReturnTop: com.github.clans.fab.FloatingActionButton
+    lateinit var apiInterfaceObj: ApiInterface
     var checkInternet: Boolean = false
     var lessThenTen = false
     var moreThenTen = true
@@ -74,7 +77,7 @@ class TrendingNewsFragment : Fragment() {
 
             }
         }
-
+        apiInterfaceObj = ApiClient.getClient().create(ApiInterface::class.java)
         var theme: Int = themePreference.getInt("theme", R.style.DefaultMedium)
         var isNightModeEnable = themePreference.getBoolean("night mode enable", false)
         activity?.setTheme(theme)
@@ -149,6 +152,14 @@ class TrendingNewsFragment : Fragment() {
                 }
             }
         })
+
+        fabReturnTop.setOnClickListener {
+            var deviceId = themePreference.getString("device_token", "")
+            val sessionId = getUniqueCode(activity!!.baseContext, themePreference)
+            trackingCallback(apiInterfaceObj, themePreference, 0, "", 0, "", "", ActionType.SCROLLTOTOP.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId,"", 0)
+
+            rvNews.smoothScrollToPosition(0)
+        }
 
         if (tagName.equals("Trending")) {
             fetchDataViewModel = ViewModelProviders.of(this).get(FetchDataApiViewModel::class.java)

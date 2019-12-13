@@ -9,12 +9,17 @@ import android.provider.Settings
 import android.util.Log
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatDelegate
+import com.fafadiatech.newscout.api.ApiClient
+import com.fafadiatech.newscout.api.ApiInterface
 import com.fafadiatech.newscout.application.MyApplication
 import com.fafadiatech.newscout.db.NewsDao
 import com.fafadiatech.newscout.db.NewsDatabase
 import com.fafadiatech.newscout.model.AdsData
 import com.fafadiatech.newscout.model.INews
 import com.fafadiatech.newscout.model.SubMenuResultData
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -117,6 +122,18 @@ fun getUUID(): String{
     return uniqueID
 }
 
+/*fun trackingCallback(tCall: Call<Void>){
+    tCall.enqueue(object: Callback<Void> {
+        override fun onFailure(call: Call<Void>, t: Throwable) {
+            Log.e("Utils: ", "Error")
+        }
+
+        override fun onResponse(call: Call<Void>, response: Response<Void>) {
+            Log.d("Utils: ", "Success")
+        }
+    })
+}*/
+
 enum class ActionType(val type:String){
     PUBLISHED("published"),
     APPOPEN("app_open"),
@@ -127,6 +144,7 @@ enum class ActionType(val type:String){
     READMORE("original_article"),
     RECOMMENDATION("recommendations"),
     BOOKMARK("bookmark_article"),
+    BOOKMARKARTICLEDETAIL("bookmark_article_detail"),
     SHAREARTICLE("share_article"),
     SOURCECLICK("source_click"),
     SEARCHQUERY("search_query"),
@@ -140,14 +158,17 @@ enum class ActionType(val type:String){
     SIGNUP("signup"),
     CHANGEPASSWORD("change_password"),
     SHARETHISAPP("share_this_app"),
+    RATETHISAPP("rate_this_app"),
     ABOUTUS("about_us"),
     DEVELOPEDBY("devloped_by"),
     TRENDINGMENUCLICK("trending_menu_click"),
+    TRENDINGGROUPCLICK("trending_group_click"),
     TRENDINGLISTCLICK("trending_list_click"),
     DAILYDIGESTMENUCLICK("daily_digest_click"),
-    FAILYDIGESTLISTCLICK("daily_digest_list_click"),
+    DAILYDIGESTLISTCLICK("daily_digest_list_click"),
     OPTIONMENU("options_menu_open"),
     SETTINGSMENUCLICK("settings_open"),
+    SEARCHMENUCLICK("search_menu_click"),
     MODECHANGE("mode_change"),
     BOOKMARKMENUCLICK("view_book_marks"),
     SCROLLTOTOP("scroll_to_top"),
@@ -160,4 +181,34 @@ enum class ViewType(val type: String){
     EDITORIALVIEW("EDITORIAL_VIEW"),
     ENGAGEVIEW("ENGAGE_VIEW"),
     MONETIZATIONVIEW("MONETIZATION_VIEW")
+}
+
+fun trackingCallback(apiInterfaceObj: ApiInterface, themePreference: SharedPreferences, itemId:Int, itemName:String, categoryId: Int, categoryName: String, authorName:String, action:String, deviceId:String, plateform:String, type:String, sessionId:String, sourceName:String, sourceId:Int = 0, clusterId: Int = 0){
+
+    //var deviceId = themePreference.getString("device_token", "")
+    var tCall: Call<Void> = apiInterfaceObj.trackApp(itemId, itemName, categoryId, categoryName, authorName, action, deviceId, plateform, type, sessionId, sourceName, sourceId, clusterId) //getUniqueCode(con, themePreference)
+    tCall.enqueue(object: Callback<Void> {
+        override fun onFailure(call: Call<Void>, t: Throwable) {
+            Log.e("Utils: ", "Error")
+        }
+
+        override fun onResponse(call: Call<Void>, response: Response<Void>) {
+            Log.d("Utils: ", "Success")
+        }
+    })
+}
+
+fun adsTrackingCallback(apiInterfaceObj: ApiInterface, themePreference: SharedPreferences, itemId:Int, itemName:String, categoryId: Int, categoryName: String, authorName:String, action:String, deviceId:String, plateform:String, type:String, sessionId:String, sourceName:String, sourceId:Int = 0, clusterId: Int = 0){
+
+    //var deviceId = themePreference.getString("device_token", "")
+    var tCall: Call<Void> = apiInterfaceObj.trackApp(itemId, itemName, categoryId, categoryName, authorName, action, deviceId, plateform, type, sessionId, sourceName, sourceId, clusterId) //getUniqueCode(con, themePreference)
+    tCall.enqueue(object: Callback<Void> {
+        override fun onFailure(call: Call<Void>, t: Throwable) {
+            Log.e("Utils: ", "Error")
+        }
+
+        override fun onResponse(call: Call<Void>, response: Response<Void>) {
+            Log.d("Utils: ", "Success")
+        }
+    })
 }

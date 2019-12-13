@@ -11,7 +11,7 @@ import androidx.appcompat.widget.AppCompatEditText
 import com.fafadiatech.newscout.R
 import com.fafadiatech.newscout.api.ApiClient
 import com.fafadiatech.newscout.api.ApiInterface
-import com.fafadiatech.newscout.appconstants.AppConstant
+import com.fafadiatech.newscout.appconstants.*
 import com.fafadiatech.newscout.model.ForgotPasswordData
 import retrofit2.Call
 import retrofit2.Callback
@@ -52,6 +52,11 @@ class ForgotPasswordActivity : BaseActivity() {
                     status = response.body()?.header?.status
                     if (status == 1) {
                         var resultSuccess = response.body()?.body?.Msg
+
+                        var deviceId = themePreference.getString("device_token", "")
+                        val sessionId = getUniqueCode(this@ForgotPasswordActivity, themePreference)
+                        trackingCallback(interfaceObj, themePreference, 0, "", 0, "", "", ActionType.FORGOTPASSWORD.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
+
                     } else if (status == 0) {
 
                     }

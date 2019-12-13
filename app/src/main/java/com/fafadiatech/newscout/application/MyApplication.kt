@@ -35,6 +35,7 @@ class MyApplication : Application() {
 
         var tagDataHashMap = HashMap<String, ArrayList<String>>()
         var categoryIdHashMap = HashMap<String, Int>()
+        var categoryNameHashMap = HashMap< Int, String>()
         var zeroItemFlag: Boolean = true
         var resultSize: Int = 0
 

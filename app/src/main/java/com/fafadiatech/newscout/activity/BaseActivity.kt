@@ -26,8 +26,6 @@ open class BaseActivity : AppCompatActivity(), ConnectivityReceiver.Connectivity
         this.setTheme(themes)
         connectivityReceiver = ConnectivityReceiver()
         connectivityReceiver.setListener(this)
-        //call event tracking function
-        //generate Unique ID and save it into shared preferences
         getUniqueCode(this, themePreference)
     }
 
@@ -53,7 +51,6 @@ open class BaseActivity : AppCompatActivity(), ConnectivityReceiver.Connectivity
 
     override fun onDestroy() {
         super.onDestroy()
-        //call event tracking function
-        //Remove old unique ID
+
     }
 }

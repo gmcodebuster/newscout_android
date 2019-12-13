@@ -27,7 +27,7 @@ import com.fafadiatech.newscout.R
 import com.fafadiatech.newscout.adapter.TrendingAdapter
 import com.fafadiatech.newscout.api.ApiClient
 import com.fafadiatech.newscout.api.ApiInterface
-import com.fafadiatech.newscout.appconstants.AppConstant
+import com.fafadiatech.newscout.appconstants.*
 import com.fafadiatech.newscout.customcomponent.MyItemDecoration
 import com.fafadiatech.newscout.db.NewsDao
 import com.fafadiatech.newscout.db.NewsDatabase
@@ -166,6 +166,10 @@ class TrendingFragment : Fragment(), AddTrendingFragmentListener {
         })
 
         fabReturnTop.setOnClickListener {
+            var deviceId = themePreference.getString("device_token", "")
+            val sessionId = getUniqueCode(activity!!.baseContext, themePreference)
+            trackingCallback(apiInterfaceObj, themePreference, 0, "", 0, "", "", ActionType.SCROLLTOTOP.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId,"", 0)
+
             rvTrending.smoothScrollToPosition(0)
         }
 
@@ -204,6 +208,11 @@ class TrendingFragment : Fragment(), AddTrendingFragmentListener {
     }
 
     override fun addFragmentOnClick(clusterId: Int, pos: Int) {
+
+        val sessionId = getUniqueCode(mContext, themePreference)
+        var deviceId = themePreference.getString("device_token", "")
+        trackingCallback(apiInterfaceObj, themePreference, 0, "", 0, "", "", ActionType.TRENDINGGROUPCLICK.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
+
         this.pos = pos
         loadTrendFragment.loadFragment(clusterId, pos)
     }

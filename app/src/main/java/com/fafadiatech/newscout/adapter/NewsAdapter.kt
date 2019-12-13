@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
@@ -31,9 +32,8 @@ import com.fafadiatech.newscout.activity.DetailNewsActivity
 import com.fafadiatech.newscout.activity.NewsWebActivity
 import com.fafadiatech.newscout.api.ApiClient
 import com.fafadiatech.newscout.api.ApiInterface
-import com.fafadiatech.newscout.appconstants.AppConstant
-import com.fafadiatech.newscout.appconstants.getImageURL
-import com.fafadiatech.newscout.appconstants.trackUserSelection
+import com.fafadiatech.newscout.appconstants.*
+import com.fafadiatech.newscout.application.MyApplication
 import com.fafadiatech.newscout.db.NewsEntity
 import com.fafadiatech.newscout.interfaces.PlaceHolderImageListener
 import com.fafadiatech.newscout.model.DetailNewsData
@@ -211,10 +211,17 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<INews, 
                         var id = news!!.id
                         fetchDataViewModel.startRecommendNewsWorkManager(id)
                         categoryId = news!!.category_id
+                        val categoryName = MyApplication.categoryNameHashMap.get(categoryId) ?: ""
                         var itemTitle = news!!.title
                         var deviceId = themePreference.getString("device_token", "")
                         trackClick("News Click", news!!.category, itemTitle)
-                        trackUserSelection(apiInterfaceObj, "item_detail", deviceId, "android", id, itemTitle)
+
+                        val sessionId = getUniqueCode(con, themePreference)
+                        val title = news!!.title
+                        val cName = news!!.category
+                        val source = news!!.source
+                        trackingCallback(apiInterfaceObj, themePreference, id, title, categoryId, cName, "", ActionType.ARTICLEDETAIL.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, source, 0)
+
                         var detailIntent = Intent(con, DetailNewsActivity::class.java)
                         detailIntent.putExtra("indexPosition", itemIndex!!)
                         detailIntent.putParcelableArrayListExtra("source_list", sourceList)
@@ -310,8 +317,15 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<INews, 
                     categoryId = news!!.category_id
                     var itemTitle = news!!.title
                     var deviceId = themePreference.getString("device_token", "")
+                    val categoryName = MyApplication.categoryNameHashMap.get(categoryId) ?: ""
                     trackClick("News Click", news!!.category, itemTitle)
-                    trackUserSelection(apiInterfaceObj, "item_detail", deviceId, "android", id, itemTitle)
+
+                    val sessionId = getUniqueCode(con, themePreference)
+                    val title = news!!.title
+                    val cName = news!!.category
+                    val source = news!!.source
+                    trackingCallback(apiInterfaceObj, themePreference, id, title, categoryId, cName, "", ActionType.ARTICLEDETAIL.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, source, 0)
+
                     var detailIntent = Intent(con, DetailNewsActivity::class.java)
                     detailIntent.putExtra("indexPosition", itemIndex!!)
                     detailIntent.putParcelableArrayListExtra("source_list", sourceList)
@@ -331,7 +345,12 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<INews, 
                     }
                 })
                 getAdsDetail(adsViewholder)
-
+                //click...
+                adsViewholder.adsCardview.setOnClickListener {
+                    var deviceId = themePreference.getString("device_token", "")
+                    val sessionId = getUniqueCode(con, themePreference)
+                    trackingCallback(apiInterfaceObj, themePreference, 0, "", 0, "", "", ActionType.ADCLICK.type, deviceId?:"", PLATFORM, ViewType.MONETIZATIONVIEW.type, sessionId, "", 0)
+                }
 
             }
         }
@@ -380,7 +399,7 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<INews, 
         fun markDetach() {
             lifecycleRegistry.markState(Lifecycle.State.DESTROYED)
         }
-
+        var adsCardview = view.findViewById<CardView>(R.id.card_view)
         var adsTitle = view.findViewById<TextView>(R.id.ads_title)
         var adsSubTitle = view.findViewById<TextView>(R.id.ads_sub_title)
 
