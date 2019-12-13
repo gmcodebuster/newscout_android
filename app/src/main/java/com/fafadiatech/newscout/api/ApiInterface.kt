@@ -128,10 +128,22 @@ interface ApiInterface {
                  @Query("device_id") deviceId:String,
                  @Query("plateform") plateform:String = "Android",
                  @Query("type") type:String,
-                 /*@Query("domain_id") domainId : String,*/
                  @Query("sid") sessionId:String,
                  @Query("source_name") sourceName:String,
                  @Query("source_id") sourceId:Int,
                  @Query("cluster_id") clusterId: Int
                 ): Call<Void>
+
+    @GET(TRACKING_URL + BuildConfig.DOMAIN_NAME)
+    fun signInTrackApp(
+                 @Query("action") action:String,
+                 @Query("device_id") deviceId:String,
+                 @Query("plateform") plateform:String = "Android",
+                 @Query("type") type:String,
+                 @Query("sid") sessionId:String,
+                 @Query("first_name") firstName:String,
+                 @Query("last_name") lastName:String,
+                 @Query("token") token: String,
+                 @Query("email") email: String
+    ): Call<Void>
 }

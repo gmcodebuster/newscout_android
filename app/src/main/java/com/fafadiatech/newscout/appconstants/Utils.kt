@@ -212,3 +212,33 @@ fun adsTrackingCallback(apiInterfaceObj: ApiInterface, themePreference: SharedPr
         }
     })
 }
+
+fun signinTrackingCallback(apiInterfaceObj: ApiInterface, themePreference: SharedPreferences, action:String, deviceId:String, plateform:String, type:String, sessionId:String, firstname: String, lastname: String, token: String, email:String){
+
+    //var deviceId = themePreference.getString("device_token", "")
+    var tCall: Call<Void> = apiInterfaceObj.signInTrackApp( action, deviceId, plateform, type, sessionId, firstname, lastname, token, email) //getUniqueCode(con, themePreference)
+    tCall.enqueue(object: Callback<Void> {
+        override fun onFailure(call: Call<Void>, t: Throwable) {
+            Log.e("Utils: ", "Error")
+        }
+
+        override fun onResponse(call: Call<Void>, response: Response<Void>) {
+            Log.d("Utils: ", "Success")
+        }
+    })
+}
+
+fun signupTrackingCallback(apiInterfaceObj: ApiInterface, themePreference: SharedPreferences, action:String, deviceId:String, plateform:String, type:String, sessionId:String, firstname: String, lastname: String, token: String, email:String){
+
+    //var deviceId = themePreference.getString("device_token", "")
+    var tCall: Call<Void> = apiInterfaceObj.signInTrackApp( action, deviceId, plateform, type, sessionId, firstname, lastname, token, email) //getUniqueCode(con, themePreference)
+    tCall.enqueue(object: Callback<Void> {
+        override fun onFailure(call: Call<Void>, t: Throwable) {
+            Log.e("Utils: ", "Error")
+        }
+
+        override fun onResponse(call: Call<Void>, response: Response<Void>) {
+            Log.d("Utils: ", "Success")
+        }
+    })
+}

@@ -78,7 +78,7 @@ class SignUpActivity : BaseActivity() {
                     if (responseCode >= 200 && responseCode < 400) {
                         var deviceId = themePreference.getString("device_token", "")
                         val sessionId = getUniqueCode(this@SignUpActivity, themePreference)
-                        trackingCallback(apiInterfaceSignUp, themePreference, 0, "", 0, "", "", ActionType.SIGNUP.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
+                        signupTrackingCallback(apiInterfaceSignUp, themePreference, ActionType.SIGNUP.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, firstNameText?:"", lastNameText?:"", "", userEmailText)
                         status = response.body()?.header?.status
                         var result: String = response.body()?.body!!.Msg
                         Toast.makeText(this@SignUpActivity, result, Toast.LENGTH_SHORT).show()

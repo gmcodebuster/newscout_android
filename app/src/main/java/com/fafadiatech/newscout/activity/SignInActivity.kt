@@ -18,7 +18,7 @@ import com.facebook.login.widget.LoginButton
 import com.fafadiatech.newscout.R
 import com.fafadiatech.newscout.api.ApiClient
 import com.fafadiatech.newscout.api.ApiInterface
-import com.fafadiatech.newscout.appconstants.AppConstant
+import com.fafadiatech.newscout.appconstants.*
 import com.fafadiatech.newscout.customcomponent.BaseAlertDialog
 import com.fafadiatech.newscout.model.*
 import com.fafadiatech.newscout.viewmodel.FetchDataApiViewModel
@@ -141,14 +141,15 @@ class SignInActivity : BaseActivity() {
                     override fun onResponse(call: Call<MessageLoginData>, response: Response<MessageLoginData>) {
                         var responseCode = response.code()
                         if (responseCode >= 200 && responseCode <= 399) {
-//Add signin tracking
+
+                            val sessionId = getUniqueCode(this@SignInActivity, themePreference)
                             var token = response.body()!!.body.user.token
                             token = "Token " + token
                             fetchDataViewModel.startVoteServerDataWorkManager(token)
                             var firstName = response.body()?.body?.user?.first_name
                             var lastName = response.body()?.body?.user?.last_name
                             var userName = firstName + " " + lastName
-
+                            signinTrackingCallback(interfaceObj, themePreference, ActionType.LOGIN.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, firstName?:"", lastName?:"", token?:"", "")
                             var editor = themePreference.edit()
                             editor.putString("token value", token)
                             editor.putString("user name", userName)
@@ -204,7 +205,8 @@ class SignInActivity : BaseActivity() {
                 override fun onResponse(call: Call<MessageLoginData>, response: Response<MessageLoginData>) {
                     var responseCode = response.code()
                     if (responseCode >= 200 && responseCode < 400) {
-//Add signin tracking
+
+
 
                         status = response.body()?.header?.status
                         Toast.makeText(this@SignInActivity, "Login Successful", Toast.LENGTH_SHORT).show()
@@ -221,6 +223,10 @@ class SignInActivity : BaseActivity() {
                             var entity = savedCategoryList.get(i)
                             categoryListServer.add(entity.name)
                         }
+
+                        var deviceId = themePreference.getString("device_token", "")
+                        val sessionId = getUniqueCode(this@SignInActivity, themePreference)
+                        signinTrackingCallback(interfaceObj, themePreference, ActionType.LOGIN.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, firstName?:"", lastName?:"", token?:"", emailText)
 
                         var gson = Gson()
                         var json: String = gson.toJson(categoryListServer)
@@ -271,7 +277,7 @@ class SignInActivity : BaseActivity() {
             editor.putString("login success", email)
             editor.commit()
             var deviceId = themePreference.getString("device_token", "")
-//Add signin tracking
+
             Toast.makeText(this, "Login Successful using Google", Toast.LENGTH_SHORT).show()
             var call: Call<MessageLoginData> = interfaceObj.loginBySocial("google", deviceId, "android", webToken!!)
             call.enqueue(object : Callback<MessageLoginData> {
@@ -280,7 +286,6 @@ class SignInActivity : BaseActivity() {
                 }
 
                 override fun onResponse(call: Call<MessageLoginData>, response: Response<MessageLoginData>) {
-
                     var token = response.body()!!.body.user.token
                     token = "Token " + token
                     fetchDataViewModel.startVoteServerDataWorkManager(token)
@@ -288,6 +293,9 @@ class SignInActivity : BaseActivity() {
                     var lastName = response.body()?.body?.user?.last_name
                     var userName = firstName + " " + lastName
 
+                    val sessionId = getUniqueCode(this@SignInActivity, themePreference)
+
+                    signinTrackingCallback(interfaceObj, themePreference, ActionType.LOGIN.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, firstName?:"", lastName?:"", token?:"", "")
                     var editor = themePreference.edit()
                     editor.putString("token value", token)
                     editor.putString("user name", userName)
