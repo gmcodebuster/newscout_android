@@ -72,6 +72,8 @@ class ChangePasswordActivity : BaseActivity() {
                         val sessionId = getUniqueCode(this@ChangePasswordActivity, themePreference)
                         trackingCallback(interfaceObj, themePreference, 0, "", 0, "", "", ActionType.CHANGEPASSWORD.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
                         val resultMessage: String? = response.body()?.body?.Msg
+
+                        finish()
                     } else if (status == 0) {
 
                         var resultFailed = response.body()?.errors?.Msg

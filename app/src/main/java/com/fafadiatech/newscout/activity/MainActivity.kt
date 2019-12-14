@@ -261,6 +261,7 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
 
 
     override fun onStop() {
+
         super.onStop()
     }
 
@@ -722,7 +723,7 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
                     adapterObj.notifyDataSetChanged()
                     setIconsTab(tabLayout)
                     vPager.setCurrentItem(0)
-                    trackingCallback(apiInterfaceObj, themePreference, 0, "", subMenuId, subMenuName, "", ActionType.PARENTCATEGORYCLICK.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
+                    trackingCallback(apiInterfaceObj, themePreference, 0, "", subMenuId, subMenuName, "", ActionType.MENUCHANGE.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
                 }
             })
         }
@@ -731,6 +732,8 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
         }
         scrollToCenter(pos)
     }
+
+
 
     override fun onDestroy() {
         var deviceId = themePreference.getString("device_token", "")
