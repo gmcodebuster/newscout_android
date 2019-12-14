@@ -326,11 +326,13 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
             //burger menu click
             drawer_layout.openDrawer(Gravity.LEFT);
             return true
+        }else{
+            val sessionId = getUniqueCode(this@MainActivity, themePreference)
+            trackingCallback(apiInterfaceObj, themePreference, 0, "", 0, "", "", ActionType.OPTIONMENU.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, ", 0")
         }
+
         var defaultTheme = MODE_NIGHT_NO
 
-        val sessionId = getUniqueCode(this@MainActivity, themePreference)
-        trackingCallback(apiInterfaceObj, themePreference, 0, "", 0, "", "", ActionType.OPTIONMENU.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, ", 0")
         when (item!!.itemId) {
             R.id.ic_bookmark -> {
 

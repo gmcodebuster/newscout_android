@@ -98,7 +98,7 @@ class DailyDigestFragment() : Fragment(), ConnectivityReceiver.ConnectivityRecei
         val deviceWidth = displayMetrics.widthPixels
         deviceWidthDp = deviceWidth / Resources.getSystem().getDisplayMetrics().density
         var view = LayoutInflater.from(context).inflate(R.layout.fragment_main, container, false)
-
+        var deviceId = themePreference.getString("device_token", "")
         var rootLayout = view.findViewById<ConstraintLayout>(R.id.root_layout_main_fragment)
 
         var layoutSwipeRefresh = view.findViewById<SwipyRefreshLayout>(R.id.layout_swipe_refresh)
@@ -171,7 +171,7 @@ class DailyDigestFragment() : Fragment(), ConnectivityReceiver.ConnectivityRecei
 
         fragRecyclerview.layoutManager = layoutManager
         fetchDataViewModel = ViewModelProviders.of(this, ViewModelProviderFactory(activity!!.application, tagId)).get(FetchDataApiViewModel::class.java)
-        fetchDataViewModel.initializeDailyDigestNews("fhdkfhkdhkdfjhgj").observe(getViewLifecycleOwner(), Observer<PagedList<DailyDigestEntity>> {
+        fetchDataViewModel.initializeDailyDigestNews(deviceId).observe(getViewLifecycleOwner(), Observer<PagedList<DailyDigestEntity>> {
 
             adapter.setPlaceHolderImage(placeHolderListener)
             adapter.submitList(it)
@@ -181,11 +181,12 @@ class DailyDigestFragment() : Fragment(), ConnectivityReceiver.ConnectivityRecei
 
         layoutSwipeRefresh.setOnRefreshListener(object : SwipyRefreshLayout.OnRefreshListener {
             override fun onRefresh(direction: SwipyRefreshLayoutDirection?) {
+                var deviceId = themePreference.getString("device_token", "")
                 if (direction == SwipyRefreshLayoutDirection.TOP) {
                     fetchDataViewModel.invalidateDataSource()
                     if (checkInternet == true) {
 
-                        val itemDataSourceFactory = DDNewsDataSourceFactory(activity!!.application, "device_id")
+                        val itemDataSourceFactory = DDNewsDataSourceFactory(activity!!.application, deviceId)
                         liveDataSource = itemDataSourceFactory.itemLiveDataSource
 
                         val pagedListConfig = PagedList.Config.Builder()
