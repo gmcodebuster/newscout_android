@@ -579,14 +579,15 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
         fetchDataViewModel.getMenuHeadingFromDb().observe(this, object : androidx.lifecycle.Observer<List<MenuHeading>> {
             override fun onChanged(list: List<MenuHeading>?) {
                 var result = list as ArrayList<MenuHeading>
-                var trendingMenu = MenuHeading(TRENDING_ID, TRENDING_NAME)
-                result.add(0, trendingMenu)
-                val latestId = getLatestNewsID(articleNewsDao)
-                trendingMenu = MenuHeading(latestId, LATESTNEWS_NAME)
-                result.add(1, trendingMenu)
-                trendingMenu = MenuHeading(DAILYDIGEST_ID, DAILYDIGEST_NAME)
-                result.add(2, trendingMenu)
-
+                if(result.size > 1) {
+                    var trendingMenu = MenuHeading(TRENDING_ID, TRENDING_NAME)
+                    result.add(0, trendingMenu)
+                    val latestId = getLatestNewsID(articleNewsDao)
+                    trendingMenu = MenuHeading(latestId, LATESTNEWS_NAME)
+                    result.add(1, trendingMenu)
+                    trendingMenu = MenuHeading(DAILYDIGEST_ID, DAILYDIGEST_NAME)
+                    result.add(2, trendingMenu)
+                }
                 recyclerTopHeadingAdapter.notifyChanges(result)
 
 
@@ -685,6 +686,13 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
             trackingCallback(apiInterfaceObj, themePreference, 0, "", DAILYDIGEST_ID, DAILYDIGEST_NAME, "", ActionType.DAILYDIGESTMENUCLICK.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
 
         } else {
+            //TODO: hide rv view
+            if(recyclerTopHeadingAdapter.itemCount <=1){
+                recyclerViewTopHeading.visibility = View.GONE
+            }else{
+                recyclerViewTopHeading.visibility = View.VISIBLE
+            }
+
             tabLayout.visibility = View.VISIBLE
             adapterObj.removeFragment()
             var deviceId = themePreference.getString("device_token", "")
@@ -694,6 +702,17 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
             fetchDataViewModel.getSubMenuDataFromDb(headingData.id).observe(this, object : androidx.lifecycle.Observer<List<SubMenuResultData>> {
                 override fun onChanged(list: List<SubMenuResultData>?) {
                     var result = list as ArrayList<SubMenuResultData>
+                    //TODO: Add Trending, latest and daily digest menu. do it for side menu.
+                    if(recyclerTopHeadingAdapter.itemCount <=1){
+
+                        val trendingSubMenu = SubMenuResultData(TRENDING_ID, TRENDING_ID, TRENDING_NAME)
+                        result.add(0, trendingSubMenu)
+                        val latestSubMenu = SubMenuResultData(LATESTNEWS_ID, LATESTNEWS_ID, LATESTNEWS_NAME)
+                        result.add(1, latestSubMenu)
+                        val dailyDigestSubMenu = SubMenuResultData(DAILYDIGEST_ID, DAILYDIGEST_ID, DAILYDIGEST_NAME)
+                        result.add(2, dailyDigestSubMenu)
+
+                    }
                     var subMenuId:Int = 0
                     var subMenuName:String = ""
                     if (result.size > 0) {
@@ -734,8 +753,6 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
         }
         scrollToCenter(pos)
     }
-
-
 
     override fun onDestroy() {
         var deviceId = themePreference.getString("device_token", "")
