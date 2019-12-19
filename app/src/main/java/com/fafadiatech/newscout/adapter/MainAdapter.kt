@@ -39,7 +39,6 @@ class MainAdapter(context: Context, fragManager: FragmentManager) : FragmentPage
     }
 
     override fun getItem(position: Int): Fragment {
-        //TODO: check if name is trending show trending fragment or dd or latest fragment
         if (dataList.size > 0) {
             var bData = dataBundleList.get(position)
             var frag = dataList.get(position)

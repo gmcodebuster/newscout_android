@@ -726,10 +726,53 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
                             subMenuName =  result.get(1).name
                         }
                     }
-
+                    adapterObj.removeFragment()
                     for (i in 0 until result.size) {
                         val name = result.get(i).name
-                        if (!name.equals(LATESTNEWS_FIELDNAME)) {
+                        if(name.equals(TRENDING_NAME)){
+                            headingData.id = TRENDING_ID
+                            var fm = supportFragmentManager
+                            fm.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                            val list = fm.fragments
+                            for (i in 0 until list.size) {
+                                var frag = list.get(i)
+                                val cm = frag.childFragmentManager
+                            }
+                            var bundle = Bundle()
+                            bundle.putString("category_name", TRENDING_NAME)
+                            bundle.putInt("position", i)
+                            bundle.putInt("category_id", TRENDING_ID)
+
+                            val rootFrag = RootTrendingFragment()
+                            //adapterObj.removeFragment()
+                            adapterObj.addFragment(i, rootFrag, bundle)
+
+                            var deviceId = themePreference.getString("device_token", "")
+                            val sessionId = getUniqueCode(this@MainActivity, themePreference)
+                            //trackingCallback(apiInterfaceObj, themePreference, 0, "", TRENDING_ID, TRENDING_NAME, "", ActionType.TRENDINGMENUCLICK.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
+
+                        } else if(name.equals(LATESTNEWS_NAME)){
+                            var newsCategoryId: Int = getLatestNewsID(articleNewsDao)
+                            var bundle = Bundle()
+                            bundle.putString("category_name", LATESTNEWS_NAME)
+                            bundle.putInt("position", i)
+                            bundle.putInt("category_id", newsCategoryId)
+
+                            val newsFrag = NewsFragment()
+                            //adapterObj.removeFragment()
+                            adapterObj.addFragment(i, newsFrag, bundle)
+
+                        } else if(name.equals(DAILYDIGEST_NAME)){
+                            var bundle = Bundle()
+                            bundle.putString("category_name", DAILYDIGEST_NAME)
+                            bundle.putInt("position", i)
+                            bundle.putInt("category_id", DAILYDIGEST_ID)
+
+                            val newsFrag = DailyDigestFragment()
+                            //adapterObj.removeFragment()
+                            adapterObj.addFragment(i, newsFrag, bundle)
+
+                        }else {
 
                             var bundle = Bundle()
                             bundle.putString("category_name", result.get(i).name)
