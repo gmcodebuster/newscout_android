@@ -23,6 +23,7 @@ import android.widget.*
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
+import androidx.core.text.HtmlCompat.FROM_HTML_MODE_COMPACT
 import androidx.core.text.HtmlCompat.FROM_HTML_MODE_LEGACY
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LifecycleOwner
@@ -184,7 +185,7 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
                 }
                 var lineCount = newsDescHeight / lineHeight
                 newsDesc.maxLines = floor(lineCount.toDouble()).toInt()
-                newsDesc.text = HtmlCompat.fromHtml(detailList.get(position).description.replace("\n", ""), FROM_HTML_MODE_LEGACY, MImageGetter(newsDesc, context), null)
+                newsDesc.text = HtmlCompat.fromHtml(detailList.get(position).description, FROM_HTML_MODE_LEGACY, MImageGetter(newsDesc, context), null)
 
                 if (detailList.get(position).cover_image.length > 0) {
                     var imageUrl = getImageURL(newsTopImage, detailList.get(position).cover_image)
