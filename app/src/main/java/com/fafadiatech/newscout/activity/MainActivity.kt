@@ -29,6 +29,7 @@ import androidx.viewpager.widget.ViewPager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
+import com.fafadiatech.newscout.BuildConfig
 import com.fafadiatech.newscout.R
 import com.fafadiatech.newscout.adapter.ExpandListAdapter
 import com.fafadiatech.newscout.adapter.MainAdapter
@@ -150,8 +151,6 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
 
         val uniqueVal = getUniqueCode(this@MainActivity, themePreference)
         var deviceId = themePreference.getString("device_token", "")
-        //var tCall: Call<Void> = apiInterfaceObj.trackApp(0, "", 0, "", "", ActionType.APPOPEN.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type,getUniqueCode(this@MainActivity, themePreference))
-        //trackingCallback(tCall)
         val sessionId = getUniqueCode(this@MainActivity, themePreference)
         trackingCallback(apiInterfaceObj, themePreference, 0, "", 0, "", "", ActionType.APPOPEN.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
         menuHeadinglayoutManager =
@@ -195,7 +194,7 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
 
         tabLayout.setupWithViewPager(vPager)
 
-        expandableListView = findViewById(R.id.expandableListView)
+        expandableListView = findViewById<ExpandableListView>(R.id.expandableListView)
 
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -222,11 +221,8 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
 
                     }
 
-                    //var deviceId = themePreference.getString("device_token", "")
-                    //trackUserSelection(apiInterfaceObj, "sub_menu_click", deviceId, "android", itemId, subHeadName)
                     var deviceId = themePreference.getString("device_token", "")
-                    //var tCall: Call<Void> = apiInterfaceObj.trackApp(0, "", itemId, subHeadName, "", ActionType.MENUCHANGE.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type,getUniqueCode(this@MainActivity, themePreference))
-                    //trackingCallback(tCall)
+
                     val sessionId = getUniqueCode(this@MainActivity, themePreference)
                     trackingCallback(apiInterfaceObj, themePreference, 0, "", itemId, subHeadName, "", ActionType.MENUCHANGE.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId,"",0)
                 }
@@ -325,7 +321,7 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
         if (item?.getItemId() == android.R.id.home) {
             val sessionId = getUniqueCode(this@MainActivity, themePreference)
             trackingCallback(apiInterfaceObj, themePreference, 0, "", 0, "", "", ActionType.BURGERICON.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId,"", 0)
-            //burger menu click
+
             drawer_layout.openDrawer(Gravity.LEFT);
             return true
         }else{
@@ -516,15 +512,34 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
             var result = list as ArrayList<SubMenuResultData>
             menuModel = MenuModel("", false, false, null)
             if(topMenuResult.size <= 1){
-                //TODO: Add trending and latest news and dd
-                //(var id: Int, var heading_id: Int, var name: String)
-                var trendingMenu = SubMenuResultData(TRENDING_ID, TRENDING_ID,TRENDING_NAME)
-                result.add(0, trendingMenu)
-                val latestId = getLatestNewsID(articleNewsDao)
-                trendingMenu = SubMenuResultData(latestId, latestId, LATESTNEWS_NAME)
-                result.add(1, trendingMenu)
-                trendingMenu = SubMenuResultData(DAILYDIGEST_ID, DAILYDIGEST_ID, DAILYDIGEST_NAME)
-                result.add(2, trendingMenu)
+
+                if(BuildConfig.showTrendingNews) {
+                    val trendingMenu = SubMenuResultData(TRENDING_ID, TRENDING_ID,TRENDING_NAME)
+                    result.add(0, trendingMenu)
+                }
+                if(BuildConfig.showLatestNews) {
+                    val latestId = getLatestNewsID(articleNewsDao)
+                    val trendingMenu = SubMenuResultData(latestId, latestId, LATESTNEWS_NAME)
+                    if(BuildConfig.showTrendingNews){
+                        result.add(1, trendingMenu)
+                    }else{
+                        result.add(0, trendingMenu)
+                    }
+                }
+
+                if(BuildConfig.showDailyDigest){
+                    val trendingMenu = SubMenuResultData(DAILYDIGEST_ID, DAILYDIGEST_ID, DAILYDIGEST_NAME)
+
+                    if(BuildConfig.showTrendingNews && BuildConfig.showLatestNews){
+                        result.add(2, trendingMenu)
+                    }else if(BuildConfig.showTrendingNews && !BuildConfig.showLatestNews){
+                        result.add(1, trendingMenu)
+                    }else if(!BuildConfig.showTrendingNews && BuildConfig.showLatestNews){
+                        result.add(1, trendingMenu)
+                    }else{
+                        result.add(0, trendingMenu)
+                    }
+                }
 
             } else{
 
@@ -551,8 +566,6 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
                 if(topMenuResult.size <= 1){
                     headerList.clear()
                     for (child in childModelsList){
-//TODO: make top menu from child
-                        //MenuHeading
                         var trendingMenu = MenuHeading(child.subMenuData!!.id, child.subMenuData!!.name)
                         topMenuResult.add(0, trendingMenu)
                         val topMenuModel = TopMenuModel(child.menuName, false, false, trendingMenu)
@@ -578,9 +591,6 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
         expandableListView.setAdapter(expandableListAdapter)
         expandableListView.setOnGroupClickListener(object : ExpandableListView.OnGroupClickListener {
             override fun onGroupClick(parent: ExpandableListView?, view: View?, groupPosition: Int, childPosition: Long): Boolean {
-//TODO: check and select the view pager.
-
-
                 var data = topMenuResult.get(groupPosition)
                 var headingData = TopHeadingData(data.id, groupPosition, data.name)
 
@@ -588,8 +598,12 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
                 val sessionId = getUniqueCode(this@MainActivity, themePreference)
                 trackingCallback(apiInterfaceObj, themePreference, 0, "", data.id, data.name, "", ActionType.BURGERMENUCLICK.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
                 if(!(rv_top_heading.isVisible)){
-                    //setIconsTab(tabLayout)
+
                     vPager.setCurrentItem(groupPosition)
+                    drawer_layout = findViewById(R.id.drawer_layout)
+                    if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
+                        drawer_layout.closeDrawer(GravityCompat.START)
+                    }
                     return true
                 }else {
                     recyclerViewTopHeading.scrollToPosition(groupPosition)
@@ -745,12 +759,33 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
                     var result = list as ArrayList<SubMenuResultData>
                     if(recyclerTopHeadingAdapter.itemCount <=1){
 
-                        val trendingSubMenu = SubMenuResultData(TRENDING_ID, TRENDING_ID, TRENDING_NAME)
-                        result.add(0, trendingSubMenu)
-                        val latestSubMenu = SubMenuResultData(LATESTNEWS_ID, LATESTNEWS_ID, LATESTNEWS_NAME)
-                        result.add(1, latestSubMenu)
-                        val dailyDigestSubMenu = SubMenuResultData(DAILYDIGEST_ID, DAILYDIGEST_ID, DAILYDIGEST_NAME)
-                        result.add(2, dailyDigestSubMenu)
+                        if(BuildConfig.showTrendingNews) {
+                            val trendingSubMenu = SubMenuResultData(TRENDING_ID, TRENDING_ID, TRENDING_NAME)
+                            result.add(0, trendingSubMenu)
+                        }
+                        if(BuildConfig.showLatestNews) {
+                            val latestSubMenu = SubMenuResultData(LATESTNEWS_ID, LATESTNEWS_ID, LATESTNEWS_NAME)
+                            if(BuildConfig.showTrendingNews){
+
+                                result.add(1, latestSubMenu)
+                            }else{
+                                result.add(0, latestSubMenu)
+                            }
+                        }
+
+                        if(BuildConfig.showDailyDigest){
+                            val dailyDigestSubMenu = SubMenuResultData(DAILYDIGEST_ID, DAILYDIGEST_ID, DAILYDIGEST_NAME)
+
+                            if(BuildConfig.showTrendingNews && BuildConfig.showLatestNews){
+                                result.add(2, dailyDigestSubMenu)
+                            }else if(BuildConfig.showTrendingNews && !BuildConfig.showLatestNews){
+                                result.add(1, dailyDigestSubMenu)
+                            }else if(!BuildConfig.showTrendingNews && BuildConfig.showLatestNews){
+                                result.add(1, dailyDigestSubMenu)
+                            }else{
+                                result.add(0, dailyDigestSubMenu)
+                            }
+                        }
 
                     }
                     var subMenuId:Int = 0
@@ -784,7 +819,7 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
                             bundle.putInt("category_id", TRENDING_ID)
 
                             val rootFrag = RootTrendingFragment()
-                            //adapterObj.removeFragment()
+
                             adapterObj.addFragment(i, rootFrag, bundle)
 
                             var deviceId = themePreference.getString("device_token", "")
@@ -799,7 +834,7 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
                             bundle.putInt("category_id", newsCategoryId)
 
                             val newsFrag = NewsFragment()
-                            //adapterObj.removeFragment()
+
                             adapterObj.addFragment(i, newsFrag, bundle)
 
                         } else if(name.equals(DAILYDIGEST_NAME)){
@@ -809,7 +844,7 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
                             bundle.putInt("category_id", DAILYDIGEST_ID)
 
                             val newsFrag = DailyDigestFragment()
-                            //adapterObj.removeFragment()
+
                             adapterObj.addFragment(i, newsFrag, bundle)
 
                         }else {
