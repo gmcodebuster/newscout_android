@@ -134,6 +134,8 @@ class SearchActivity : AppCompatActivity(), ProgressBarListener {
             var queryString = parent.getItemAtPosition(position) as String
             searchAutoComplete.setText(queryString)
             searchEditText.setSelection(queryString.length)
+
+
         }
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -171,7 +173,7 @@ class SearchActivity : AppCompatActivity(), ProgressBarListener {
 
                     })
                     val sessionId = getUniqueCode(this@SearchActivity, themePreference)
-                    trackingCallback(apiInterface, themePreference, 0, "", 0, "", "", ActionType.SEARCHQUERY.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId,"",0)
+                    trackingCallback(apiInterface, themePreference, 0, queryText, 0, "", "", ActionType.SEARCHQUERY.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId,"",0)
 
                 }
                 return false

@@ -451,10 +451,13 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<INews, 
             override fun onResponse(call: Call<NewsAdsApi>, response: Response<NewsAdsApi>) {
                 //To change body of created functions use File | Settings | File Templates.
                 Log.d("TestMainActivity", "Inside Success")
-                val bodyData = response.body()
-
-                fetchDataViewModel.setAdsTitle(bodyData!!.body)
-
+                val code = response.code()
+                if(code == 200) {
+                    val bodyData = response.body()
+                    bodyData?.body?.let{
+                        fetchDataViewModel.setAdsTitle(bodyData?.body)
+                    }
+                }
             }
         })
     }

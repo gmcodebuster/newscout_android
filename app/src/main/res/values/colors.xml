@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<!--
+
     <color name="colorPrimary">#ed1c24</color>
     <color name="colorPrimaryDark">#b20000</color>
     <color name="colorAccent">#FF4081</color>
@@ -42,7 +42,7 @@
     <color name="red">#FF0000</color>
 
     <color name="primaryLightColor">#E53935</color>
-    <color name="secondaryColor">#b0bec5</color>
+    <color name="secondaryColor">#ED1C24</color>
     <color name="secondaryDarkColor">#808e95</color>
     <color name="secondaryLightColor">#e2f1f8</color>
 
@@ -80,7 +80,7 @@
     <color name="pbstartcolor">#D8ED1C24</color>
     <color name="pbcentercolor">#BEED1C24</color>
     <color name="pbendcolor">#A6ED1C24</color>
--->
+
 
     <!--<style name="AppTheme" parent="Theme.MaterialComponents.Light">
         <item name="colorPrimary">#212121</item>
@@ -114,7 +114,7 @@
 
     -->
 
-    <!--Brown color theme-->
+    <!--Brown color theme
 
     <color name="colorPrimary">#5d4037</color>
     <color name="colorPrimaryDark">#321911</color>
@@ -189,5 +189,5 @@
     <color name="pbstartcolor">#D85D4037</color>
     <color name="pbcentercolor">#BE5D4037</color>
     <color name="pbendcolor">#A65D4037</color>
-
+-->
 </resources>

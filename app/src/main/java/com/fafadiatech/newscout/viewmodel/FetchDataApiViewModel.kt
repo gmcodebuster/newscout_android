@@ -301,8 +301,8 @@ class FetchDataApiViewModel(application: Application, mParams: Int) : AndroidVie
         return result
     }
 
-    fun setAdsTitle(data:NewsAdsBodyData){
-        adsTitleVM.postValue(data)
+    fun setAdsTitle(data:NewsAdsBodyData?){
+        data?:adsTitleVM.postValue(data)
     }
 
     fun getAdsTitle():MutableLiveData<NewsAdsBodyData>{
