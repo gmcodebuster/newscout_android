@@ -190,8 +190,8 @@ interface NewsDao {
     @Query("SELECT ss.`query` FROM SearchSuggestionData ss")
     fun getSearchSuggestionFromDb(): LiveData<List<String>>
 
-    @Query("SELECT id FROM SubMenuData WHERE name LIKE '%' || :fieldName || '%'")
-    fun getLatestNewsId(fieldName: String? = "Uncategorised"): List<Int>
+    @Query("SELECT id FROM SubMenuData WHERE name LIKE '%' || :fieldName || '%' OR name LIKE '%' || :fieldName1 || '%'")
+    fun getLatestNewsId(fieldName: String? = "Uncategorised", fieldName1: String? = "Uncategorized"): List<Int>
 
     @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
     @Query("SELECT a.* FROM ArticlesData a ORDER BY a.published_on DESC")

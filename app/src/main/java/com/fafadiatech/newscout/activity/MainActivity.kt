@@ -547,11 +547,11 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
             for (i in 0 until result.size) {
                 subHeadId = result.get(i).id
                 var subHead = result.get(i).name
-                if (!subHead.equals(LATESTNEWS_FIELDNAME)) {
+                if (!subHead.equals(LATESTNEWS_FIELDNAME) && !subHead.equals(LATESTNEWS_FIELDNAME2)) {
                     subHeadList.add(subHead)
+                    menuModel = MenuModel(subHead, false, false, result.get(i))
+                    childModelsList.add(menuModel)
                 }
-                menuModel = MenuModel(subHead, false, false, result.get(i))
-                childModelsList.add(menuModel)
             }
             if (item.name.equals(LATESTNEWS_NAME)) {
                 subHeadId = getLatestNewsID(articleNewsDao)
@@ -793,12 +793,12 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
                     if (result.size > 0) {
                         adapterObj.removeFragment()
 
-                        if (!subMenuName.equals(LATESTNEWS_FIELDNAME)) {
+                        if (!subMenuName.equals(LATESTNEWS_FIELDNAME) && !subMenuName.equals(LATESTNEWS_FIELDNAME2)) {
                             subMenuId =  result.get(0).id
                             subMenuName =  result.get(0).name
                         }else{
-                            subMenuId =  result.get(1).id
-                            subMenuName =  result.get(1).name
+                            //subMenuId =  result.get(1).id
+                            //subMenuName =  result.get(1).name
                         }
                     }
                     adapterObj.removeFragment()
@@ -848,15 +848,16 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
                             adapterObj.addFragment(i, newsFrag, bundle)
 
                         }else {
+                            if (!name.equals(LATESTNEWS_FIELDNAME) && !name.equals(LATESTNEWS_FIELDNAME2)) {
+                                var bundle = Bundle()
+                                bundle.putString("category_name", result.get(i).name)
+                                bundle.putInt("position", i)
+                                bundle.putInt("category_id", result.get(i).id)
 
-                            var bundle = Bundle()
-                            bundle.putString("category_name", result.get(i).name)
-                            bundle.putInt("position", i)
-                            bundle.putInt("category_id", result.get(i).id)
+                                val newsFrag = NewsFragment()
 
-                            val newsFrag = NewsFragment()
-
-                            adapterObj.addFragment(i, newsFrag, bundle)
+                                adapterObj.addFragment(i, newsFrag, bundle)
+                            }
                         }
                     }
                     adapterObj.notifyDataSetChanged()

@@ -35,6 +35,7 @@ val DAILYDIGEST_ID = -3
 const val DAILYDIGEST_NAME = "Daily Digest"
 val LATESTNEWS_ID = -4
 const val LATESTNEWS_FIELDNAME = "Uncategorised"
+const val LATESTNEWS_FIELDNAME2 = "Uncategorized"
 const val LATESTNEWS_NAME = "Latest News"
 const val UNIQUE_CODE = "uniquecode"
 val NEWSPAGESIZE = 20

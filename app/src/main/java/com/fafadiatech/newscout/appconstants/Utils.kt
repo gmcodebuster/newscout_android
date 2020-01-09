@@ -69,14 +69,14 @@ fun getMenuFromDB(context: Context) {
 }
 
 fun getLatestNewsID(newsDao: NewsDao): Int {
-    var newsCategoryId: Int = 123
+    var newsCategoryId: Int = 0
     try {
         var ids = newsDao.getLatestNewsId()
         if (ids.size > 0) {
             newsCategoryId = ids.get(0)
         }
     } catch (e: Exception) {
-        newsCategoryId = 123
+        newsCategoryId = 0
     }
     return newsCategoryId
 }
