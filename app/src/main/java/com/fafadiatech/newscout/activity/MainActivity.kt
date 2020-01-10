@@ -429,6 +429,7 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
         drawer_layout = findViewById(R.id.drawer_layout)
         if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
             drawer_layout.closeDrawer(GravityCompat.START)
+            return
         }
 
         val fm = supportFragmentManager
