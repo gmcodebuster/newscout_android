@@ -7,8 +7,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.paging.*
 import androidx.sqlite.db.SupportSQLiteQuery
+import com.fafadiatech.newscout.appconstants.DAILYDIGEST_NAME
 import com.fafadiatech.newscout.appconstants.NEWSPAGESIZE
 import com.fafadiatech.newscout.appconstants.TRENDING_ID
+import com.fafadiatech.newscout.appconstants.TRENDING_NAME
 import com.fafadiatech.newscout.application.MyApplication
 import com.fafadiatech.newscout.db.dailydigest.DailyDigestEntity
 import com.fafadiatech.newscout.db.trending.TrendingData
@@ -40,8 +42,8 @@ class NewsRepository(application: Application) {
         this.application = application
         newsDatabase = NewsDatabase.getInstance(application)
         rNewsDao = newsDatabase!!.newsDao()
-        dataSourceFactory = NewsDataSourceFactory(application, 0)
-        dbData = DBNewsDataSource(application.baseContext, 0, 1)
+        dataSourceFactory = NewsDataSourceFactory(application, "")
+        dbData = DBNewsDataSource(application.baseContext, "", 1)
     }
 
     companion object {
@@ -176,16 +178,16 @@ class NewsRepository(application: Application) {
     }
 
     fun initializeDBDataSourceFactory(application: Application): LiveData<PagedList<NewsEntity>> {
-        val dbData = DBNewsDataSource(application.baseContext, 0, 1)
+        val dbData = DBNewsDataSource(application.baseContext, "", 1)
         val articleDataSource: DataSource.Factory<Int, NewsEntity> = rNewsDao.getPaggedDetailNewsFromDb()
         val articleList = articleDataSource.toLiveData(pageSize = NEWSPAGESIZE)
         return articleList
     }
 
-    fun initializeNetworkCall(application: Application, queryTag: Int): LiveData<PagedList<INews>> {
+    fun initializeNetworkCall(application: Application, queryTag: String): LiveData<PagedList<INews>> {
         var itemDataSourceFactory = NewsDataSourceFactory(application, queryTag)
         var PAGESIZE = 20
-        if (queryTag == TRENDING_ID) {
+        if (queryTag.equals(TRENDING_NAME, true)) {
             PAGESIZE = 30
         }
 
@@ -200,19 +202,19 @@ class NewsRepository(application: Application) {
     }
 
 
-    fun initializedbDataSourceFactory(application: Application, cateId: Int): LiveData<PagedList<INews>> {
+    fun initializedbDataSourceFactory(application: Application, cateName: String): LiveData<PagedList<INews>> {
         var PAGESIZE = 20
-        if (cateId == TRENDING_ID) {
+        if (cateName.equals(TRENDING_NAME, true)) {
             PAGESIZE = 30
         }
         val pageListConfig = PagedList.Config.Builder()
                 .setEnablePlaceholders(false)
                 .setPageSize(PAGESIZE).build()
 
-        if (cateId > 0) {
-            factory = rNewsDao.getPagedNewsByNodeIdFromDb(cateId) as DataSource.Factory<Int, INews>
+        if (!cateName.equals(TRENDING_NAME) && !cateName.equals(DAILYDIGEST_NAME)) {// > 0
+            factory = rNewsDao.getPagedNewsByNodeIdFromDb(cateName) as DataSource.Factory<Int, INews>
         } else {
-            factory = rNewsDao.getPagedNewsByNodeIdFromDb(cateId) as DataSource.Factory<Int, INews>
+            //factory = rNewsDao.getPagedNewsByNodeIdFromDb(cateName) as DataSource.Factory<Int, INews>
         }
 
         factory.toLiveData(pageListConfig)
@@ -222,32 +224,32 @@ class NewsRepository(application: Application) {
         return itemPagedList
     }
 
-    fun selectSource(cateId: Int, pageNo: Int): LiveData<PagedList<INews>> {
+    fun selectSource(cateName: String, pageNo: Int): LiveData<PagedList<INews>> {
 
         if (MyApplication.checkInternet) {
-            newsPagedList = initializeNetworkCall(application, cateId)
+            newsPagedList = initializeNetworkCall(application, cateName)
         } else {
-            if (cateId > 0) {
-                newsPagedList = initializedbDataSourceFactory(application, cateId)
+            if (!cateName.equals(TRENDING_NAME) && !cateName.equals(DAILYDIGEST_NAME)) {
+                newsPagedList = initializedbDataSourceFactory(application, cateName)
             } else {
-                newsPagedList = initializedbDataSourceFactory(application, cateId)
+                newsPagedList = initializedbDataSourceFactory(application, cateName)
             }
         }
         return newsPagedList!!
     }
 
-    fun selectTrendingSource(cateId: Int) {
+    /*fun selectTrendingSource(cateId: Int) {
         if (MyApplication.checkInternet) {
             initNwTrendingSF(cateId)
         } else {
             initDBTrendingSF()
         }
-    }
+    }*/
 
-    fun initNwTrendingSF(queryTag: Int) {
+    /*fun initNwTrendingSF(queryTag: Int) {
         var itemDataSourceFactory = NewsDataSourceFactory(application, queryTag)
         liveDataSource = itemDataSourceFactory.getNewsSourceData()
-    }
+    }*/
 
     fun invalidateDataSourceFactory() {
         newsPagedList?.value?.dataSource?.invalidate()

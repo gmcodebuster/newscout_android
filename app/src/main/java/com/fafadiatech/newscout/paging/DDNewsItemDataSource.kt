@@ -46,7 +46,7 @@ class DDNewsItemDataSource(context: Context, deviceId: String) : PageKeyedDataSo
         var call: Call<NewsDataApi> = interfaceObj.getDDNewsFromNodeIdByPage(FIRST_PAGE, deviceId)
         call.enqueue(object : Callback<NewsDataApi> {
             override fun onFailure(call: Call<NewsDataApi>, t: Throwable) {
-                print(t.message)
+                print("Daily Digest : "+t.message)
             }
 
             override fun onResponse(call: Call<NewsDataApi>, response: Response<NewsDataApi>) {

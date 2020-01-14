@@ -79,7 +79,7 @@ interface ApiInterface {
     fun getNewsFromTagByPage(@Query("page") page: Int, @Query("tag", encoded = true) tag: String): Call<NewsDataApi>
 
     @GET("article/search/" + BuildConfig.DOMAIN_NAME)
-    fun getNewsFromNodeIdByPage(@Query("page") page: Int, @Query("category") category: Int): Call<NewsDataApi>
+    fun getNewsFromNodeIdByPage(@Query("page") page: Int, @Query("category") category: String): Call<NewsDataApi>
 
     @GET("article/search/" + BuildConfig.DOMAIN_NAME)
     fun getNewsFromSource(@Query("source") source: String, @Query("page") page: Int): Call<NewsDataApi>
@@ -112,8 +112,9 @@ interface ApiInterface {
     @GET("trending" + BuildConfig.DOMAIN_NAME)
     fun getNewsByTrendingAPI(): Call<TrendingDataHeaderApi>
 
+
     @GET("daily-digest/" + BuildConfig.DOMAIN_NAME)
-    fun getDDNewsFromNodeIdByPage(@Query("page") page: Int, @Query("device_id") deviceId: String): Call<NewsDataApi>
+    fun getDDNewsFromNodeIdByPage(@Query("page") page: Int, @Query("device_id", encoded = true) deviceId: String): Call<NewsDataApi>
 
     @GET("http://www.newscout.in/api/v1/get-ads/")
     fun getAds() : Call<NewsAdsApi>

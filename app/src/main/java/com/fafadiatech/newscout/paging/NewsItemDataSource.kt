@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.paging.PageKeyedDataSource
 import com.fafadiatech.newscout.api.ApiClient
 import com.fafadiatech.newscout.api.ApiInterface
+import com.fafadiatech.newscout.appconstants.TRENDING_NAME
 import com.fafadiatech.newscout.appconstants.addAdsData
 import com.fafadiatech.newscout.db.*
 import com.fafadiatech.newscout.model.AdsData
@@ -17,10 +18,10 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.io.File
 
-class NewsItemDataSource(context: Context, queryTag: Int) : PageKeyedDataSource<Int, INews>() {
+class NewsItemDataSource(context: Context, queryTag: String) : PageKeyedDataSource<Int, INews>() {
 
     lateinit var interfaceObj: ApiInterface
-    var tagId: Int
+    var tagName: String = ""
     var articleNewsDao: NewsDao
     var newsDatabase: NewsDatabase? = null
     val TAG: String = "NewsItemDataSource"
@@ -38,7 +39,7 @@ class NewsItemDataSource(context: Context, queryTag: Int) : PageKeyedDataSource<
         newsDatabase = NewsDatabase.getInstance(context)
         interfaceObj = ApiClient.getClient().create(ApiInterface::class.java)
         articleNewsDao = newsDatabase!!.newsDao()
-        tagId = queryTag
+        tagName = queryTag
     }
 
     var adjacentKey: Int? = null
@@ -47,7 +48,7 @@ class NewsItemDataSource(context: Context, queryTag: Int) : PageKeyedDataSource<
 
     override fun loadInitial(params: LoadInitialParams<Int>, callback: LoadInitialCallback<Int, INews>) {
 
-        if (tagId == -1) {
+        if (tagName.equals(TRENDING_NAME, true)) {
             lateinit var articleList: ArrayList<INews>
             var call: Call<TrendingDataApi> = interfaceObj.getNewsByTrending()
 
@@ -100,7 +101,7 @@ class NewsItemDataSource(context: Context, queryTag: Int) : PageKeyedDataSource<
             return
         }
 
-        var call: Call<NewsDataApi> = interfaceObj.getNewsFromNodeIdByPage(FIRST_PAGE, tagId)
+        var call: Call<NewsDataApi> = interfaceObj.getNewsFromNodeIdByPage(FIRST_PAGE, tagName)
         call.enqueue(object : Callback<NewsDataApi> {
             override fun onFailure(call: Call<NewsDataApi>, t: Throwable) {
             }
@@ -115,7 +116,7 @@ class NewsItemDataSource(context: Context, queryTag: Int) : PageKeyedDataSource<
                         key = null
                     }
 
-                    file = File(mContext.cacheDir, "${tagId}.txt")
+                    file = File(mContext.cacheDir, "${tagName}.txt")
                     var list = response.body()!!.body.results
                     if (list != null && list.size > 0) {
                         var hashTagArrayList: ArrayList<HashTagEntity> = ArrayList<HashTagEntity>()
@@ -185,7 +186,7 @@ class NewsItemDataSource(context: Context, queryTag: Int) : PageKeyedDataSource<
     }
 
     override fun loadAfter(params: LoadParams<Int>, callback: LoadCallback<Int, INews>) {
-        var call: Call<NewsDataApi> = interfaceObj.getNewsFromNodeIdByPage(params.key, tagId)
+        var call: Call<NewsDataApi> = interfaceObj.getNewsFromNodeIdByPage(params.key, tagName)
         call.enqueue(object : Callback<NewsDataApi> {
             override fun onFailure(call: Call<NewsDataApi>, t: Throwable) {
             }
@@ -268,7 +269,7 @@ class NewsItemDataSource(context: Context, queryTag: Int) : PageKeyedDataSource<
     }
 
     override fun loadBefore(params: LoadParams<Int>, callback: LoadCallback<Int, INews>) {
-        var call: Call<NewsDataApi> = interfaceObj.getNewsFromNodeIdByPage(params.key, tagId)
+        var call: Call<NewsDataApi> = interfaceObj.getNewsFromNodeIdByPage(params.key, tagName)
         call.enqueue(object : Callback<NewsDataApi> {
             override fun onFailure(call: Call<NewsDataApi>, t: Throwable) {
             }

@@ -170,7 +170,7 @@ class DailyDigestFragment() : Fragment(), ConnectivityReceiver.ConnectivityRecei
         }
 
         fragRecyclerview.layoutManager = layoutManager
-        fetchDataViewModel = ViewModelProviders.of(this, ViewModelProviderFactory(activity!!.application, tagId)).get(FetchDataApiViewModel::class.java)
+        fetchDataViewModel = ViewModelProviders.of(this, ViewModelProviderFactory(activity!!.application, tagName)).get(FetchDataApiViewModel::class.java)
         fetchDataViewModel.initializeDailyDigestNews(deviceId).observe(getViewLifecycleOwner(), Observer<PagedList<DailyDigestEntity>> {
 
             adapter.setPlaceHolderImage(placeHolderListener)

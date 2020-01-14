@@ -712,8 +712,9 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
         } else if (headingData.category.equals(LATESTNEWS_NAME)) {
             tabLayout.visibility = View.GONE
             var newsCategoryId: Int = getLatestNewsID(articleNewsDao)
+            var newsCategoryName: String = getLatestNewsName(articleNewsDao)
             var bundle = Bundle()
-            bundle.putString("category_name", LATESTNEWS_NAME)
+            bundle.putString("category_name", newsCategoryName)
             bundle.putInt("position", 0)
             bundle.putInt("category_id", newsCategoryId)
 

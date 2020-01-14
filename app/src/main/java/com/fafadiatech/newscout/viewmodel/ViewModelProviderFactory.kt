@@ -7,9 +7,9 @@ import androidx.lifecycle.ViewModelProvider
 class ViewModelProviderFactory():ViewModelProvider.Factory {
 
     lateinit var mApplication:Application
-    var mParams:Int=0
+    var mParams:String=""
 
-    constructor(application: Application,param:Int):this(){
+    constructor(application: Application,param:String):this(){
         mApplication = application
         mParams = param
     }

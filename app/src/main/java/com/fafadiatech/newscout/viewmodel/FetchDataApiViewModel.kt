@@ -26,7 +26,7 @@ import com.fafadiatech.newscout.paging.NewsItemDataSource
 import com.fafadiatech.newscout.workmanager.*
 
 
-class FetchDataApiViewModel(application: Application, mParams: Int) : AndroidViewModel(application) {
+class FetchDataApiViewModel(application: Application, mParams: String) : AndroidViewModel(application) {
     var apiInterface = ApiClient.getClient().create(ApiInterface::class.java)
     var articleList = MutableLiveData<ArrayList<ArticlesData>>()
     var cursorNext: String? = null
@@ -40,7 +40,7 @@ class FetchDataApiViewModel(application: Application, mParams: Int) : AndroidVie
     var categoryList = ArrayList<String>()
     var workManager: WorkManager = WorkManager.getInstance()
     private val repository = NewsRepository(application)
-    var queryTag = 1
+    var queryTag:String = ""
     var itemPagedList: LiveData<PagedList<INews>>
     var liveDataSource: LiveData<PageKeyedDataSource<Int, INews>>
     var detailList = ArrayList<DetailNewsData>()
@@ -67,7 +67,7 @@ class FetchDataApiViewModel(application: Application, mParams: Int) : AndroidVie
                 .build()
     }
 
-    constructor(application: Application) : this(application, 1) {
+    constructor(application: Application) : this(application, "") {
     }
 
     fun getCursorNext(category: String) {
@@ -266,7 +266,7 @@ class FetchDataApiViewModel(application: Application, mParams: Int) : AndroidVie
         }
     }
 
-    fun initializeNews(cateId: Int, pageNo: Int): LiveData<PagedList<INews>> {
+    fun initializeNews(cateId: String, pageNo: Int): LiveData<PagedList<INews>> {
         newsItemPagedList = repository.selectSource(cateId, pageNo)
         return newsItemPagedList
     }

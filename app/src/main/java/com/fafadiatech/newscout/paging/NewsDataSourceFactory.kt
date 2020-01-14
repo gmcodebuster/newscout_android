@@ -7,14 +7,14 @@ import androidx.paging.PageKeyedDataSource
 import com.fafadiatech.newscout.db.NewsEntity
 import com.fafadiatech.newscout.model.INews
 
-class NewsDataSourceFactory(context: Context, nodeId: Int) : DataSource.Factory<Int, INews>() {
+class NewsDataSourceFactory(context: Context, nodeName: String) : DataSource.Factory<Int, INews>() {
 
     val itemLiveDataSource = MutableLiveData<PageKeyedDataSource<Int, INews>>()
-    var query: Int
+    var query: String
     var mContext: Context
 
     init {
-        query = nodeId
+        query = nodeName
         mContext = context
     }
 

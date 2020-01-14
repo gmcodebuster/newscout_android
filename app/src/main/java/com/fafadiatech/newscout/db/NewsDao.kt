@@ -203,8 +203,8 @@ interface NewsDao {
     @Query("SELECT SubMenuHashTagData.name FROM SubMenuHashTagData WHERE SubMenuHashTagData.submenu_id = :subMenuId")
     fun getMenuTagsFromDb(subMenuId: Int): List<String>
 
-    @Query("SELECT * FROM ArticlesData WHERE ArticlesData.category_id= :categoryId ORDER BY ArticlesData.published_on DESC")
-    fun getPagedNewsByNodeIdFromDb(categoryId: Int): DataSource.Factory<Int, NewsEntity>
+    @Query("SELECT * FROM ArticlesData WHERE ArticlesData.category LIKE :categoryName ORDER BY ArticlesData.published_on DESC")
+    fun getPagedNewsByNodeIdFromDb(categoryName: String): DataSource.Factory<Int, NewsEntity>
 
     @Query("SELECT * FROM( SELECT TrendingData.cluster_id,TrendingData.count,a.article_id, a.title, a.source, a.category, a.source_url, a.cover_image, a.description, a.published_on, a.category_id FROM ArticlesData as a,TrendingData  WHERE TrendingData.article_id = a.article_id ORDER BY published_on ASC ) as sub GROUP BY cluster_id ORDER BY published_on DESC")
     fun getPagingTrendingDataFromDb(): DataSource.Factory<Int, TrendingNewsData>
@@ -270,4 +270,7 @@ interface NewsDao {
         insertDDHashTagList(htList)
         insertDDArticleMediaList(amList)
     }
+
+    @Query("SELECT * FROM SubMenuData WHERE name LIKE '%' || :fieldName || '%' OR name LIKE '%' || :fieldName1 || '%'")
+    fun getLatestNewsName(fieldName: String? = "Uncategorised", fieldName1: String? = "Uncategorized" ): List<SubMenuEntity>
 }

@@ -228,6 +228,19 @@ fun signupTrackingCallback(apiInterfaceObj: ApiInterface, themePreference: Share
 }
 
 
+fun getLatestNewsName(newsDao: NewsDao): String {
+    var LatestNewsName: String = ""
+    try {
+        var ids = newsDao.getLatestNewsName()
+        if (ids.size > 0) {
+            LatestNewsName = ids.get(0).name
+        }
+    } catch (e: Exception) {
+        LatestNewsName = ""
+    }
+    return LatestNewsName
+}
+
 fun searchTrackingCallback(apiInterfaceObj: ApiInterface, themePreference: SharedPreferences, action:String, deviceId:String, plateform:String, type:String, sessionId:String, searchText:String){
 
     /*var tCall: Call<Void> = apiInterfaceObj.signInTrackApp( action, deviceId, plateform, type, sessionId, searchText) //getUniqueCode(con, themePreference)

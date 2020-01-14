@@ -192,8 +192,8 @@ class NewsFragment() : Fragment(), ConnectivityReceiver.ConnectivityReceiverList
         fragRecyclerview.layoutManager = layoutManager
 
         if (!tagName.equals("Trending")) {
-            fetchDataViewModel = ViewModelProviders.of(this, ViewModelProviderFactory(activity!!.application, tagId)).get(FetchDataApiViewModel::class.java)
-            fetchDataViewModel.initializeNews(tagId, 1).observe(viewLifecycleOwner, Observer<PagedList<INews>> {
+            fetchDataViewModel = ViewModelProviders.of(this, ViewModelProviderFactory(activity!!.application, "")).get(FetchDataApiViewModel::class.java)
+            fetchDataViewModel.initializeNews(tagName, 1).observe(viewLifecycleOwner, Observer<PagedList<INews>> {
 
                 adapter.setPlaceHolderImage(placeHolderListener)
 
@@ -210,7 +210,7 @@ class NewsFragment() : Fragment(), ConnectivityReceiver.ConnectivityReceiverList
                 if (direction == SwipyRefreshLayoutDirection.TOP) {
                     fetchDataViewModel.invalidateDataSource()
                     if (checkInternet == true) {
-                        val itemDataSourceFactory = NewsDataSourceFactory(activity!!.application, tagId)
+                        val itemDataSourceFactory = NewsDataSourceFactory(activity!!.application, tagName)
                         liveDataSource = itemDataSourceFactory.itemLiveDataSource
 
                         val pagedListConfig = PagedList.Config.Builder()
@@ -234,7 +234,7 @@ class NewsFragment() : Fragment(), ConnectivityReceiver.ConnectivityReceiverList
 
                     var tagsArray = arrayOfNulls<String>(tagItems.size)
                     tagItems.toArray(tagsArray)
-                    fetchDataViewModel.initializeNews(tagId, 1).observe(viewLifecycleOwner, Observer<PagedList<INews>> {
+                    fetchDataViewModel.initializeNews(tagName, 1).observe(viewLifecycleOwner, Observer<PagedList<INews>> {
                         val newsList = it as PagedList<INews>
                         adapter.submitList(newsList)
                     })
