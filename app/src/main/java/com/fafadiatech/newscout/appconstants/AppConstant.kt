@@ -25,7 +25,7 @@ import androidx.core.content.ContextCompat.getSystemServiceName
 
 
 val BASE_URL = "http://www.newscout.in/api/v1/"
-const val TRACKING_URL = "http://192.168.2.127:8000/event/track/"//"http://t.fafadiatech.com/api/v1/track/"
+const val TRACKING_URL = "http://www.newscout.in/event/track/"//"http://t.fafadiatech.com/api/v1/track/"
 val THUMBOR_IMG_URL = "http://d3fgx8oqv3lbgx.cloudfront.net/unsafe/"
 val KEY_NAME = "menu_name"
 val TRENDING_ID = -1
