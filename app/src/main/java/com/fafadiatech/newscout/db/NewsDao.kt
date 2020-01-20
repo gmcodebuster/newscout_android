@@ -157,10 +157,10 @@ interface NewsDao {
     @Query("SELECT * FROM ArticlesData WHERE ArticlesData.category_id= :categoryId ORDER BY ArticlesData.published_on DESC")
     fun getNewsByNodeIdFromDb(categoryId: Int): List<NewsEntity>
 
-    @Query("select a.article_id,a.title,a.source,a.category,a.source_url,a.cover_image,a.description,a.published_on, a.article_score, COALESCE(l.is_like, '2') AS like_status, COALESCE(b.status,'0') AS bookmark_status from ArticlesData as a LEFT JOIN LikeData as l on a.article_id = l.article_id LEFT JOIN BookmarkData as b on a.article_id = b.article_id where a.category_id = :categoryId ORDER BY a.published_on DESC")
+    @Query("select a.article_id,a.title,a.source,a.category,a.source_url,a.cover_image,a.description,a.published_on, a.article_score, COALESCE(l.is_like, '2') AS like_status, COALESCE(b.status,'0') AS bookmark_status from ArticlesData as a LEFT JOIN LikeData as l on a.article_id = l.article_id LEFT JOIN BookmarkData as b on a.article_id = b.article_id where a.category_id = :categoryId ORDER BY a.article_score DESC, a.published_on DESC")
     fun getDetailNewsByNodeId(categoryId: Int): List<DetailNewsData>
 
-    @Query("SELECT a.article_id,a.title,a.source,a.category,a.source_url,a.cover_image,a.description,a.published_on, a.article_score, CASE  WHEN article_id NOTNULL THEN 2  END AS like_status,CASE WHEN article_id NOTNULL THEN 0 END AS bookmark_status FROM ArticlesData a  WHERE a.category_id=:categoryId ORDER BY a.published_on DESC")
+    @Query("SELECT a.article_id,a.title,a.source,a.category,a.source_url,a.cover_image,a.description,a.published_on, a.article_score, CASE  WHEN article_id NOTNULL THEN 2  END AS like_status,CASE WHEN article_id NOTNULL THEN 0 END AS bookmark_status FROM ArticlesData a  WHERE a.category_id=:categoryId ORDER BY a.article_score DESC, a.published_on DESC")
     fun getDefaultDetailNewsByNodeId(categoryId: Int): List<DetailNewsData>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
