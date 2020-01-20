@@ -40,7 +40,7 @@ const val LATESTNEWS_NAME = "Latest News"
 const val UNIQUE_CODE = "uniquecode"
 val NEWSPAGESIZE = 20
 val TRENDINGPAGESIZE = 30
-const val PLATFORM = "Android"
+const val PLATFORM = "android"
 
 class AppConstant {
 

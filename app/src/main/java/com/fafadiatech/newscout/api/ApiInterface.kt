@@ -127,7 +127,7 @@ interface ApiInterface {
                  @Query("author_name") authorName:String = "",
                  @Query("action") action:String,
                  @Query("device_id") deviceId:String,
-                 @Query("plateform") plateform:String = "Android",
+                 @Query("platform") plateform:String = "android",
                  @Query("type") type:String,
                  @Query("sid") sessionId:String,
                  @Query("source_name") sourceName:String,
@@ -139,7 +139,7 @@ interface ApiInterface {
     fun signInTrackApp(
                  @Query("action") action:String,
                  @Query("device_id") deviceId:String,
-                 @Query("plateform") plateform:String = "Android",
+                 @Query("platform") plateform:String = "android",
                  @Query("type") type:String,
                  @Query("sid") sessionId:String,
                  @Query("first_name") firstName:String,
