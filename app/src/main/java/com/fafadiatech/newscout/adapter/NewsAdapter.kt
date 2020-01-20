@@ -343,16 +343,36 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<INews, 
                 fetchDataViewModel.getAdsTitle().observeOnce(con as LifecycleOwner, Observer<NewsAdsBodyData> {
                     if (it != null) {
                         holder?.adsTitle?.text = it?.ad_text
-                        holder?.adsSubTitle.text = it?.ad_url
+                        val adsurl = it?.ad_url
+                        if (it?.media != null && it.media.length > 0) {
+                            //var imageUrl = getImageURL(holder?.adsImage, it.media)
+                            Glide.with(con).load(it.media).apply(requestOptions)
+                                    .apply(RequestOptions.timeoutOf(5 * 60 * 1000))
+                                    .placeholder(R.drawable.image_not_found)
+                                    .error(R.drawable.image_not_found)
+                                    .into(holder?.adsImage)
+                        } else {
+                            Glide.with(con).load(R.drawable.image_not_found).apply(requestOptions)
+                                    .into(holder?.adsImage)
+                        }
+
+
+                        holder?.adsCardview.setOnClickListener {
+                            var deviceId = themePreference.getString("device_token", "")
+                            val sessionId = getUniqueCode(con, themePreference)
+                            trackingCallback(apiInterfaceObj, themePreference, 0, "", 0, "", "", ActionType.ADCLICK.type, deviceId?:"", PLATFORM, ViewType.MONETIZATIONVIEW.type, sessionId, "", 0)
+
+                            var url = adsurl
+                            val i = Intent(con, NewsWebActivity::class.java)
+                            i.putExtra("url_link", url)
+                            con.startActivity(i)
+                        }
+
                     }
                 })
                 getAdsDetail(adsViewholder)
                 //click...
-                adsViewholder.adsCardview.setOnClickListener {
-                    var deviceId = themePreference.getString("device_token", "")
-                    val sessionId = getUniqueCode(con, themePreference)
-                    trackingCallback(apiInterfaceObj, themePreference, 0, "", 0, "", "", ActionType.ADCLICK.type, deviceId?:"", PLATFORM, ViewType.MONETIZATIONVIEW.type, sessionId, "", 0)
-                }
+
 
             }
         }
@@ -403,7 +423,7 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<INews, 
         }
         var adsCardview = view.findViewById<CardView>(R.id.card_view)
         var adsTitle = view.findViewById<TextView>(R.id.ads_title)
-        var adsSubTitle = view.findViewById<TextView>(R.id.ads_sub_title)
+        var adsImage = view.findViewById<ImageView>(R.id.ads_image)
 
 
     }
