@@ -61,6 +61,7 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<INews, 
     var dateString: String? = null
     var categoryId: Int = 0
     lateinit var apiInterfaceObj: ApiInterface
+    lateinit var apiAdsInterfaceObj : ApiInterface
     lateinit var themePreference: SharedPreferences
     var placeHolderListener: PlaceHolderImageListener? = null
     val liveDataAds = MutableLiveData<NewsAdsApi>()
@@ -90,6 +91,7 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<INews, 
     init {
         fetchDataViewModel = ViewModelProviders.of(context as FragmentActivity).get(FetchDataApiViewModel::class.java)
         apiInterfaceObj = ApiClient.getClient().create(ApiInterface::class.java)
+        apiAdsInterfaceObj= ApiClient.getADSClient().create(ApiInterface::class.java)
         themePreference = context.getSharedPreferences(AppConstant.APPPREF, Context.MODE_PRIVATE)
         if (context is PlaceHolderImageListener) {
             placeHolderListener = context as PlaceHolderImageListener
@@ -442,7 +444,7 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<INews, 
 
     fun getAdsDetail(holder : AdsItemViewHolder?){
         //fetchDataViewModel.adsTitleVM.observe(con as LifecycleOwner, nameObserver)
-        var call: Call<NewsAdsApi> = apiInterfaceObj.getAds()
+        var call: Call<NewsAdsApi> = apiAdsInterfaceObj.getAds()
         call.enqueue(object : Callback<NewsAdsApi> {
             override fun onFailure(call: Call<NewsAdsApi>, t: Throwable) {
                 Log.d("TestMainActivity", "Inside Failure")

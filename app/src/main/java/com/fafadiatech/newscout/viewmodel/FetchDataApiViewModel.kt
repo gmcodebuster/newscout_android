@@ -302,7 +302,10 @@ class FetchDataApiViewModel(application: Application, mParams: String) : Android
     }
 
     fun setAdsTitle(data:NewsAdsBodyData?){
-        data?:adsTitleVM.postValue(data)
+        if (data != null){
+            adsTitleVM.postValue(data)
+        }
+        //data?:adsTitleVM.postValue(data)
     }
 
     fun getAdsTitle():MutableLiveData<NewsAdsBodyData>{

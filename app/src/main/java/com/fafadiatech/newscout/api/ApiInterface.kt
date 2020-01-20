@@ -116,7 +116,7 @@ interface ApiInterface {
     @GET("daily-digest/" + BuildConfig.DOMAIN_NAME)
     fun getDDNewsFromNodeIdByPage(@Query("page") page: Int, @Query("device_id", encoded = true) deviceId: String): Call<NewsDataApi>
 
-    @GET("http://www.newscout.in/api/v1/get-ads/")
+    @GET("ads/schedules/" + BuildConfig.DOMAIN_NAME)
     fun getAds() : Call<NewsAdsApi>
 
     @GET(TRACKING_URL + BuildConfig.DOMAIN_NAME)/*+ BuildConfig.DOMAIN_NAME */
