@@ -41,6 +41,7 @@ const val UNIQUE_CODE = "uniquecode"
 val NEWSPAGESIZE = 20
 val TRENDINGPAGESIZE = 30
 const val PLATFORM = "android"
+val ADFACTOR = 10
 
 class AppConstant {
 

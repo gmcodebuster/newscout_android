@@ -49,6 +49,7 @@ import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.math.floor
 
 class NewsAdapter(context: Context, category: String) : PagedListAdapter<INews, RecyclerView.ViewHolder>(DIFF_CALLBACK) {
 
@@ -224,6 +225,12 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<INews, 
                         val source = news!!.source
                         trackingCallback(apiInterfaceObj, themePreference, id, title, categoryId, cName, "", ActionType.ARTICLEDETAIL.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, source, 0)
 
+                        var difference:Int = 0
+                        if(position > (ADFACTOR - 1)){
+                            difference = floor(position.toFloat() / (ADFACTOR + 1)).toInt()
+                            itemIndex = itemIndex!! - difference
+                        }
+
                         var detailIntent = Intent(con, DetailNewsActivity::class.java)
                         detailIntent.putExtra("indexPosition", itemIndex!!)
                         detailIntent.putParcelableArrayListExtra("source_list", sourceList)
@@ -328,6 +335,12 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<INews, 
                     val source = news!!.source
                     trackingCallback(apiInterfaceObj, themePreference, id, title, categoryId, cName, "", ActionType.ARTICLEDETAIL.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, source, 0)
 
+                    var difference:Int =0
+                    if(position > (ADFACTOR-1)){
+                        difference = floor(position.toFloat() / (ADFACTOR + 1)).toInt()
+                        itemIndex = itemIndex!! - difference
+                    }
+
                     var detailIntent = Intent(con, DetailNewsActivity::class.java)
                     detailIntent.putExtra("indexPosition", itemIndex!!)
                     detailIntent.putParcelableArrayListExtra("source_list", sourceList)
@@ -370,10 +383,7 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<INews, 
 
                     }
                 })
-                getAdsDetail(adsViewholder)
-                //click...
-
-
+                getAdsDetail()
             }
         }
     }
@@ -462,9 +472,9 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<INews, 
                 .putCustomAttribute("Title", title));
     }
 
-    fun getAdsDetail(holder : AdsItemViewHolder?){
+    fun getAdsDetail(){
         //fetchDataViewModel.adsTitleVM.observe(con as LifecycleOwner, nameObserver)
-        var call: Call<NewsAdsApi> = apiAdsInterfaceObj.getAds()
+        var call: Call<NewsAdsApi> = apiAdsInterfaceObj.getAds(categoryType)
         call.enqueue(object : Callback<NewsAdsApi> {
             override fun onFailure(call: Call<NewsAdsApi>, t: Throwable) {
                 Log.d("TestMainActivity", "Inside Failure")

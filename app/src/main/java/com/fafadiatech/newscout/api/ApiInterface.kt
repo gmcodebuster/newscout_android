@@ -117,7 +117,7 @@ interface ApiInterface {
     fun getDDNewsFromNodeIdByPage(@Query("page") page: Int, @Query("device_id", encoded = true) deviceId: String): Call<NewsDataApi>
 
     @GET("ads/schedules/" + BuildConfig.DOMAIN_NAME)
-    fun getAds() : Call<NewsAdsApi>
+    fun getAds(@Query("category") categoryName:String = "") : Call<NewsAdsApi>
 
     @GET(TRACKING_URL + BuildConfig.DOMAIN_NAME)/*+ BuildConfig.DOMAIN_NAME */
     fun trackApp(@Query("article_id") itemId:Int = 0,

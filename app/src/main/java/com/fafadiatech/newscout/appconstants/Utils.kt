@@ -15,6 +15,7 @@ import com.fafadiatech.newscout.application.MyApplication
 import com.fafadiatech.newscout.db.NewsDao
 import com.fafadiatech.newscout.db.NewsDatabase
 import com.fafadiatech.newscout.model.AdsData
+import com.fafadiatech.newscout.model.DetailNewsData
 import com.fafadiatech.newscout.model.INews
 import com.fafadiatech.newscout.model.SubMenuResultData
 import retrofit2.Call
@@ -85,7 +86,7 @@ fun addAdsData(newsList : ArrayList<INews>?): ArrayList<INews>?{
 
     val newsIterator = newsList?.listIterator()
     for ((index, value) in newsIterator?.withIndex()!!) {
-        if(index > 0 && (index + 1) % 10 == 0){
+        if(index > 0 && (index + 1) % ADFACTOR == 0){
             newsIterator.add(AdsData("",""))
         }
     }
