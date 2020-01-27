@@ -59,7 +59,7 @@ class SourceItemDataSource(context: Context, queryTag: String) : PageKeyedDataSo
                                 var articleScore = obj.article_score
 
                                 var entityObj =
-                                        NewsEntity(newsId, categoryId, title, source, category, url, urlToImage, description, publishedOn, hashTags!!, articleScore)
+                                        NewsEntity(newsId, categoryId, title, source, category, url, urlToImage, description, publishedOn, hashTags!!, articleScore.toString())
                                 newsList.add(entityObj)
                             }
                         }
@@ -106,7 +106,7 @@ class SourceItemDataSource(context: Context, queryTag: String) : PageKeyedDataSo
                                 var articleScore = obj.article_score
 
                                 var entityObj =
-                                        NewsEntity(newsId, categoryId, title, source, category, url, urlToImage, description, publishedOn, hashTags!!, articleScore)
+                                        NewsEntity(newsId, categoryId, title, source, category, url, urlToImage, description, publishedOn, hashTags!!, articleScore.toString())
                                 newsList.add(entityObj)
                             }
                         }

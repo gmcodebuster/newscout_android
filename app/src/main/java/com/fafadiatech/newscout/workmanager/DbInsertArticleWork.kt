@@ -60,7 +60,7 @@ class DbInsertArticleWork(context: Context, params: WorkerParameters) : Worker(c
                         val articleScore = obj.article_score
 
                         var entityObj =
-                                NewsEntity(newsId, categoryId, title, source, category, url, urlToImage, description, publishedOn, hashTags!!, articleScore)
+                                NewsEntity(newsId, categoryId, title, source, category, url, urlToImage, description, publishedOn, hashTags!!, articleScore.toString())
                         newsList.add(entityObj)
 
                         var hashTagList = list.get(i).hash_tags

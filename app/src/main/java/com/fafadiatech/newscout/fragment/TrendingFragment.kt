@@ -252,7 +252,7 @@ class TrendingFragment : Fragment(), AddTrendingFragmentListener {
                             var articleScore = obj.article_score
 
                             var entityObj =
-                                    NewsEntity(newsId, categoryId, title, source, category, url, urlToImage, description, publishedOn, hashTags!!, articleScore)
+                                    NewsEntity(newsId, categoryId, title, source, category, url, urlToImage, description, publishedOn, hashTags!!, articleScore.toString())
 
                             articleList.add(entityObj)
 

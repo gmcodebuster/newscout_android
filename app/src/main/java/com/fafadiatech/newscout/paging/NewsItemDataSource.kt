@@ -79,7 +79,7 @@ class NewsItemDataSource(context: Context, queryTag: String) : PageKeyedDataSour
                                 val description: String = obj.blurb
                                 val publishedOn: String = obj.published_on
                                 val hashTags = obj.hash_tags
-                                var articleScore = obj.article_score
+                                var articleScore = obj.article_score.toString()
 
                                 var entityObj =
                                         NewsEntity(newsId, categoryId, title, source, category, url, urlToImage, description, publishedOn, hashTags!!, articleScore)
@@ -137,7 +137,7 @@ class NewsItemDataSource(context: Context, queryTag: String) : PageKeyedDataSour
                             val description: String = obj.blurb
                             val publishedOn: String = obj.published_on
                             val hashTags = obj.hash_tags
-                            var articleScore = obj.article_score
+                            var articleScore = obj.article_score.toString()
 
                             var entityObj =
                                     NewsEntity(newsId, categoryId, title, source, category, url, urlToImage, description, publishedOn, hashTags!!, articleScore)
@@ -220,7 +220,7 @@ class NewsItemDataSource(context: Context, queryTag: String) : PageKeyedDataSour
                             val description: String = obj.blurb
                             val publishedOn: String = obj.published_on
                             val hashTags = obj.hash_tags
-                            var articleScore = obj.article_score
+                            var articleScore = obj.article_score.toString()
 
                             var entityObj =
                                     NewsEntity(newsId, categoryId, title, source, category, url, urlToImage, description, publishedOn, hashTags!!,articleScore)
@@ -291,7 +291,7 @@ class NewsItemDataSource(context: Context, queryTag: String) : PageKeyedDataSour
                         val description: String = obj.blurb
                         val publishedOn: String = obj.published_on
                         val hashTags = obj.hash_tags
-                        var articleScore = obj.article_score
+                        var articleScore = obj.article_score.toString()
 
                         var entityObj =
                                 NewsEntity(newsId, categoryId, title, source, category, url, urlToImage, description, publishedOn, hashTags!!, articleScore)

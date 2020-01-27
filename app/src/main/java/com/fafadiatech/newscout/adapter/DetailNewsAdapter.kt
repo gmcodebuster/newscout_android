@@ -320,7 +320,7 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
                                     var coverImage = obj.cover_image
                                     var hasTags = ArrayList<String>()
                                     var articleScore = obj.article_score
-                                    var newsEntity = NewsEntity(id, 0, title, source, category, sourceUrl, coverImage, desc, publishedOn, hasTags, articleScore)
+                                    var newsEntity = NewsEntity(id, 0, title, source, category, sourceUrl, coverImage, desc, publishedOn, hasTags, articleScore.toString())
                                     newsDao.insertNewsEntity(newsEntity)
                                 }
 

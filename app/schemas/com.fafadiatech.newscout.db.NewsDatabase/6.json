@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 6,
-    "identityHash": "41a6fe5ec516fee5e12643ce7e561ce6",
+    "identityHash": "992518b1f495496657fe7a77d7c364a8",
     "entities": [
       {
         "tableName": "ArticlesData",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`article_id` INTEGER NOT NULL, `category_id` INTEGER NOT NULL, `title` TEXT NOT NULL, `source` TEXT NOT NULL, `category` TEXT NOT NULL, `source_url` TEXT NOT NULL, `cover_image` TEXT NOT NULL, `description` TEXT, `published_on` TEXT NOT NULL, `hash_tags` TEXT NOT NULL, `article_score` REAL NOT NULL, PRIMARY KEY(`article_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`article_id` INTEGER NOT NULL, `category_id` INTEGER NOT NULL, `title` TEXT NOT NULL, `source` TEXT NOT NULL, `category` TEXT NOT NULL, `source_url` TEXT NOT NULL, `cover_image` TEXT NOT NULL, `description` TEXT, `published_on` TEXT NOT NULL, `hash_tags` TEXT NOT NULL, `article_score` TEXT NOT NULL, PRIMARY KEY(`article_id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -71,7 +71,7 @@
           {
             "fieldPath": "article_score",
             "columnName": "article_score",
-            "affinity": "REAL",
+            "affinity": "TEXT",
             "notNull": true
           }
         ],
@@ -898,7 +898,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '41a6fe5ec516fee5e12643ce7e561ce6')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '992518b1f495496657fe7a77d7c364a8')"
     ]
   }
 }
