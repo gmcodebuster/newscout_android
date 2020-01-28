@@ -32,7 +32,7 @@ class NewsWebActivity : BaseActivity() {
         webSettings.useWideViewPort = true
         webSettings.loadWithOverviewMode = true
         webSettings.pluginState = WebSettings.PluginState.ON
-        urlLink = intent.getStringExtra("url_link")
+        urlLink = intent.getStringExtra("url_link")?:""
 
         browser.webChromeClient = object : WebChromeClient() {
             override fun onProgressChanged(view: WebView, progress: Int) {

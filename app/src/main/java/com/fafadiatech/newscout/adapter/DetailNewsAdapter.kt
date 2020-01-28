@@ -375,9 +375,13 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
             val sessionId = getUniqueCode(context, themePreference)
             trackingCallback(interfaceObj, themePreference, newsId, itemName, cId, cName, "", ActionType.READMORE.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId,"",0)
             var url = detailList.get(position).source_url
-            val i = Intent(context, NewsWebActivity::class.java)
-            i.putExtra("url_link", url)
-            context.startActivity(i)
+            if (url.isNullOrBlank()) {
+                Toast.makeText(context, "Page not found", Toast.LENGTH_SHORT).show()
+            } else {
+                val i = Intent(context, NewsWebActivity::class.java)
+                i.putExtra("url_link", url)
+                context.startActivity(i)
+            }
         }
 
         tvMoreStories.setOnClickListener {

@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
@@ -376,9 +377,13 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<INews, 
                             trackingCallback(apiInterfaceObj, themePreference, 0, "", 0, "", "", ActionType.ADCLICK.type, deviceId?:"", PLATFORM, ViewType.MONETIZATIONVIEW.type, sessionId, "", 0)
 
                             var url = adsurl
-                            val i = Intent(con, NewsWebActivity::class.java)
-                            i.putExtra("url_link", url)
-                            con.startActivity(i)
+                            if (url.isNullOrBlank()) {
+                                Toast.makeText(con, "Page not found", Toast.LENGTH_SHORT).show()
+                            } else {
+                                val i = Intent(con, NewsWebActivity::class.java)
+                                i.putExtra("url_link", url)
+                                con.startActivity(i)
+                            }
                         }
 
                     }
