@@ -38,7 +38,7 @@ class IntroActivity : AppCompatActivity() {
         prefManager = PrefManager(this)
         if (!prefManager!!.isFirstTimeLaunch()) {
             launchHomeScreen()
-            finish()
+            return
         }
 
         setContentView(R.layout.activity_intro_screen)
@@ -81,7 +81,7 @@ class IntroActivity : AppCompatActivity() {
     private fun launchHomeScreen() {
         prefManager!!.setFirstTimeLaunch(false)
         startActivity(Intent(this@IntroActivity, MainActivity::class.java))
-        finish()
+        this@IntroActivity.finish()
     }
 
 
@@ -121,5 +121,9 @@ class IntroActivity : AppCompatActivity() {
             val view = `object` as View
             container.removeView(view)
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
     }
 }
