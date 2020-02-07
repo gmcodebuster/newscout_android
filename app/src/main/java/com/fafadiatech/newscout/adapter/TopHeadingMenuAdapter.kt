@@ -45,14 +45,16 @@ class TopHeadingMenuAdapter(var context: Context, var clickListener: MenuHeaderC
         } else if (position == 1) {
             holder.imgViewMenu.setImageResource(R.drawable.latest_news)
         } else if (position == 2) {
-            holder.imgViewMenu.setImageResource(R.drawable.sector_update)
+            holder.imgViewMenu.setImageResource(R.drawable.ic_daily_news)
         } else if (position == 3) {
-            holder.imgViewMenu.setImageResource(R.drawable.internet)
+            holder.imgViewMenu.setImageResource(R.drawable.sector_update)
         } else if (position == 4) {
-            holder.imgViewMenu.setImageResource(R.drawable.finance)
+            holder.imgViewMenu.setImageResource(R.drawable.internet)
         } else if (position == 5) {
-            holder.imgViewMenu.setImageResource(R.drawable.economy)
+            holder.imgViewMenu.setImageResource(R.drawable.finance)
         } else if (position == 6) {
+            holder.imgViewMenu.setImageResource(R.drawable.economy)
+        } else if (position == 7) {
             holder.imgViewMenu.setImageResource(R.drawable.news)
         } else {
             holder.imgViewMenu.setImageResource(R.drawable.trending_news)
