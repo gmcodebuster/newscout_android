@@ -38,7 +38,6 @@ class IntroActivity : AppCompatActivity() {
         prefManager = PrefManager(this)
         if (!prefManager!!.isFirstTimeLaunch()) {
             launchHomeScreen()
-            return
         }
 
         setContentView(R.layout.activity_intro_screen)
