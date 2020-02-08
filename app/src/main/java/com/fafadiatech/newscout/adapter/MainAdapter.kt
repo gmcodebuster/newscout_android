@@ -15,7 +15,7 @@ import com.fafadiatech.newscout.R
 import com.fafadiatech.newscout.appconstants.convertDpToPx
 import com.fafadiatech.newscout.fragment.NewsFragment
 
-class MainAdapter(context: Context, fragManager: FragmentManager) : FragmentPagerAdapter(fragManager) {
+class MainAdapter(context: Context, fragManager: FragmentManager, data : ArrayList<Fragment>, dataBundle : ArrayList<Bundle>) : FragmentPagerAdapter(fragManager) {
 
     var con: Context = context
     private var baseId: Long = 0
@@ -32,6 +32,8 @@ class MainAdapter(context: Context, fragManager: FragmentManager) : FragmentPage
 
     init {
         this.fManager = fragManager
+        this.dataList = data
+        this.dataBundleList = dataBundle
     }
 
     override fun getCount(): Int {
@@ -64,6 +66,7 @@ class MainAdapter(context: Context, fragManager: FragmentManager) : FragmentPage
     fun addFragment(position: Int, f: Fragment, data: Bundle) {
         dataList.add(f)
         dataBundleList.add(data)
+        notifyDataSetChanged()
     }
 
     fun removeFragment() {

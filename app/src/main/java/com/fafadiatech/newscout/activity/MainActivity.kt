@@ -91,6 +91,8 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
     var topMenuResult = ArrayList<MenuHeading>()
     lateinit var expandableListAdapter: ExpandListAdapter
     lateinit var menuHeadinglayoutManager: LinearLayoutManager
+    var arrFragment = ArrayList<Fragment>()
+    var arrDataBundle = ArrayList<Bundle>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -114,7 +116,7 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
         toolbar = findViewById(R.id.toolbar_home_sc)
         drawer_layout = findViewById(R.id.drawer_layout)
         gson = Gson()
-        adapterObj = MainAdapter(this, supportFragmentManager)
+        adapterObj = MainAdapter(this, supportFragmentManager, arrFragment, arrDataBundle)
 
         if (token != null && token != "") {
 
@@ -702,8 +704,14 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
 
             val rootFrag = RootTrendingFragment()
             adapterObj.removeFragment()
-            adapterObj.addFragment(0, rootFrag, bundle)
-            adapterObj.notifyDataSetChanged()
+
+            arrFragment.add(rootFrag)
+            arrDataBundle.add(bundle)
+            adapterObj = MainAdapter(this@MainActivity, supportFragmentManager, arrFragment, arrDataBundle)
+
+            vPager.adapter = adapterObj
+            setIconsTab(tabLayout)
+            vPager.setCurrentItem(0)
 
             var deviceId = themePreference.getString("device_token", "")
             val sessionId = getUniqueCode(this@MainActivity, themePreference)
@@ -720,8 +728,15 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
 
             val newsFrag = NewsFragment()
             adapterObj.removeFragment()
-            adapterObj.addFragment(0, newsFrag, bundle)
-            adapterObj.notifyDataSetChanged()
+
+            arrFragment.add(newsFrag)
+            arrDataBundle.add(bundle)
+
+            adapterObj = MainAdapter(this@MainActivity, supportFragmentManager, arrFragment, arrDataBundle)
+
+            vPager.adapter = adapterObj
+            setIconsTab(tabLayout)
+            vPager.setCurrentItem(0)
 
             var deviceId = themePreference.getString("device_token", "")
             val sessionId = getUniqueCode(this@MainActivity, themePreference)
@@ -736,8 +751,15 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
 
             val newsFrag = DailyDigestFragment()
             adapterObj.removeFragment()
-            adapterObj.addFragment(0, newsFrag, bundle)
-            adapterObj.notifyDataSetChanged()
+
+            arrFragment.add(newsFrag)
+            arrDataBundle.add(bundle)
+
+            adapterObj = MainAdapter(this@MainActivity, supportFragmentManager, arrFragment, arrDataBundle)
+
+            vPager.adapter = adapterObj
+            setIconsTab(tabLayout)
+            vPager.setCurrentItem(0)
 
             var deviceId = themePreference.getString("device_token", "")
             val sessionId = getUniqueCode(this@MainActivity, themePreference)
@@ -822,7 +844,8 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
 
                             val rootFrag = RootTrendingFragment()
 
-                            adapterObj.addFragment(i, rootFrag, bundle)
+                            arrFragment.add(rootFrag)
+                            arrDataBundle.add(bundle)
 
                             var deviceId = themePreference.getString("device_token", "")
                             val sessionId = getUniqueCode(this@MainActivity, themePreference)
@@ -837,7 +860,8 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
 
                             val newsFrag = NewsFragment()
 
-                            adapterObj.addFragment(i, newsFrag, bundle)
+                            arrFragment.add(newsFrag)
+                            arrDataBundle.add(bundle)
 
                         } else if(name.equals(DAILYDIGEST_NAME)){
                             var bundle = Bundle()
@@ -847,7 +871,8 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
 
                             val newsFrag = DailyDigestFragment()
 
-                            adapterObj.addFragment(i, newsFrag, bundle)
+                            arrFragment.add(newsFrag)
+                            arrDataBundle.add(bundle)
 
                         }else {
                             if (!name.equals(LATESTNEWS_FIELDNAME) && !name.equals(LATESTNEWS_FIELDNAME2)) {
@@ -858,11 +883,13 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
 
                                 val newsFrag = NewsFragment()
 
-                                adapterObj.addFragment(i, newsFrag, bundle)
+                                arrFragment.add(newsFrag)
+                                arrDataBundle.add(bundle)
                             }
                         }
                     }
-                    adapterObj.notifyDataSetChanged()
+                    adapterObj = MainAdapter(this@MainActivity, supportFragmentManager, arrFragment, arrDataBundle)
+                    vPager.adapter = adapterObj
                     setIconsTab(tabLayout)
                     vPager.setCurrentItem(0)
                     trackingCallback(apiInterfaceObj, themePreference, 0, "", subMenuId, subMenuName, "", ActionType.MENUCHANGE.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
