@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import android.content.res.Resources
 import android.os.Bundle
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.view.animation.Animation
@@ -168,7 +169,13 @@ class SearchActivity : AppCompatActivity(), ProgressBarListener {
                             .build()
 
                     itemPagedList.observe(this@SearchActivity, Observer<PagedList<NewsEntity>> {
+                        progressBar.visibility = View.VISIBLE
+                        Log.d("Search Activity", "Paged List :"+ it.size)
 
+                        Log.d("Search Activity", "Paged List snapshot :"+ it.snapshot().size)
+                        if(it.snapshot().size > 0){
+
+                        }
                         searchAdapter.submitList(it)
 
                     })

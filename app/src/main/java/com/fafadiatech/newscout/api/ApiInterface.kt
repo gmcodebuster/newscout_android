@@ -79,7 +79,7 @@ interface ApiInterface {
     fun getNewsFromTagByPage(@Query("page") page: Int, @Query("tag", encoded = true) tag: String): Call<NewsDataApi>
 
     @GET("article/search/" + BuildConfig.DOMAIN_NAME)
-    fun getNewsFromNodeIdByPage(@Query("page") page: Int, @Query("category") category: String): Call<NewsDataApi>
+    fun getNewsFromNodeIdByPage(@Query("page") page: Int, @Query("category", encoded = false) category: String): Call<NewsDataApi>
 
     @GET("article/search/" + BuildConfig.DOMAIN_NAME)
     fun getNewsFromSource(@Query("source") source: String, @Query("page") page: Int): Call<NewsDataApi>

@@ -35,7 +35,7 @@ class UrlEncodeInterceptor : Interceptor {
                     .build();
         } else {
             var stringUrl = original.url().toString()
-            stringUrl = stringUrl.replace("%26", "&").replace("%3D", "=").replace("%20", " ")
+            stringUrl = stringUrl/*.replace("%26", "&")*/.replace("%3D", "=").replace("%20", " ")
             val time = Date()
             request = original.newBuilder().url(stringUrl)
                     .build()

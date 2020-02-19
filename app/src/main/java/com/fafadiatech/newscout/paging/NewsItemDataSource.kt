@@ -1,6 +1,7 @@
 package com.fafadiatech.newscout.paging
 
 import android.content.Context
+import android.net.Uri
 import android.util.Log
 import androidx.paging.PageKeyedDataSource
 import com.fafadiatech.newscout.api.ApiClient
@@ -17,6 +18,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.io.File
+import java.net.URLEncoder
 
 class NewsItemDataSource(context: Context, queryTag: String) : PageKeyedDataSource<Int, INews>() {
 
@@ -40,6 +42,7 @@ class NewsItemDataSource(context: Context, queryTag: String) : PageKeyedDataSour
         interfaceObj = ApiClient.getClient().create(ApiInterface::class.java)
         articleNewsDao = newsDatabase!!.newsDao()
         tagName = queryTag
+
     }
 
     var adjacentKey: Int? = null
