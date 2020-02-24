@@ -173,10 +173,33 @@ class SearchActivity : AppCompatActivity(), ProgressBarListener {
                         Log.d("Search Activity", "Paged List :"+ it.size)
 
                         Log.d("Search Activity", "Paged List snapshot :"+ it.snapshot().size)
-                        if(it.snapshot().size > 0){
 
-                        }
                         searchAdapter.submitList(it)
+
+                        it.addWeakCallback(null, object:PagedList.Callback(){
+                            override fun onChanged(position: Int, count: Int) {
+                                Log.d("SearchActivity", "onChanged Size : "+count)
+                                if(count == 0){
+                                    Log.d("","")
+                                    progressBar.visibility = View.GONE
+                                    emptyText.visibility = View.VISIBLE
+                                    emptyText.text = "No data found"
+                                }
+                            }
+
+                            override fun onInserted(position: Int, count: Int) {
+                                Log.d("SearchActivity", "onInserted Size : "+count)
+                                if(count == 0){
+                                    progressBar.visibility = View.GONE
+                                    emptyText.visibility = View.VISIBLE
+                                    emptyText.text = "No data found"
+                                }
+                            }
+
+                            override fun onRemoved(position: Int, count: Int) {
+
+                            }
+                        })
 
                     })
                     val sessionId = getUniqueCode(this@SearchActivity, themePreference)

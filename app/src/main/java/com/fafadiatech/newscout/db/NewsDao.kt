@@ -72,7 +72,7 @@ interface NewsDao {
     fun getDetailSearchNewsFromDb(): List<DetailNewsData>
 
     @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
-    @Query("SELECT  a.* FROM SearchData a ORDER BY a.published_on DESC")
+    @Query("SELECT  a.* FROM SearchData a ORDER BY datetime(a.published_on) DESC, a.article_score ASC")
     fun getSearchNewsFromDb(): List<NewsEntity>
 
     @Query("DELETE FROM SearchData")
