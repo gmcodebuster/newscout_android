@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.*
 import android.widget.ExpandableListView
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
@@ -237,12 +238,12 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
     fun setIconsTab(tabLayout: TabLayout) {
 
         for (i in 0 until tabLayout.getTabCount()) {
-            val tab1 = tabLayout.getTabAt(i)
+            val cTab = tabLayout.getTabAt(i)
             val tabView = (tabLayout.getChildAt(0) as ViewGroup).getChildAt(i)
             val p = tabView.layoutParams as ViewGroup.MarginLayoutParams
-            p.setMargins(16, 8, 16, 8)
+            p.setMargins(8, 8, 8, 8)
+            cTab?.setCustomView(adapterObj.getTabView(i))
             tabView.requestLayout()
-            tab1?.setCustomView(adapterObj.getTabView(i))
         }
     }
 

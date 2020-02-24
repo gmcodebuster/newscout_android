@@ -62,6 +62,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/rv_top_heading"
         app:tabGravity="fill"
+        app:tabMinWidth="8dp"
         app:tabIndicatorHeight="@dimen/size_0dp"
         app:tabMode="scrollable"
         app:tabPaddingBottom="@dimen/size_n1dp"
