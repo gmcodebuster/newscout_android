@@ -28,6 +28,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.crashlytics.android.answers.Answers
 import com.crashlytics.android.answers.CustomEvent
+import com.fafadiatech.newscout.BuildConfig
 import com.fafadiatech.newscout.R
 import com.fafadiatech.newscout.activity.DetailNewsActivity
 import com.fafadiatech.newscout.activity.NewsWebActivity
@@ -226,10 +227,12 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<INews, 
                         val source = news!!.source
                         trackingCallback(apiInterfaceObj, themePreference, id, title, categoryId, cName, "", ActionType.ARTICLEDETAIL.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, source, 0)
 
-                        var difference:Int = 0
-                        if(position > (ADFACTOR - 1)){
-                            difference = floor(position.toFloat() / (ADFACTOR + 1)).toInt()
-                            itemIndex = itemIndex!! - difference
+                        if(BuildConfig.showAds) {
+                            var difference: Int = 0
+                            if (position > (ADFACTOR - 1)) {
+                                difference = floor(position.toFloat() / (ADFACTOR + 1)).toInt()
+                                itemIndex = itemIndex!! - difference
+                            }
                         }
 
                         var detailIntent = Intent(con, DetailNewsActivity::class.java)

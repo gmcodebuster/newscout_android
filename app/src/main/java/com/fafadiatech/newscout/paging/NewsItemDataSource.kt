@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import android.util.Log
 import androidx.paging.PageKeyedDataSource
+import com.fafadiatech.newscout.BuildConfig
 import com.fafadiatech.newscout.api.ApiClient
 import com.fafadiatech.newscout.api.ApiInterface
 import com.fafadiatech.newscout.appconstants.TRENDING_NAME
@@ -94,7 +95,10 @@ class NewsItemDataSource(context: Context, queryTag: String) : PageKeyedDataSour
                         articleNewsDao.insertNews(articleList as ArrayList<NewsEntity>)
                         articleNewsDao.insertTrendingData(trendingNewsList)
 
-                        articleList = addAdsData(articleList)!!
+                        if(BuildConfig.showAds){
+                            articleList = addAdsData(articleList)!!
+                        }
+
                     }
                 }
             })
@@ -175,7 +179,9 @@ class NewsItemDataSource(context: Context, queryTag: String) : PageKeyedDataSour
                         } catch (e: Exception) {
 
                         }
-                        newsList = addAdsData(newsList)!!
+                        if(BuildConfig.showAds) {
+                            newsList = addAdsData(newsList)!!
+                        }
                     }
 
                     try {
@@ -258,7 +264,9 @@ class NewsItemDataSource(context: Context, queryTag: String) : PageKeyedDataSour
 
                         }
 
-                        newsList = addAdsData(newsList)!!
+                        if(BuildConfig.showAds) {
+                            newsList = addAdsData(newsList)!!
+                        }
                     }
 
                     try {
