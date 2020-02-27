@@ -101,21 +101,9 @@ class SgstItemDataSource(context: Context, newsId: Int) : PageKeyedDataSource<In
                             }
                         }
 
-                        /*try {
-                            articleNewsDao.insertNews(newsList as ArrayList<NewsEntity>)
-                            articleNewsDao.insertHashTagList(hashTagArrayList)
-                            articleNewsDao.insertArticleMediaList(articleMediaArrayList)
-                        } catch (e: Exception) {
-
-                        }*/
-
-
-
                     }else{
                         if(newsList.isNullOrEmpty() || newsList.size == 0){ //
-                            //call db
-                            //val fetchDataViewModel = ViewModelProviders(mContext).get(FetchDataApiViewModel::class.java)
-                            //val fetchDataViewModel = ViewModelProvider(mContext, ViewModelProviderFactory()).get(FetchDataApiViewModel::class.java)
+
                             val newsDatabase = NewsDatabase.getInstance(mContext.applicationContext)
                             val rNewsDao = newsDatabase!!.newsDao()
                             newsList = rNewsDao.getTopFiveArticles() as ArrayList<INews>

@@ -152,7 +152,7 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
         rvSuggestedNews.adapter = rvSuggestedAdapter
 
         fetchDataViewModel = ViewModelProviders.of(context as FragmentActivity).get(FetchDataApiViewModel::class.java)
-            
+
         newsId = detailList.get(position).article_id
         fetchDataViewModel.suggestedNews(newsId, 1).observe(context as LifecycleOwner, object: Observer<List<INews>> {
             override fun onChanged(list: List<INews>?) {

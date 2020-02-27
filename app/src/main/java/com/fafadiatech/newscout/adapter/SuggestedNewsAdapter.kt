@@ -94,9 +94,8 @@ class SuggestedNewsAdapter(val context: Context) : PagedListAdapter<DetailNewsDa
                 val count:Int  = itemCount
                 itemIndex = position - 1
                 var viewHolderItem = holder as SuggestedNewsViewHolder
-                val news = getItem(position) as DetailNewsData
                 val preNews = getItem(position -1) as DetailNewsData
-                viewHolderItem.suggestedNewsTitle.text = news.title //detailList.get(itemIndex)
+                viewHolderItem.suggestedNewsTitle.text = preNews.title
                 val vto = viewHolderItem.suggestedNewsImage.viewTreeObserver
                 vto.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
                     override fun onPreDraw(): Boolean {
@@ -124,11 +123,11 @@ class SuggestedNewsAdapter(val context: Context) : PagedListAdapter<DetailNewsDa
                         detailList = data?.toList() as ArrayList<DetailNewsData>
                     }
                     var deviceId = themePreference.getString("device_token", "")
-                    val newsId = news.article_id
-                    val itemName = news.title
-                    val cName = news.category
+                    val newsId = preNews.article_id
+                    val itemName = preNews.title
+                    val cName = preNews.category
                     val cId = MyApplication.categoryIdHashMap.get(cName) ?: 0
-                    val sourceName = news.source
+                    val sourceName = preNews.source
 
                     var detailIntent = Intent(context, DetailNewsActivity::class.java)
                     detailIntent.putExtra("indexPosition", itemIndex)
