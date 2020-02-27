@@ -19,6 +19,7 @@ import com.fafadiatech.newscout.model.*
 import com.fafadiatech.newscout.paging.DBNewsDataSource
 import com.fafadiatech.newscout.paging.DDNewsDataSourceFactory
 import com.fafadiatech.newscout.paging.NewsDataSourceFactory
+import com.fafadiatech.newscout.paging.SgstDataSourceFactory
 
 class NewsRepository(application: Application) {
     var rNewsDao: NewsDao
@@ -37,6 +38,10 @@ class NewsRepository(application: Application) {
     var ddNewsPagedList: LiveData<PagedList<DailyDigestEntity>>? = null
     lateinit var factory: DataSource.Factory<Int, INews>
     lateinit var ddfactory: DataSource.Factory<Int, DailyDigestEntity>
+    lateinit var sgstDataSourceFactory: SgstDataSourceFactory
+    lateinit var sgstLiveDataSource: LiveData<PageKeyedDataSource<Int, INews>>
+    lateinit var sgstItemPagedList: LiveData<PagedList<INews>>
+    var suggestedNewsList: LiveData<PagedList<INews>>? = null
 
     init {
         this.application = application
@@ -331,4 +336,29 @@ class NewsRepository(application: Application) {
         var result: LiveData<List<DetailNewsData>> = rNewsDao.getDDDetailNewsFromDb()
         return result
     }
+
+    fun sgstNetworkCall(application: Application, newsId: Int): LiveData<PagedList<INews>> {
+        var sgstDataSourceFactory = SgstDataSourceFactory(application, newsId)
+
+        sgstLiveDataSource = sgstDataSourceFactory.getNewsSourceData()
+        val pagedListConfig = PagedList.Config.Builder()
+                .setEnablePlaceholders(false)
+                .setPageSize(NEWSPAGESIZE).build()
+
+        sgstItemPagedList = LivePagedListBuilder(sgstDataSourceFactory, pagedListConfig)
+                .build()
+        return sgstItemPagedList
+    }
+
+    fun selectSuggestedNewsSource(newsId: Int, pageNo: Int): LiveData<PagedList<INews>> {
+
+        if (MyApplication.checkInternet) {
+            suggestedNewsList = sgstNetworkCall(application, newsId)
+        } else {
+
+        }
+        return suggestedNewsList!!
+    }
+
+
 }

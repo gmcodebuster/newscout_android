@@ -212,9 +212,8 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<INews, 
 
                     rightItemViewholder.itemRootView.setOnClickListener {
                         itemIndex = position
-                        fetchDataViewModel.setCurrentListNews(newsList)//setCurrentList(newsList)
+                        fetchDataViewModel.setCurrentListNews(newsList)
                         var id = news!!.id
-                        fetchDataViewModel.startRecommendNewsWorkManager(id)
                         categoryId = news!!.category_id
                         val categoryName = MyApplication.categoryNameHashMap.get(categoryId) ?: ""
                         var itemTitle = news!!.title
@@ -234,7 +233,7 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<INews, 
                                 itemIndex = itemIndex!! - difference
                             }
                         }
-
+                        Log.d("News Adapter","Right Image News Id :"+id)
                         var detailIntent = Intent(con, DetailNewsActivity::class.java)
                         detailIntent.putExtra("indexPosition", itemIndex!!)
                         detailIntent.putParcelableArrayListExtra("source_list", sourceList)
@@ -323,7 +322,7 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<INews, 
                 }
 
                 leftItemViewholder.itemRootView.setOnClickListener {
-                    fetchDataViewModel.setCurrentListNews(newsList)//setCurrentList(newsList)
+                    fetchDataViewModel.setCurrentListNews(newsList)
                     itemIndex = position
                     var id = news!!.id
                     fetchDataViewModel.startRecommendNewsWorkManager(id)
@@ -344,7 +343,7 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<INews, 
                         difference = floor(position.toFloat() / (ADFACTOR + 1)).toInt()
                         itemIndex = itemIndex!! - difference
                     }
-
+                    Log.d("News Adapter","Left Image News Id :"+id)
                     var detailIntent = Intent(con, DetailNewsActivity::class.java)
                     detailIntent.putExtra("indexPosition", itemIndex!!)
                     detailIntent.putParcelableArrayListExtra("source_list", sourceList)
@@ -362,7 +361,7 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<INews, 
                         holder?.adsTitle?.text = it?.ad_text
                         val adsurl = it?.ad_url
                         if (it?.media != null && it.media.length > 0) {
-                            //var imageUrl = getImageURL(holder?.adsImage, it.media)
+
                             Glide.with(con).load(it.media).apply(requestOptions)
                                     .apply(RequestOptions.timeoutOf(5 * 60 * 1000))
                                     .placeholder(R.drawable.image_not_found)
@@ -481,7 +480,7 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<INews, 
     }
 
     fun getAdsDetail(){
-        //fetchDataViewModel.adsTitleVM.observe(con as LifecycleOwner, nameObserver)
+
         var call: Call<NewsAdsApi> = apiAdsInterfaceObj.getAds(categoryType)
         call.enqueue(object : Callback<NewsAdsApi> {
             override fun onFailure(call: Call<NewsAdsApi>, t: Throwable) {
@@ -489,7 +488,7 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<INews, 
             }
 
             override fun onResponse(call: Call<NewsAdsApi>, response: Response<NewsAdsApi>) {
-                //To change body of created functions use File | Settings | File Templates.
+
                 Log.d("TestMainActivity", "Inside Success")
                 val code = response.code()
                 if(code == 200) {

@@ -49,6 +49,8 @@ class FetchDataApiViewModel(application: Application, mParams: String) : Android
     lateinit var newsItemPagedList: LiveData<PagedList<INews>>
     lateinit var ddnewsItemPagedList: LiveData<PagedList<DailyDigestEntity>>
 
+    lateinit var sgstNewsPagedList: LiveData<PagedList<INews>>
+
     val adsTitleVM: MutableLiveData<NewsAdsBodyData> by lazy {
         MutableLiveData<NewsAdsBodyData>()
     }
@@ -250,7 +252,7 @@ class FetchDataApiViewModel(application: Application, mParams: String) : Android
 
     fun setCurrentList(mList: List<NewsEntity>) {
         this.detailList.clear()
-        var listMap: List<DetailNewsData> = mList.map { DetailNewsData(it.id, it.title, it.source, it.category, it.source_url, it.cover_image, it.blurb!!, it.published_on, 0, 0, it.article_score.toFloat()) };
+        var listMap: List<DetailNewsData> = mList.map { DetailNewsData(it.id, it.title, it.source, it.category, it.source_url, it.cover_image, it.blurb!!, it.published_on, 0, 0, it.article_score) };
         this.detailList.addAll(listMap)
     }
 
@@ -260,7 +262,7 @@ class FetchDataApiViewModel(application: Application, mParams: String) : Android
         for(data in mList){
             if(data is NewsEntity){
                 val d = data as NewsEntity
-                var mData = DetailNewsData(d.id, d.title, d.source, d.category, d.source_url, d.cover_image, d.blurb!!, d.published_on, 0, 0,d.article_score.toFloat())
+                var mData = DetailNewsData(d.id, d.title, d.source, d.category, d.source_url, d.cover_image, d.blurb!!, d.published_on, 0, 0,d.article_score)
                 this.detailList.add(mData)
             }
         }
@@ -310,5 +312,10 @@ class FetchDataApiViewModel(application: Application, mParams: String) : Android
 
     fun getAdsTitle():MutableLiveData<NewsAdsBodyData>{
         return adsTitleVM
+    }
+
+    fun suggestedNews(newsId: Int, pageNo: Int): LiveData<PagedList<INews>> {
+        sgstNewsPagedList = repository.selectSuggestedNewsSource(newsId, pageNo)
+        return sgstNewsPagedList
     }
 }

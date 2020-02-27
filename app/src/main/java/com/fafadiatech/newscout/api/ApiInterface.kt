@@ -147,4 +147,7 @@ interface ApiInterface {
                  @Query("token") token: String,
                  @Query("email") email: String
     ): Call<Void>
+
+    @GET("articles/{id}/recommendations/")
+    fun getSuggestedArticles(@Path("id") id: Int): Call<NewsDataApi>
 }

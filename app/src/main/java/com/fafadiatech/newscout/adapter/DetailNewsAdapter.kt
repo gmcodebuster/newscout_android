@@ -27,7 +27,9 @@ import androidx.core.text.HtmlCompat.FROM_HTML_MODE_COMPACT
 import androidx.core.text.HtmlCompat.FROM_HTML_MODE_LEGACY
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.PagerAdapter
@@ -49,6 +51,7 @@ import com.fafadiatech.newscout.db.NewsDatabase
 import com.fafadiatech.newscout.db.NewsEntity
 import com.fafadiatech.newscout.model.BookmarkArticleData
 import com.fafadiatech.newscout.model.DetailNewsData
+import com.fafadiatech.newscout.model.INews
 import com.fafadiatech.newscout.viewmodel.FetchDataApiViewModel
 import com.github.marlonlom.utilities.timeago.TimeAgo
 import com.github.marlonlom.utilities.timeago.TimeAgoMessages
@@ -149,15 +152,13 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
         rvSuggestedNews.adapter = rvSuggestedAdapter
 
         fetchDataViewModel = ViewModelProviders.of(context as FragmentActivity).get(FetchDataApiViewModel::class.java)
-        fetchDataViewModel.getDetailRecommendNewsFromDb().observe(context as LifecycleOwner, object : androidx.lifecycle.Observer<List<DetailNewsData>> {
-            override fun onChanged(list: List<DetailNewsData>?) {
-                var result = ArrayList<DetailNewsData>()
-                result = list as ArrayList<DetailNewsData>
-                if (list.size == 0) {
-                    var resultList = fetchDataViewModel.getDetailTopFiveFromDb()
-                    result = resultList as ArrayList<DetailNewsData>
-                }
-                rvSuggestedAdapter.setData(result)
+            
+        newsId = detailList.get(position).article_id
+        fetchDataViewModel.suggestedNews(newsId, 1).observe(context as LifecycleOwner, object: Observer<List<INews>> {
+            override fun onChanged(list: List<INews>?) {
+                val newsList = list as PagedList<DetailNewsData>
+                rvSuggestedAdapter.submitList(newsList)
+
             }
         })
 
@@ -254,7 +255,6 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
             imgBtnBookmark.setBackgroundResource(R.drawable.ic_bookmark_empty)
         }
 
-        newsId = detailList.get(position).article_id
         token = themePreference.getString("token value", "")
 
         imgBtnShare.setOnClickListener {
