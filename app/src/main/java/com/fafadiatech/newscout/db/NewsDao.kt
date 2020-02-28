@@ -155,7 +155,7 @@ interface NewsDao {
 
     @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
     @Query("SELECT a.article_id, a.title, a.source, a.category, a.source_url, a.cover_image, a.description, a.published_on, a.article_score, COALESCE(b.is_like, '2') AS like_status,COALESCE(c.status,'0') AS bookmark_status FROM ArticlesData a LEFT JOIN LikeData b ON a.article_id=b.article_id LEFT JOIN BookmarkData c ON c.article_id=b.article_id ORDER BY a.published_on desc LIMIT 25")
-    fun getTopFiveSgstArticles(): List<DetailNewsData>
+    fun getTopFiveSgstArticles(): DataSource.Factory<Int, DetailNewsData>
 
     @RawQuery
     fun getResultByRawQuery(query: SupportSQLiteQuery): List<NewsEntity>

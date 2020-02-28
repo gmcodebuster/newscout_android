@@ -42,6 +42,8 @@ class NewsRepository(application: Application) {
     lateinit var sgstLiveDataSource: LiveData<PageKeyedDataSource<Int, INews>>
     lateinit var sgstItemPagedList: LiveData<PagedList<INews>>
     var suggestedNewsList: LiveData<PagedList<INews>>? = null
+    lateinit var sgstFactory: DataSource.Factory<Int, INews>
+
 
     init {
         this.application = application
@@ -350,12 +352,26 @@ class NewsRepository(application: Application) {
         return sgstItemPagedList
     }
 
+    fun sgstDbDataSourceFactory(application: Application): LiveData<PagedList<INews>> {
+        var PAGESIZE = 20
+        val pageListConfig = PagedList.Config.Builder()
+                .setEnablePlaceholders(false)
+                .setPageSize(PAGESIZE).build()
+
+        sgstFactory = rNewsDao.getTopFiveSgstArticles() as DataSource.Factory<Int, INews>
+        sgstFactory.toLiveData(pageListConfig)
+        val ddpagedListBuilder: LivePagedListBuilder<Int, INews> = LivePagedListBuilder<Int, INews>(sgstFactory,
+                pageListConfig)
+        sgstItemPagedList = ddpagedListBuilder.build()
+        return sgstItemPagedList
+    }
+
     fun selectSuggestedNewsSource(newsId: Int, pageNo: Int): LiveData<PagedList<INews>> {
 
         if (MyApplication.checkInternet) {
             suggestedNewsList = sgstNetworkCall(application, newsId)
         } else {
-
+            suggestedNewsList = sgstDbDataSourceFactory(application)
         }
         return suggestedNewsList!!
     }
