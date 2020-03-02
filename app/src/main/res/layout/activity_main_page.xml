@@ -38,6 +38,7 @@
                 android:layout_marginTop="@dimen/size_1dp"
                 android:dividerHeight="@dimen/size_0dp"
                 android:groupIndicator="@null"
+                android:listSelector="@drawable/drawer_item_selector"
                 style="@style/ExpandableList"
                 />
         </LinearLayout>
