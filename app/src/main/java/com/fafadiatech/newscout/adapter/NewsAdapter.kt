@@ -337,11 +337,12 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<INews, 
                     val cName = news!!.category
                     val source = news!!.source
                     trackingCallback(apiInterfaceObj, themePreference, id, title, categoryId, cName, "", ActionType.ARTICLEDETAIL.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, source, 0)
-
-                    var difference:Int =0
-                    if(position > (ADFACTOR-1)){
-                        difference = floor(position.toFloat() / (ADFACTOR + 1)).toInt()
-                        itemIndex = itemIndex!! - difference
+                    if(BuildConfig.showAds) {
+                        var difference: Int = 0
+                        if (position > (ADFACTOR - 1)) {
+                            difference = floor(position.toFloat() / (ADFACTOR + 1)).toInt()
+                            itemIndex = itemIndex!! - difference
+                        }
                     }
                     Log.d("News Adapter","Left Image News Id :"+id)
                     var detailIntent = Intent(con, DetailNewsActivity::class.java)
