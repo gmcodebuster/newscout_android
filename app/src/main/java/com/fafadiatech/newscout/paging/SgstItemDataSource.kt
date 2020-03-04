@@ -46,78 +46,89 @@ class SgstItemDataSource(context: Context, newsId: Int) : PageKeyedDataSource<In
             override fun onResponse(call: Call<NewsDataApi>, response: Response<NewsDataApi>) {
                 var newsList : ArrayList<INews>? = null
                 if (response.body() != null) {
+                    val resHeader = response.body()?.header
+                    val resBody = response.body()?.body
+                    val status = resHeader?.status
 
-                    if (response.body()?.body?.next != null) {
-                        key = FIRST_PAGE + 1
-                    } else {
-                        key = null
-                    }
+                    if(status == 0){
 
-                    var list = response.body()?.body?.results ?: arrayListOf()
-                    if (list != null && list.size > 0) {
-                        var hashTagArrayList: ArrayList<HashTagEntity> = ArrayList<HashTagEntity>()
-                        newsList = ArrayList<INews>()
-                        var articleMediaArrayList = ArrayList<ArticleMediaEntity>()
-                        newsList?.clear()
-                        for (i in 0 until list.size) {
-                            var obj = list.get(i)
-                            val newsId: Int = obj.id
-                            val categoryId = obj.category_id
-                            val title: String = obj.title
-                            val source: String = obj.source
-                            val category: String = obj.category.let { it }
-                            val url: String = obj.source_url
-                            val urlToImage: String = obj.cover_image
-                            val description: String = obj.blurb
-                            val publishedOn: String = obj.published_on
-                            val hashTags = obj.hash_tags
-                            val likeStatus:Int  = 0
-                            val bookmarkStatus:Int = 0
-                            var articleScore = obj.article_score.toString()
-
-                            var entityObj =
-                                    DetailNewsData(newsId, categoryId, title, source, category, url, urlToImage, description, publishedOn, hashTags!!, likeStatus, bookmarkStatus, articleScore)
-                            newsList?.add(entityObj)
-
-                            var hashTagList = list.get(i).hash_tags
-                            for (j in 0 until hashTagList!!.size) {
-                                var name = hashTagList.get(j)
-                                var entityObj = HashTagEntity(newsId, name)
-                                hashTagArrayList.add(entityObj)
-                            }
-
-                            var articleMediaList = list.get(i).article_media
-                            for (k in 0 until articleMediaList!!.size) {
-                                var articleMedia = articleMediaList.get(k)
-                                var id = articleMedia.id
-                                var createdAt = articleMedia.created_at
-                                var modifiedAt = articleMedia.modified_at
-                                var category = articleMedia.category
-                                var url = articleMedia.url
-                                var videoUrl: String? = articleMedia.video_url
-                                var article = articleMedia.article
-                                var articleMediaEntity = ArticleMediaEntity(id, createdAt, modifiedAt, category, url, videoUrl, article)
-                                articleMediaArrayList.add(articleMediaEntity)
-                            }
-                        }
+                        Log.d("SugDataSource Exception","Error :")
+                        val newsDatabase = NewsDatabase.getInstance(mContext.applicationContext)
+                        val rNewsDao = newsDatabase!!.newsDao()
+                        newsList = rNewsDao.getTopFiveSgstArticles() as ArrayList<INews>
+                        callback.onResult(newsList, null, key)
 
                     }else{
-                        if(newsList.isNullOrEmpty() || newsList.size == 0){ //
 
-                            val newsDatabase = NewsDatabase.getInstance(mContext.applicationContext)
-                            val rNewsDao = newsDatabase!!.newsDao()
-                            newsList = rNewsDao.getTopFiveArticles() as ArrayList<INews>
-
+                        resBody?.next?.let {
+                            key = FIRST_PAGE + 1
                         }
-                    }
 
-                    try {
-                        if(newsList == null){
-                            newsList = arrayListOf<INews>()
+                        var list = response.body()?.body?.results ?: arrayListOf()
+                        if (list != null && list.size > 0) {
+                            var hashTagArrayList: ArrayList<HashTagEntity> = ArrayList<HashTagEntity>()
+                            newsList = ArrayList<INews>()
+                            var articleMediaArrayList = ArrayList<ArticleMediaEntity>()
+                            newsList?.clear()
+                            for (i in 0 until list.size) {
+                                var obj = list.get(i)
+                                val newsId: Int = obj.id
+                                val categoryId = obj.category_id
+                                val title: String = obj.title
+                                val source: String = obj.source
+                                val category: String = obj.category.let { it }
+                                val url: String = obj.source_url
+                                val urlToImage: String = obj.cover_image
+                                val description: String = obj.blurb
+                                val publishedOn: String = obj.published_on
+                                val hashTags = obj.hash_tags
+                                val likeStatus:Int  = 0
+                                val bookmarkStatus:Int = 0
+                                var articleScore = obj.article_score.toString()
+
+                                var entityObj =
+                                        DetailNewsData(newsId, categoryId, title, source, category, url, urlToImage, description, publishedOn, hashTags!!, likeStatus, bookmarkStatus, articleScore)
+                                newsList?.add(entityObj)
+
+                                var hashTagList = list.get(i).hash_tags
+                                for (j in 0 until hashTagList!!.size) {
+                                    var name = hashTagList.get(j)
+                                    var entityObj = HashTagEntity(newsId, name)
+                                    hashTagArrayList.add(entityObj)
+                                }
+
+                                var articleMediaList = list.get(i).article_media
+                                for (k in 0 until articleMediaList!!.size) {
+                                    var articleMedia = articleMediaList.get(k)
+                                    var id = articleMedia.id
+                                    var createdAt = articleMedia.created_at
+                                    var modifiedAt = articleMedia.modified_at
+                                    var category = articleMedia.category
+                                    var url = articleMedia.url
+                                    var videoUrl: String? = articleMedia.video_url
+                                    var article = articleMedia.article
+                                    var articleMediaEntity = ArticleMediaEntity(id, createdAt, modifiedAt, category, url, videoUrl, article)
+                                    articleMediaArrayList.add(articleMediaEntity)
+                                }
+                            }
+
+                        }else{
+                            if(newsList.isNullOrEmpty() || newsList.size == 0){
+                                val newsDatabase = NewsDatabase.getInstance(mContext.applicationContext)
+                                val rNewsDao = newsDatabase!!.newsDao()
+                                newsList = rNewsDao.getTopFiveArticles() as ArrayList<INews>
+                            }
                         }
-                        callback.onResult(newsList!!, null, key)
-                    } catch (e: Exception) {
-                        Log.d("SuggestedDataSource","Error : "+e.message)
+
+                        try {
+                            if(newsList == null){
+                                newsList = arrayListOf<INews>()
+                            }
+                            callback.onResult(newsList!!, null, key)
+                        } catch (e: Exception) {
+                            Log.d("SuggestedDataSource","Error : "+e.message)
+                        }
+
                     }
                 }else{
                     try {
@@ -125,9 +136,12 @@ class SgstItemDataSource(context: Context, newsId: Int) : PageKeyedDataSource<In
                         val rNewsDao = newsDatabase!!.newsDao()
                         newsList = rNewsDao.getTopFiveSgstArticles() as ArrayList<INews>
                         callback.onResult(newsList, null, key)
-
                     }catch (e:Exception){
-                        Log.d("SuggestedDataSource","Error : "+e.message)
+                        Log.d("SugDataSource Exception","Error : "+e.message)
+                        val newsDatabase = NewsDatabase.getInstance(mContext.applicationContext)
+                        val rNewsDao = newsDatabase!!.newsDao()
+                        newsList = rNewsDao.getTopFiveSgstArticles() as ArrayList<INews>
+                        callback.onResult(newsList, null, key)
                     }
                 }
             }
