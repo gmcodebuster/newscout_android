@@ -156,6 +156,11 @@ class SearchActivity : AppCompatActivity(), ProgressBarListener {
                     fetchDataViewModel.deleteSearchTableWork()
 
                     var searchAdapter = SearchAdapter(this@SearchActivity, "Search", progressBarListener)
+                    progressBar.visibility = View.VISIBLE
+                    /*fetchDataViewModel.initSearchNews(query, 1).observe(this@SearchActivity, Observer<PagedList<NewsEntity>>{
+
+                        searchAdapter.submitList(it)
+                    })*/
                     val itemDataSourceFactory = SearchDataSourceFactory(this@SearchActivity, query)
 
                     rvNews.adapter = searchAdapter

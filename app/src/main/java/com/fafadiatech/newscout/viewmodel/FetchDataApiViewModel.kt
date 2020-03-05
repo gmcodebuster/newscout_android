@@ -50,6 +50,8 @@ class FetchDataApiViewModel(application: Application, mParams: String) : Android
     lateinit var ddnewsItemPagedList: LiveData<PagedList<DailyDigestEntity>>
 
     lateinit var sgstNewsPagedList: LiveData<PagedList<INews>>
+    lateinit var searchNewsPageList: LiveData<PagedList<NewsEntity>>
+
 
     val adsTitleVM: MutableLiveData<NewsAdsBodyData> by lazy {
         MutableLiveData<NewsAdsBodyData>()
@@ -316,5 +318,10 @@ class FetchDataApiViewModel(application: Application, mParams: String) : Android
     fun suggestedNews(newsId: Int, pageNo: Int): LiveData<PagedList<INews>> {
         sgstNewsPagedList = repository.selectSuggestedNewsSource(newsId, pageNo)
         return sgstNewsPagedList
+    }
+
+    fun initSearchNews(query: String, pageNo: Int) : LiveData<PagedList<NewsEntity>>{
+        searchNewsPageList = repository.selectSearchNewsSource(query, pageNo)
+        return searchNewsPageList
     }
 }

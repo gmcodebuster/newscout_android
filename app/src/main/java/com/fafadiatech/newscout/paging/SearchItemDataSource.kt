@@ -1,6 +1,7 @@
 package com.fafadiatech.newscout.paging
 
 import android.content.Context
+import android.util.Log
 import androidx.paging.PageKeyedDataSource
 import com.fafadiatech.newscout.api.ApiClient
 import com.fafadiatech.newscout.api.ApiInterface
@@ -67,7 +68,7 @@ class SearchItemDataSource(context: Context, queryTag: String) : PageKeyedDataSo
                         var list = articleNewsDao.getSearchNewsFromDb()
                         callback.onResult(list, null, SearchItemDataSource.FIRST_PAGE + 1)
                     } catch (e: Throwable) {
-
+                        Log.d("SearchItemDataSource", e.message)
                     }
                 }
             }
@@ -112,7 +113,7 @@ class SearchItemDataSource(context: Context, queryTag: String) : PageKeyedDataSo
                         var list = articleNewsDao.getSearchNewsFromDb()
                         callback.onResult(list, key)
                     } catch (e: Throwable) {
-
+                        Log.d("SearchItemDataSource", e.message)
                     }
                 }
             }

@@ -23,4 +23,8 @@ class SearchDataSourceFactory(context: Context, query: String) : DataSource.Fact
         itemLiveDataSource.postValue(newsDataSource)
         return newsDataSource
     }
+
+    fun getNewsSourceData(): MutableLiveData<PageKeyedDataSource<Int, NewsEntity>> {
+        return itemLiveDataSource
+    }
 }

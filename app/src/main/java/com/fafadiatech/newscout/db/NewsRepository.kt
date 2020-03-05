@@ -16,10 +16,7 @@ import com.fafadiatech.newscout.db.dailydigest.DailyDigestEntity
 import com.fafadiatech.newscout.db.trending.TrendingData
 import com.fafadiatech.newscout.db.trending.TrendingNewsEntity
 import com.fafadiatech.newscout.model.*
-import com.fafadiatech.newscout.paging.DBNewsDataSource
-import com.fafadiatech.newscout.paging.DDNewsDataSourceFactory
-import com.fafadiatech.newscout.paging.NewsDataSourceFactory
-import com.fafadiatech.newscout.paging.SgstDataSourceFactory
+import com.fafadiatech.newscout.paging.*
 
 class NewsRepository(application: Application) {
     var rNewsDao: NewsDao
@@ -44,6 +41,9 @@ class NewsRepository(application: Application) {
     var suggestedNewsList: LiveData<PagedList<INews>>? = null
     lateinit var sgstFactory: DataSource.Factory<Int, INews>
 
+    var searchPagedList: LiveData<PagedList<NewsEntity>>? = null
+    lateinit var searchLiveDataSource: LiveData<PageKeyedDataSource<Int, NewsEntity>>
+    lateinit var searchItemPagedList: LiveData<PagedList<NewsEntity>>
 
     init {
         this.application = application
@@ -376,5 +376,21 @@ class NewsRepository(application: Application) {
         return suggestedNewsList!!
     }
 
+    fun searchNetworkCall(application:Application, query:String) : LiveData<PagedList<NewsEntity>>{
+        var itemDataSourceFactory = SearchDataSourceFactory(application, query)
+        searchLiveDataSource = itemDataSourceFactory.getNewsSourceData()
+        val pagedListConfig = PagedList.Config.Builder()
+                .setEnablePlaceholders(false)
+                .setPageSize(NEWSPAGESIZE).build()
+        searchItemPagedList = LivePagedListBuilder(itemDataSourceFactory, pagedListConfig)
+                .build()
+        return searchItemPagedList
+    }
 
+    fun selectSearchNewsSource(query: String, pageNo:Int): LiveData<PagedList<NewsEntity>> {
+        if (MyApplication.checkInternet) {
+            searchPagedList = searchNetworkCall(application, query)
+        }
+        return searchPagedList!!
+    }
 }
