@@ -55,8 +55,8 @@ class SgstItemDataSource(context: Context, newsId: Int) : PageKeyedDataSource<In
                         Log.d("SugDataSource Exception","Error :")
                         val newsDatabase = NewsDatabase.getInstance(mContext.applicationContext)
                         val rNewsDao = newsDatabase!!.newsDao()
-                        newsList = rNewsDao.getTopFiveSgstArticles() as ArrayList<INews>
-                        callback.onResult(newsList, null, key)
+                        val news = rNewsDao.getTopFiveArticles()
+                        callback.onResult(news, null, key)
 
                     }else{
 
@@ -134,14 +134,15 @@ class SgstItemDataSource(context: Context, newsId: Int) : PageKeyedDataSource<In
                     try {
                         val newsDatabase = NewsDatabase.getInstance(mContext.applicationContext)
                         val rNewsDao = newsDatabase!!.newsDao()
-                        newsList = rNewsDao.getTopFiveSgstArticles() as ArrayList<INews>
+                        //newsList = rNewsDao.getTopFiveSgstArticles() as ArrayList<INews>
+                        newsList = rNewsDao.getTopFiveArticles() as ArrayList<INews>
                         callback.onResult(newsList, null, key)
                     }catch (e:Exception){
                         Log.d("SugDataSource Exception","Error : "+e.message)
                         val newsDatabase = NewsDatabase.getInstance(mContext.applicationContext)
                         val rNewsDao = newsDatabase!!.newsDao()
-                        newsList = rNewsDao.getTopFiveSgstArticles() as ArrayList<INews>
-                        callback.onResult(newsList, null, key)
+                        val news = rNewsDao.getTopFiveArticles()
+                        callback.onResult(news, null, key)
                     }
                 }
             }
