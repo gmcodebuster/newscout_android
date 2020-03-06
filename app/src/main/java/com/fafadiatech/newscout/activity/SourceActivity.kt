@@ -111,12 +111,12 @@ class SourceActivity : AppCompatActivity(), PlaceHolderImageListener {
                 .build()
         itemPagedList.observe(this, Observer<PagedList<NewsEntity>> {
             val newsList = it as PagedList<INews>
-            for ((index, value) in newsList.withIndex()) {
+            /*for ((index, value) in newsList.withIndex()) {
                 println("$index: $value")
                 if(index % 10 == 0){
                     newsList.add(index, AdsData("",""))
                 }
-            }
+            }*/
             adapterObj.submitList(it)
         })
 
