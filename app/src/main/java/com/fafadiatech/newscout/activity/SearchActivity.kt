@@ -94,6 +94,8 @@ class SearchActivity : AppCompatActivity(), ProgressBarListener {
                 as SearchView.SearchAutoComplete
         searchAutoComplete.threshold = 0
 
+        var searchAdapter = SearchAdapter(this@SearchActivity, "Search", this.progressBarListener)
+        //fetchSearchData()
         rvNews?.addOnScrollListener(object: RecyclerView.OnScrollListener(){
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
@@ -139,6 +141,12 @@ class SearchActivity : AppCompatActivity(), ProgressBarListener {
 
         }
 
+        /*fetchDataViewModel.initSearchNews("", 1).observe(this@SearchActivity, Observer<PagedList<NewsEntity>>{
+
+            searchAdapter.submitList(it)
+        })*/
+
+
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(queryText: String?): Boolean {
 
@@ -155,12 +163,9 @@ class SearchActivity : AppCompatActivity(), ProgressBarListener {
                     progressBar.visibility = View.VISIBLE
                     fetchDataViewModel.deleteSearchTableWork()
 
-                    var searchAdapter = SearchAdapter(this@SearchActivity, "Search", progressBarListener)
-                    progressBar.visibility = View.VISIBLE
-                    /*fetchDataViewModel.initSearchNews(query, 1).observe(this@SearchActivity, Observer<PagedList<NewsEntity>>{
 
-                        searchAdapter.submitList(it)
-                    })*/
+                    progressBar.visibility = View.VISIBLE
+                    //fetchSearchData()
                     val itemDataSourceFactory = SearchDataSourceFactory(this@SearchActivity, query)
 
                     rvNews.adapter = searchAdapter
@@ -211,7 +216,7 @@ class SearchActivity : AppCompatActivity(), ProgressBarListener {
                     trackingCallback(apiInterface, themePreference, 0, queryText, 0, "", "", ActionType.SEARCHQUERY.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId,"",0)
 
                 }
-                return false
+                return true
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
@@ -272,4 +277,14 @@ class SearchActivity : AppCompatActivity(), ProgressBarListener {
 
     private val lastVisibleItemPosition: Int
         get() = (rvNews!!.layoutManager!! as LinearLayoutManager).findLastVisibleItemPosition()
+
+    fun fetchSearchData(){
+        var searchAdapter = SearchAdapter(this@SearchActivity, "Search", this.progressBarListener)
+        fetchDataViewModel.initSearchNews("Trump", 1).observe(this@SearchActivity, Observer<PagedList<NewsEntity>>{
+            Log.d("Search view", "Size : "+ it.size)
+            searchAdapter.submitList(it)
+        })
+
+
+    }
 }

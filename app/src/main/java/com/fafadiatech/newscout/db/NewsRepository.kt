@@ -388,9 +388,9 @@ class NewsRepository(application: Application) {
     }
 
     fun selectSearchNewsSource(query: String, pageNo:Int): LiveData<PagedList<NewsEntity>> {
-        if (MyApplication.checkInternet) {
-            searchPagedList = searchNetworkCall(application, query)
-        }
+
+        searchPagedList = searchNetworkCall(application, query)
+
         return searchPagedList!!
     }
 }
