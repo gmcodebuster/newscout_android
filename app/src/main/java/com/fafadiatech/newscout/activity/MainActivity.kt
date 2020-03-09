@@ -94,6 +94,7 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
     lateinit var menuHeadinglayoutManager: LinearLayoutManager
     var arrFragment = ArrayList<Fragment>()
     var arrDataBundle = ArrayList<Bundle>()
+    var pagePosition = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -202,14 +203,32 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         vPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+            var lastPageChange = false
             override fun onPageScrollStateChanged(state: Int) {
+                val lastIdx = adapterObj.getCount() - 1;
+                val curItem = vPager.getCurrentItem();
+                val firstIdx = 0
+                if(curItem==lastIdx && state==1) {
+                    lastPageChange = true;
+                    Log.d("ScrollStateChanged","page scroll state >>>> ");
+
+                } else if(curItem == firstIdx && state == 1){
+                    lastPageChange = false;
+                    Log.d("ScrollStateChanged","page scroll state <<<<< ");
+                }else {
+                    lastPageChange = false;
+                }
             }
 
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+                val lastIdx = adapterObj.getCount() - 1;
+                if(lastPageChange && position == lastIdx) {
+                    Log.d("MainActivity","Last Page")
+                }
             }
 
             override fun onPageSelected(position: Int) {
-
+                pagePosition = position
                 if (tabLayout.getTabAt(position) != null) {
                     val tabview = (tabLayout.getTabAt(position)?.customView) as ViewGroup
 
