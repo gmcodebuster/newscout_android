@@ -18,6 +18,9 @@ import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.util.DisplayMetrics
 import android.view.*
+import android.view.animation.Animation
+import android.view.animation.AnimationSet
+import android.view.animation.AnimationUtils
 import android.view.animation.TranslateAnimation
 import android.widget.*
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -447,12 +450,20 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
     }
 
     fun slideTopStoriesDown(view: View, btnReadMore: Button, tvStories: TextView) {
+
         tvStories.setTypeface(null, Typeface.BOLD)
         view.visibility = View.INVISIBLE
         var animate = TranslateAnimation(0f, 0f, 0f, view.height.toFloat())
         animate.duration = 500
         animate.fillAfter = true
         view.startAnimation(animate)
+
+        val animset = AnimationSet(false)
+        val animFadein = AnimationUtils.loadAnimation(context, R.anim.fade_in)
+        animset.addAnimation(animFadein)
+        animset.startOffset = 500
+        btnReadMore.startAnimation(animset)
+
         btnReadMore.visibility = View.VISIBLE
     }
 
