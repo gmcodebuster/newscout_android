@@ -187,7 +187,7 @@ class NewsItemDataSource(context: Context, queryTag: String) : PageKeyedDataSour
                     try {
                         callback.onResult(newsList, null, key)
                     } catch (e: Exception) {
-
+                        Log.d("NewsItemDataSource",""+e.message)
                     }
                 }
             }

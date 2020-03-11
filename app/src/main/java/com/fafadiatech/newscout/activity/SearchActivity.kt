@@ -37,6 +37,7 @@ import com.fafadiatech.newscout.interfaces.ProgressBarListener
 import com.fafadiatech.newscout.paging.SearchDataSourceFactory
 import com.fafadiatech.newscout.paging.SearchItemDataSource
 import com.fafadiatech.newscout.viewmodel.FetchDataApiViewModel
+import com.fafadiatech.newscout.viewmodel.ViewModelProviderFactory
 
 class SearchActivity : AppCompatActivity(), ProgressBarListener {
 
@@ -74,7 +75,7 @@ class SearchActivity : AppCompatActivity(), ProgressBarListener {
         getDelegate().setLocalNightMode(defaultNightMode)
         var themes: Int = themePreference.getInt("theme", R.style.DefaultMedium)
         var isNightModeEnable = themePreference.getBoolean("night mode enable", false)
-        fetchDataViewModel = ViewModelProviders.of(this).get(FetchDataApiViewModel::class.java)
+        fetchDataViewModel = ViewModelProviders.of(this, ViewModelProviderFactory(application, "")).get(FetchDataApiViewModel::class.java)
         this.setTheme(themes)
         setContentView(R.layout.activity_search)
         var toolbarText = findViewById<TextView>(R.id.toolbar_title)
@@ -95,7 +96,6 @@ class SearchActivity : AppCompatActivity(), ProgressBarListener {
         searchAutoComplete.threshold = 0
 
         var searchAdapter = SearchAdapter(this@SearchActivity, "Search", this.progressBarListener)
-        //fetchSearchData()
         rvNews?.addOnScrollListener(object: RecyclerView.OnScrollListener(){
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
@@ -124,14 +124,6 @@ class SearchActivity : AppCompatActivity(), ProgressBarListener {
             }
         })
 
-        fetchDataViewModel.getSearchSuggestedData().observe(this, object : androidx.lifecycle.Observer<List<String>> {
-            override fun onChanged(list: List<String>?) {
-                suggestionList = list as ArrayList<String>
-                val suggestionAdapter = ArrayAdapter(this@SearchActivity, android.R.layout.simple_dropdown_item_1line, suggestionList)
-                searchAutoComplete.setAdapter(suggestionAdapter)
-
-            }
-        })
 
         searchAutoComplete.setOnItemClickListener { parent, view, position, id ->
             var queryString = parent.getItemAtPosition(position) as String
@@ -140,12 +132,6 @@ class SearchActivity : AppCompatActivity(), ProgressBarListener {
 
 
         }
-
-        /*fetchDataViewModel.initSearchNews("", 1).observe(this@SearchActivity, Observer<PagedList<NewsEntity>>{
-
-            searchAdapter.submitList(it)
-        })*/
-
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(queryText: String?): Boolean {
@@ -165,7 +151,6 @@ class SearchActivity : AppCompatActivity(), ProgressBarListener {
 
 
                     progressBar.visibility = View.VISIBLE
-                    //fetchSearchData()
                     val itemDataSourceFactory = SearchDataSourceFactory(this@SearchActivity, query)
 
                     rvNews.adapter = searchAdapter
