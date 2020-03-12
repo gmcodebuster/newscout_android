@@ -43,10 +43,10 @@
     <string name="app_version">App Version :</string>
     <string name="app_version_value">1.0</string>
     <string name="last_update">Last Updated :</string>
-    <string name="last_update_value">27/01/2019</string>
+    <string name="last_update_value">12/03/2020</string>
     <string name="developed_by">Developed By :</string>
     <string name="developed_by_value">www.fafadiatech.com</string>
-    <string name="copyright">Copyright © 2019 FafadiaTech</string>
+    <string name="copyright">Copyright © 2020 FafadiaTech</string>
     <string name="about_us">About Us</string>
     <string name="bookmark_title">My Bookmark</string>
     <string name="no_bookmark_msg">No bookmared news to display</string>
