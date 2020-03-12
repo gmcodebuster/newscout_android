@@ -138,6 +138,8 @@ class SearchActivity : AppCompatActivity(), ProgressBarListener {
 
 
         }
+        rvNews.visibility = View.GONE
+        emptyText.visibility = View.VISIBLE
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(queryText: String?): Boolean {
@@ -168,12 +170,13 @@ class SearchActivity : AppCompatActivity(), ProgressBarListener {
                     itemPagedList = LivePagedListBuilder(itemDataSourceFactory, pagedListConfig)
                             .build()
 
+
                     itemPagedList.observe(this@SearchActivity, Observer<PagedList<NewsEntity>> {
                         progressBar.visibility = View.VISIBLE
                         Log.d("Search Activity", "Paged List :"+ it.size)
 
                         Log.d("Search Activity", "Paged List snapshot :"+ it.snapshot().size)
-
+                        showEmptyList(it?.size == 0)
                         searchAdapter.submitList(it)
 
                         it.addWeakCallback(null, object:PagedList.Callback(){
@@ -184,6 +187,9 @@ class SearchActivity : AppCompatActivity(), ProgressBarListener {
                                     progressBar.visibility = View.GONE
                                     emptyText.visibility = View.VISIBLE
                                     emptyText.text = "No data found"
+                                }else{
+                                    progressBar.visibility = View.VISIBLE
+                                    emptyText.visibility = View.GONE
                                 }
                             }
 
@@ -193,6 +199,10 @@ class SearchActivity : AppCompatActivity(), ProgressBarListener {
                                     progressBar.visibility = View.GONE
                                     emptyText.visibility = View.VISIBLE
                                     emptyText.text = "No data found"
+                                }else{
+                                    progressBar.visibility = View.GONE
+                                    rvNews.visibility = View.VISIBLE
+                                    emptyText.visibility = View.GONE
                                 }
                             }
 
@@ -267,4 +277,15 @@ class SearchActivity : AppCompatActivity(), ProgressBarListener {
 
     private val lastVisibleItemPosition: Int
         get() = (rvNews!!.layoutManager!! as LinearLayoutManager).findLastVisibleItemPosition()
+
+    private fun showEmptyList(show: Boolean) {
+        progressBar.visibility = View.GONE
+        if (show) {
+            emptyText.visibility = View.VISIBLE
+            rvNews.visibility = View.GONE
+        } else {
+            emptyText.visibility = View.GONE
+            rvNews.visibility = View.VISIBLE
+        }
+    }
 }
