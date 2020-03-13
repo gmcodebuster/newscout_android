@@ -39,6 +39,7 @@ android {
             disable 'RestrictedApi'
             abortOnError false
         }
+        vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
         debug{
