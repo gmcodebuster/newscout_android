@@ -733,6 +733,7 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
             adapterObj = MainAdapter(this@MainActivity, supportFragmentManager, arrFragment, arrDataBundle)
 
             vPager.adapter = adapterObj
+            adapterObj.notifyDataSetChanged()
             setIconsTab(tabLayout)
             vPager.setCurrentItem(0)
 
@@ -758,6 +759,7 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
             adapterObj = MainAdapter(this@MainActivity, supportFragmentManager, arrFragment, arrDataBundle)
 
             vPager.adapter = adapterObj
+            adapterObj.notifyDataSetChanged()
             setIconsTab(tabLayout)
             vPager.setCurrentItem(0)
 
@@ -781,6 +783,7 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
             adapterObj = MainAdapter(this@MainActivity, supportFragmentManager, arrFragment, arrDataBundle)
 
             vPager.adapter = adapterObj
+            adapterObj.notifyDataSetChanged()
             setIconsTab(tabLayout)
             vPager.setCurrentItem(0)
 
@@ -910,6 +913,7 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
                     }
                     adapterObj = MainAdapter(this@MainActivity, supportFragmentManager, arrFragment, arrDataBundle)
                     vPager.adapter = adapterObj
+                    adapterObj.notifyDataSetChanged()
                     setIconsTab(tabLayout)
                     vPager.setCurrentItem(0)
                     trackingCallback(apiInterfaceObj, themePreference, 0, "", subMenuId, subMenuName, "", ActionType.MENUCHANGE.type, deviceId
