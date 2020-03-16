@@ -17,6 +17,7 @@ import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.*
 import android.view.animation.Animation
 import android.view.animation.AnimationSet
@@ -164,6 +165,10 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
 
             }
         })
+        if (isMoreStoriesUp) {
+            slideTopStoriesDown(view, btnReadMore, tvMoreStories)
+            isMoreStoriesUp = false
+        }
 
         var suggestedNewsHeight = rvSuggestedNews.height
         gson = Gson()
@@ -208,6 +213,7 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
         })
 
         newsHeading.text = detailList.get(position).title
+        Log.d("DetailNewsAdapter", "Title : "+detailList.get(position).title + " id : "+detailList.get(position).article_id)
         newsDesc.text = detailList.get(position).description.replace("\n", "")
         if (detailList.get(position).source != null) {
 
@@ -465,6 +471,7 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
         btnReadMore.startAnimation(animset)
 
         btnReadMore.visibility = View.VISIBLE
+
     }
 
     fun onSlideMoreStoriesClick(view: View, btnReadMore: Button, tvStories: TextView) {

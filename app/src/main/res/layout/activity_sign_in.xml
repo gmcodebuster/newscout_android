@@ -70,9 +70,9 @@
 
     <com.google.android.gms.common.SignInButton
         android:id="@+id/btn_login_google"
-        android:layout_width="@dimen/size_0dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/size_20dp"
+        android:layout_marginTop="20dp"
         app:layout_constraintLeft_toRightOf="@id/guideline_start_sign_in"
         app:layout_constraintRight_toLeftOf="@id/guideline_end_sign_in"
         app:layout_constraintTop_toBottomOf="@id/btn_forgot_password" />

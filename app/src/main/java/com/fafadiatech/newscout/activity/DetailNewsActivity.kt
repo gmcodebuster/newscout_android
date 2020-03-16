@@ -189,7 +189,6 @@ class DetailNewsActivity : BaseActivity(), VerticalViewPager.SwiperListener {
     }
 
     override fun onBackPressed() {
-
         finish()
     }
 

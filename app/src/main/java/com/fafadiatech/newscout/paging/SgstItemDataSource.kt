@@ -86,8 +86,11 @@ class SgstItemDataSource(context: Context, newsId: Int) : PageKeyedDataSource<In
                                 val bookmarkStatus:Int = 0
                                 var articleScore = obj.article_score.toString()
 
+                                Log.d("SgstItemData","News Id : "+newsId +" CategoryId : "+categoryId+ " Title" +
+                                "Source : " +source+" category : " +category+ " url : "+url + " urlToImage : "+ urlToImage+ " description : "+ description+ "publishedOn : "+publishedOn + "hashTags : "+hashTags?.size + "likeStatus : "+likeStatus+ "bookmarkStatus : "+bookmarkStatus+ "articleScore :"+articleScore
+                                )
                                 var entityObj =
-                                        DetailNewsData(newsId, categoryId, title, source, category, url, urlToImage, description, publishedOn, hashTags!!, likeStatus, bookmarkStatus, articleScore)
+                                        DetailNewsData(newsId?:0, categoryId?:0, title?:"", source?:"", category?:"", url?:"", urlToImage?:"", description?:"", publishedOn?:"", hashTags!!, likeStatus?:0, bookmarkStatus?:0, articleScore?:"0.0")
                                 newsList?.add(entityObj)
 
                                 var hashTagList = list.get(i).hash_tags

@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Typeface
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
@@ -115,7 +116,7 @@ class SignInActivity : BaseActivity() {
                 var request = GraphRequest.newMeRequest(loginResult.accessToken, object : GraphRequest.GraphJSONObjectCallback {
                     override fun onCompleted(jsonObject: JSONObject, response: GraphResponse?) {
                         if (response!!.error != null) {
-
+                            Log.d("SignIn","Facebook-error")
                         } else {
                             var email = jsonObject.optString("email")
                             val editor = themePreference.edit()
@@ -140,26 +141,31 @@ class SignInActivity : BaseActivity() {
 
                     override fun onResponse(call: Call<MessageLoginData>, response: Response<MessageLoginData>) {
                         var responseCode = response.code()
-                        if (responseCode >= 200 && responseCode <= 399) {
+                        try{
+                            if (responseCode >= 200 && responseCode <= 399) {
 
-                            val sessionId = getUniqueCode(this@SignInActivity, themePreference)
-                            var token = response.body()!!.body.user.token
-                            token = "Token " + token
-                            fetchDataViewModel.startVoteServerDataWorkManager(token)
-                            var firstName = response.body()?.body?.user?.first_name
-                            var lastName = response.body()?.body?.user?.last_name
-                            var userName = firstName + " " + lastName
-                            signinTrackingCallback(interfaceObj, themePreference, ActionType.LOGIN.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, firstName?:"", lastName?:"", token?:"", "")
-                            var editor = themePreference.edit()
-                            editor.putString("token value", token)
-                            editor.putString("user name", userName)
-                            editor.commit()
+                                val sessionId = getUniqueCode(this@SignInActivity, themePreference)
+                                var token = response.body()!!.body.user.token
+                                token = "Token " + token
+                                fetchDataViewModel.startVoteServerDataWorkManager(token)
+                                var firstName = response.body()?.body?.user?.first_name
+                                var lastName = response.body()?.body?.user?.last_name
+                                var userName = firstName + " " + lastName
+                                signinTrackingCallback(interfaceObj, themePreference, ActionType.LOGIN.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, firstName?:"", lastName?:"", token?:"", "")
+                                var editor = themePreference.edit()
+                                editor.putString("token value", token)
+                                editor.putString("user name", userName)
+                                editor.commit()
 
-                            var intent = Intent()
-                            getPositionFromIntent(intent)
-                        } else {
+                                var intent = Intent()
+                                getPositionFromIntent(intent)
+                            } else {
+
+                            }
+                        }catch(e:Exception){
 
                         }
+
                     }
                 })
             }
@@ -176,10 +182,8 @@ class SignInActivity : BaseActivity() {
         btnLoginGoogle.setOnClickListener {
             if (success == 0) {
                 signInWithGoogle()
-                success = 1
             } else {
                 signOutGoogle()
-                success = 0
             }
         }
     }
@@ -190,8 +194,12 @@ class SignInActivity : BaseActivity() {
     }
 
     fun signOutGoogle() {
-
-        mGoogleSignInClient.signOut()
+        try {
+            mGoogleSignInClient.signOut()
+            success = 0
+        }catch(e: Exception){
+            Log.d("SignIn Activity", "Signout Error"+e.message)
+        }
     }
 
     fun signIn() {
@@ -282,30 +290,49 @@ class SignInActivity : BaseActivity() {
             var call: Call<MessageLoginData> = interfaceObj.loginBySocial("google", deviceId, "android", webToken!!)
             call.enqueue(object : Callback<MessageLoginData> {
                 override fun onFailure(call: Call<MessageLoginData>, t: Throwable) {
-
+                    success = 0
                 }
 
                 override fun onResponse(call: Call<MessageLoginData>, response: Response<MessageLoginData>) {
-                    var token = response.body()!!.body.user.token
-                    token = "Token " + token
-                    fetchDataViewModel.startVoteServerDataWorkManager(token)
-                    var firstName = response.body()?.body?.user?.first_name
-                    var lastName = response.body()?.body?.user?.last_name
-                    var userName = firstName + " " + lastName
+                    try {
+                        val code = response.code()
+                        if(code >= 200 && code < 300){
+                            var token = response.body()!!.body.user.token
+                            token = "Token " + token
+                            fetchDataViewModel.startVoteServerDataWorkManager(token)
+                            var firstName = response.body()?.body?.user?.first_name
+                            var lastName = response.body()?.body?.user?.last_name
+                            var userName = firstName + " " + lastName
 
-                    val sessionId = getUniqueCode(this@SignInActivity, themePreference)
+                            val sessionId = getUniqueCode(this@SignInActivity, themePreference)
 
-                    signinTrackingCallback(interfaceObj, themePreference, ActionType.LOGIN.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, firstName?:"", lastName?:"", token?:"", "")
-                    var editor = themePreference.edit()
-                    editor.putString("token value", token)
-                    editor.putString("user name", userName)
-                    editor.commit()
-                    var intent = Intent()
-                    getPositionFromIntent(intent)
+                            signinTrackingCallback(interfaceObj, themePreference, ActionType.LOGIN.type, deviceId
+                                    ?: "", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, firstName
+                                    ?: "", lastName ?: "", token ?: "", "")
+                            var editor = themePreference.edit()
+                            editor.putString("token value", token)
+                            editor.putString("user name", userName)
+                            editor.commit()
+                            var intent = Intent()
+                            getPositionFromIntent(intent)
+                            Toast.makeText(this@SignInActivity, "Login Successfully from local server "+code, Toast.LENGTH_LONG).show()
+                            success = 1
+                        }else{
+                            Toast.makeText(this@SignInActivity, "Login Error from local server "+code , Toast.LENGTH_LONG).show()
+                            Log.d("SignInActivity", "Error Social-login ")
+                            success = 0
+                        }
+                    }catch(e: Exception){
+                        Toast.makeText(this@SignInActivity, "Login Exception from local server "+e.message , Toast.LENGTH_LONG).show()
+                        Log.d("SignInActivity", "Error Social-login " +e.message )
+                        success = 0
+                    }
                 }
             })
         } catch (e: ApiException) {
+            Toast.makeText(this@SignInActivity, "Login Exception "+e.message , Toast.LENGTH_LONG).show()
             Toast.makeText(this, "Login failed using Google", Toast.LENGTH_SHORT).show()
+            success = 0
         }
     }
 
