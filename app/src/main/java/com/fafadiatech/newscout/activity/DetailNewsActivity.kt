@@ -39,7 +39,6 @@ class DetailNewsActivity : BaseActivity(), VerticalViewPager.SwiperListener {
     lateinit var fetchDataViewModel: FetchDataApiViewModel
     var categoryId: Int = 0
     var token: String = ""
-    lateinit var fabReturnTop: com.github.clans.fab.FloatingActionButton
     lateinit var topLayout : ConstraintLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,7 +64,7 @@ class DetailNewsActivity : BaseActivity(), VerticalViewPager.SwiperListener {
         index = intent.getIntExtra("indexPosition", 0)
         newsListCategory = intent.getStringExtra("category_of_newslist")
         categoryId = intent.getIntExtra("category_id", 0)
-        fabReturnTop = findViewById(R.id.fab_return_top)
+        //fabReturnTop = findViewById(R.id.fab_return_top)
         topLayout = findViewById(R.id.top_layout_detailSc)
 
         if (newsListCategory == "") {
@@ -141,22 +140,6 @@ class DetailNewsActivity : BaseActivity(), VerticalViewPager.SwiperListener {
         }
 
         vPagerDetailAdapter.setCategory(newsListCategory!!)
-
-        //vPagerDetail.setOnTouchListener(View.OnTouchListener(clickMe(v, motion)))
-
-        /*vPagerDetail.setOnTouchListener(object: View.OnTouchListener{
-            override fun onTouch(p0: View?, p1: MotionEvent?): Boolean {
-                //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-                return true
-            }
-        })*/
-
-        topLayout.setOnTouchListener{view: View?, motionEvent: MotionEvent? ->
-            handleTouch(motionEvent)
-            true
-        }
-
-
 
         vPagerDetail.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(state: Int) {
@@ -239,37 +222,5 @@ class DetailNewsActivity : BaseActivity(), VerticalViewPager.SwiperListener {
                 vPagerDetail.currentItem = index
             }
         }
-    }
-
-    fun handleTouch(m:MotionEvent?){
-        val pointerCount = m?.pointerCount
-        Toast.makeText(this@DetailNewsActivity, "Touch on detail screen", Toast.LENGTH_LONG).show()
-
-        for (i in 0 until pointerCount!!)
-        {
-            val x = m.getX(i)
-            val y = m.getY(i)
-            val id = m.getPointerId(i)
-            val action = m.actionMasked
-            val actionIndex = m.actionIndex
-            var actionString: String
-
-            when (action)
-            {
-                MotionEvent.ACTION_DOWN -> actionString = "DOWN"
-                MotionEvent.ACTION_UP -> actionString = "UP"
-                MotionEvent.ACTION_POINTER_DOWN -> actionString = "PNTR DOWN"
-                MotionEvent.ACTION_POINTER_UP -> actionString = "PNTR UP"
-                MotionEvent.ACTION_MOVE -> actionString = "MOVE"
-                else -> actionString = ""
-            }
-
-            val touchStatus =
-                    "Action: $actionString Index: $actionIndex ID: $id X: $x Y: $y"
-
-
-        }
-
-
     }
 }
