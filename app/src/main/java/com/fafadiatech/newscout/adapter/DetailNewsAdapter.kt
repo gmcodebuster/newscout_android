@@ -423,7 +423,11 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
     }
 
     fun convertPxToDp(context: Context, px: Int): Int {
-        return px / context.resources.displayMetrics.density.toInt()
+        try{
+            return px / context.resources.displayMetrics.density.toInt()
+        }catch(e:Exception){
+            return px
+        }
     }
 
     fun convertDpToPx(context: Context, dp: Int): Int {
