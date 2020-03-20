@@ -47,7 +47,7 @@ class SearchActivity : AppCompatActivity(), ProgressBarListener {
     lateinit var progressBar: ProgressBar
     lateinit var themePreference: SharedPreferences
     lateinit var fetchDataViewModel: FetchDataApiViewModel
-    lateinit var emptyText: TextView
+    lateinit var emptyText: LinearLayout
     var emptyTextFlag: Boolean = false
     var deviceWidthDp: Float = 0f
     lateinit var layoutManager: RecyclerView.LayoutManager
@@ -139,7 +139,7 @@ class SearchActivity : AppCompatActivity(), ProgressBarListener {
 
         }
         rvNews.visibility = View.GONE
-        emptyText.visibility = View.VISIBLE
+        emptyText.visibility = View.INVISIBLE
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(queryText: String?): Boolean {
@@ -186,7 +186,7 @@ class SearchActivity : AppCompatActivity(), ProgressBarListener {
                                     Log.d("","")
                                     progressBar.visibility = View.GONE
                                     emptyText.visibility = View.VISIBLE
-                                    emptyText.text = "No data found"
+                                    //emptyText.text = "No data found"
                                 }else{
                                     progressBar.visibility = View.VISIBLE
                                     emptyText.visibility = View.GONE
@@ -198,7 +198,7 @@ class SearchActivity : AppCompatActivity(), ProgressBarListener {
                                 if(count == 0){
                                     progressBar.visibility = View.GONE
                                     emptyText.visibility = View.VISIBLE
-                                    emptyText.text = "No data found"
+                                    //emptyText.text = "No data found"
                                 }else{
                                     progressBar.visibility = View.GONE
                                     rvNews.visibility = View.VISIBLE
