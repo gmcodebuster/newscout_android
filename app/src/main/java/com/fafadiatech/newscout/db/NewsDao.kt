@@ -9,7 +9,12 @@ import com.fafadiatech.newscout.db.dailydigest.DDHashTagEntity
 import com.fafadiatech.newscout.db.dailydigest.DailyDigestEntity
 import com.fafadiatech.newscout.db.trending.TrendingData
 import com.fafadiatech.newscout.db.trending.TrendingNewsEntity
-import com.fafadiatech.newscout.model.*
+import com.fafadiatech.newscout.model.DetailNewsData
+import com.fafadiatech.newscout.model.MenuHeading
+import com.fafadiatech.newscout.model.SubMenuResultData
+import com.fafadiatech.newscout.model.TrendingNewsData
+import io.sentry.event.User
+
 
 @Dao
 interface NewsDao {
@@ -236,11 +241,15 @@ interface NewsDao {
 
     @Transaction
     fun removeTrending(newsData: ArrayList<TrendingNewsEntity>, tEntity: ArrayList<TrendingEntity>) {
-        deleteTrendingData()
-        deleteFromTNews()
+        try {
+            deleteTrendingData()
+            deleteFromTNews()
 
-        insertTrendingData(tEntity)
-        insertTNews(newsData)
+            insertTrendingData(tEntity)
+            insertTNews(newsData)
+        }catch(e:Exception){
+
+        }
     }
 
     @Query("SELECT * FROM TrendingAPIData")
@@ -290,4 +299,7 @@ interface NewsDao {
 
     @Query("SELECT * FROM SubMenuData WHERE name LIKE '%' || :fieldName || '%' OR name LIKE '%' || :fieldName1 || '%'")
     fun getLatestNewsName(fieldName: String? = "Uncategorised", fieldName1: String? = "Uncategorized" ): List<SubMenuEntity>
+
+    @RawQuery
+    fun deleteSequenceTable(query: SupportSQLiteQuery?):Long
 }

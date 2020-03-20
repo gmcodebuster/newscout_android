@@ -14,6 +14,7 @@ import com.fafadiatech.newscout.api.ApiInterface
 import com.fafadiatech.newscout.application.MyApplication
 import com.fafadiatech.newscout.db.NewsDao
 import com.fafadiatech.newscout.db.NewsDatabase
+import com.fafadiatech.newscout.db.NewsDatabase.Companion.getInstance
 import com.fafadiatech.newscout.model.AdsData
 import com.fafadiatech.newscout.model.DetailNewsData
 import com.fafadiatech.newscout.model.INews
@@ -254,4 +255,14 @@ fun searchTrackingCallback(apiInterfaceObj: ApiInterface, themePreference: Share
             Log.d("Utils: ", "Success")
         }
     })*/
+
+
 }
+
+/*
+fun resetPointer(context:Context, tableName:String) {
+    val roomDb = getInstance(context)
+
+    roomDb.writableDatabase.execSQL("DELETE FROM sqlite_sequence WHERE name='$tableName';")
+    roomDb.close()
+}*/

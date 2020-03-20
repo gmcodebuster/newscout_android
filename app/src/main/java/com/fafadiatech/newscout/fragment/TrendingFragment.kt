@@ -5,6 +5,8 @@ import android.animation.AnimatorListenerAdapter
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.Resources
+import android.database.SQLException
+import android.database.sqlite.SQLiteFullException
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
@@ -47,6 +49,7 @@ import com.omadahealth.github.swipyrefreshlayout.library.SwipyRefreshLayoutDirec
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.lang.Exception
 
 class TrendingFragment : Fragment(), AddTrendingFragmentListener {
 
@@ -266,7 +269,14 @@ class TrendingFragment : Fragment(), AddTrendingFragmentListener {
                             trendingNewsList.add(trendingObJ)
                         }
                     }
-                    articleNewsDao.removeTrending(trendingArticleList, trendingNewsList)
+                    try {
+                        articleNewsDao.removeTrending(trendingArticleList, trendingNewsList)
+                    }catch(e:Exception){
+                        if(e is SQLiteFullException){
+                            //clear table values
+
+                        }
+                    }
                 }
                 refreshTrendingNews.isRefreshing = false
             }

@@ -22,6 +22,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.sqlite.db.SimpleSQLiteQuery
 import androidx.viewpager.widget.ViewPager
 import com.fafadiatech.newscout.BuildConfig
 import com.fafadiatech.newscout.R
@@ -112,7 +113,8 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
         drawer_layout = findViewById(R.id.drawer_layout)
         gson = Gson()
         adapterObj = MainAdapter(this, supportFragmentManager, arrFragment, arrDataBundle)
-
+        val query = SimpleSQLiteQuery("DELETE from sqlite_sequence")
+        val value = articleNewsDao.deleteSequenceTable(query);
         if (token != null && token != "") {
 
             var deviceId = themePreference.getString("device_token", "")
