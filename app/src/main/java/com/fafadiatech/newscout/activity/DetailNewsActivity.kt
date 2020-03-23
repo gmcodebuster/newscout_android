@@ -24,11 +24,12 @@ import com.fafadiatech.newscout.appconstants.AppConstant
 import com.fafadiatech.newscout.application.MyApplication
 import com.fafadiatech.newscout.customcomponent.VerticalViewPager
 import com.fafadiatech.newscout.db.NewsEntity
+import com.fafadiatech.newscout.interfaces.ITopNews
 import com.fafadiatech.newscout.model.DetailNewsData
 import com.fafadiatech.newscout.viewmodel.FetchDataApiViewModel
 import io.fabric.sdk.android.Fabric
 
-class DetailNewsActivity : BaseActivity(), VerticalViewPager.SwiperListener {
+class DetailNewsActivity : BaseActivity(), VerticalViewPager.SwiperListener, ITopNews {
 
     var detailArticleList = ArrayList<DetailNewsData>()
     var currentItem: Int? = null
@@ -222,5 +223,10 @@ class DetailNewsActivity : BaseActivity(), VerticalViewPager.SwiperListener {
                 vPagerDetail.currentItem = index
             }
         }
+    }
+
+    override fun gotofirstNews() {
+        vPagerDetail.setCurrentItem(0, false)
+        vPagerDetailAdapter.notifyDataSetChanged()
     }
 }

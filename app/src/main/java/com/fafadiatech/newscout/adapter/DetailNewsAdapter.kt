@@ -53,6 +53,7 @@ import com.fafadiatech.newscout.customcomponent.BaseAlertDialog
 import com.fafadiatech.newscout.db.NewsDao
 import com.fafadiatech.newscout.db.NewsDatabase
 import com.fafadiatech.newscout.db.NewsEntity
+import com.fafadiatech.newscout.interfaces.ITopNews
 import com.fafadiatech.newscout.model.BookmarkArticleData
 import com.fafadiatech.newscout.model.DetailNewsData
 import com.fafadiatech.newscout.model.INews
@@ -60,6 +61,7 @@ import com.fafadiatech.newscout.viewmodel.FetchDataApiViewModel
 import com.github.marlonlom.utilities.timeago.TimeAgo
 import com.github.marlonlom.utilities.timeago.TimeAgoMessages
 import com.google.gson.Gson
+import kotlinx.android.synthetic.main.activity_intro_screen.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -95,6 +97,7 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
     private var newsDatabase: NewsDatabase? = null
     var height: Int = 0
     var requestOptions: RequestOptions? = null
+    lateinit var itopNews: ITopNews
 
     init {
         mLayoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
@@ -104,6 +107,7 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
         newsDatabase = NewsDatabase.getInstance(context)
         newsDao = newsDatabase!!.newsDao()
         requestOptions = RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL).timeout(5000)
+        itopNews = context as ITopNews
     }
 
     override fun isViewFromObject(view: View, `object`: Any): Boolean {
@@ -140,6 +144,7 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
         imgBtnBookmark = view.findViewById<ImageButton>(R.id.img_btn_bookmark_detail)
         var btnReadMore = view.findViewById<Button>(R.id.btn_read_more)
         var tvMoreStories = view.findViewById<TextView>(R.id.tv_more_stories)
+        var btnTopNews = view.findViewById<ImageButton>(R.id.btn_top_news)
         var parentLayoutRvSuggested: ConstraintLayout = view.findViewById(R.id.parent_rv_suggested)
         var moreStoriesParent: ConstraintLayout = view.findViewById(R.id.bottom_layout_like_menu_bar)
         height = moreStoriesParent.layoutParams.height
@@ -166,8 +171,9 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
             }
         })
         if (isMoreStoriesUp) {
-            slideTopStoriesDown(view, btnReadMore, tvMoreStories)
             isMoreStoriesUp = false
+            slideTopStoriesDown(view, btnReadMore, tvMoreStories)
+
         }
 
         var suggestedNewsHeight = rvSuggestedNews.height
@@ -403,6 +409,12 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
             setData(shuffleList)
 
         }
+
+        btnTopNews.setOnClickListener {
+            itopNews.gotofirstNews()
+
+        }
+
         container.addView(view)
         return view
     }
