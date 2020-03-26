@@ -236,7 +236,6 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<INews, 
                         Log.d("News Adapter","Right Image News Id :"+id)
                         var detailIntent = Intent(con, DetailNewsActivity::class.java)
                         detailIntent.putExtra("indexPosition", itemIndex!!)
-                        detailIntent.putParcelableArrayListExtra("source_list", sourceList)
                         detailIntent.putExtra("category_of_newslist", categoryType)
                         detailIntent.putExtra("category_id", categoryId)
                         con.startActivity(detailIntent)
@@ -347,7 +346,6 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<INews, 
                     Log.d("News Adapter","Left Image News Id :"+id)
                     var detailIntent = Intent(con, DetailNewsActivity::class.java)
                     detailIntent.putExtra("indexPosition", itemIndex!!)
-                    detailIntent.putParcelableArrayListExtra("source_list", sourceList)
                     detailIntent.putExtra("category_of_newslist", categoryType)
                     detailIntent.putExtra("category_id", categoryId)
 
