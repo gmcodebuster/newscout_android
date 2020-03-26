@@ -291,7 +291,7 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
                 putExtra(Intent.EXTRA_SUBJECT, newsTitle)
                 type = "text/plain"
             }
-            context.startActivity(Intent.createChooser(sendIntent, "Share newss to.."))
+            context.startActivity(Intent.createChooser(sendIntent, "Share news to.."))
 
         }
 

@@ -193,7 +193,7 @@ class DDNewsAdapter(context: Context) : PagedListAdapter<DailyDigestEntity, Recy
 
                         var detailIntent = Intent(con, DetailNewsActivity::class.java)
                         detailIntent.putExtra("indexPosition", itemIndex!!)
-                        detailIntent.putParcelableArrayListExtra("source_list", sourceList)
+//                        detailIntent.putParcelableArrayListExtra("source_list", sourceList)
                         detailIntent.putExtra("category_of_newslist", "DailyDigest")
                         detailIntent.putExtra("category_id", categoryId)
 
@@ -300,7 +300,7 @@ class DDNewsAdapter(context: Context) : PagedListAdapter<DailyDigestEntity, Recy
 
                     var detailIntent = Intent(con, DetailNewsActivity::class.java)
                     detailIntent.putExtra("indexPosition", itemIndex!!)
-                    detailIntent.putParcelableArrayListExtra("source_list", sourceList)
+//                    detailIntent.putParcelableArrayListExtra("source_list", sourceList)
                     detailIntent.putExtra("category_of_newslist", "DailyDigest")
                     detailIntent.putExtra("category_id", categoryId)
 
