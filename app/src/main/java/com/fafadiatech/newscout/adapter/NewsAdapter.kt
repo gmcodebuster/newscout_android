@@ -116,7 +116,7 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<INews, 
 
             1 -> NewsAdapter.RightItemViewHolder(inflater.inflate(R.layout.news_item_main, parent, false))
             2 -> {
-                AdsItemViewHolder(inflater.inflate(R.layout.item_promotion_ads, parent, false), con)
+                AdsItemViewHolder(inflater.inflate(R.layout.item_promotion_ads_big, parent, false), con)
             }
             else -> NewsAdapter.RightItemViewHolder(inflater.inflate(R.layout.news_item_main, parent, false))
         }
