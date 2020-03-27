@@ -104,6 +104,8 @@ class SuggestedNewsAdapter(val context: Context) : PagedListAdapter<DetailNewsDa
                             var imageUrl = getImageURL(viewHolderItem.suggestedNewsImage, preNews.cover_image)
                             Glide.with(context).load(imageUrl).apply(requestOptions)
                                     .apply(RequestOptions.timeoutOf(5 * 60 * 1000))
+                                    .thumbnail(0.1f)
+                                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                                     .placeholder(R.drawable.image_not_found)
                                     .error(R.drawable.image_not_found)
                                     .into(viewHolderItem.suggestedNewsImage)

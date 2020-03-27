@@ -91,6 +91,8 @@ class TrendingNewsAdapter(context: Context, category: String) : RecyclerView.Ada
                         if (trendingList.get(position)?.cover_image != null && trendingList.get(position).cover_image.length > 0) {
                             var imageUrl = getImageURL(rightItemViewholder.newsImage, trendingList.get(position).cover_image)
                             Glide.with(con).load(imageUrl).apply(requestOptions)
+                                    .thumbnail(0.1f)
+                                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                                     .placeholder(R.drawable.image_not_found)
                                     .error(R.drawable.image_not_found)
                                     .apply(RequestOptions.timeoutOf(5 * 60 * 1000))
@@ -182,6 +184,8 @@ class TrendingNewsAdapter(context: Context, category: String) : RecyclerView.Ada
 
                             Glide.with(con).load(imageUrl).apply(requestOptions)
                                     .apply(RequestOptions.timeoutOf(5 * 60 * 1000))
+                                    .thumbnail(0.1f)
+                                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                                     .placeholder(R.drawable.image_not_found)
                                     .error(R.drawable.image_not_found)
                                     .into(leftItemViewholder.newsImageLeft)

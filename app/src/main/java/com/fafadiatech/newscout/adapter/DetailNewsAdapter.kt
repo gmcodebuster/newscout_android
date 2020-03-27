@@ -206,6 +206,8 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
                     var imageUrl = getImageURL(newsTopImage, detailList.get(position).cover_image)
                     Glide.with(context).load(imageUrl).apply(requestOptions!!)
                             .apply(RequestOptions.timeoutOf(5 * 60 * 1000))
+                            .thumbnail(0.1f)
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
                             .placeholder(R.drawable.image_not_found)
                             .error(R.drawable.image_not_found)
                             .into(newsTopImage)
@@ -509,6 +511,8 @@ open class MImageGetter(internal var mTv: TextView, internal var mContext: Conte
         Glide.with(mContext)
                 .asBitmap()
                 .load(source)
+                .thumbnail(0.1f)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(object : CustomTarget<Bitmap>() {
                     override fun onResourceReady(resource: Bitmap, transition: com.bumptech.glide.request.transition.Transition<in Bitmap>?) {
                         if (resource != null) {
