@@ -37,6 +37,7 @@ import com.fafadiatech.newscout.api.ApiInterface
 import com.fafadiatech.newscout.appconstants.*
 import com.fafadiatech.newscout.application.MyApplication
 import com.fafadiatech.newscout.db.NewsEntity
+import com.fafadiatech.newscout.db.SourceNewsEntity
 import com.fafadiatech.newscout.interfaces.PlaceHolderImageListener
 import com.fafadiatech.newscout.model.DetailNewsData
 import com.fafadiatech.newscout.model.INews
@@ -129,7 +130,7 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<INews, 
         val currentItem = getItem(position)
         var newsList: MutableList<INews> = pagedList!!.snapshot()
         var sourceList = ArrayList<INews>()
-        if (categoryType.equals("Source")) {
+        if (categoryType.equals("Source") || categoryType.equals("Search")) {
             sourceList.addAll(newsList)
         }
 
@@ -238,6 +239,9 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<INews, 
                         Log.d("News Adapter","Right Image News Id :"+id)
                         var detailIntent = Intent(con, DetailNewsActivity::class.java)
                         detailIntent.putExtra("indexPosition", itemIndex!!)
+                        if (categoryType.equals("Source") || categoryType.equals("Search")) {
+                            detailIntent.putParcelableArrayListExtra("source_list", sourceList)
+                        }
                         detailIntent.putExtra("category_of_newslist", categoryType)
                         detailIntent.putExtra("category_id", categoryId)
                         con.startActivity(detailIntent)
@@ -350,6 +354,9 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<INews, 
                     Log.d("News Adapter","Left Image News Id :"+id)
                     var detailIntent = Intent(con, DetailNewsActivity::class.java)
                     detailIntent.putExtra("indexPosition", itemIndex!!)
+                    if (categoryType.equals("Source") || categoryType.equals("Search")) {
+                        detailIntent.putParcelableArrayListExtra("source_list", sourceList)
+                    }
                     detailIntent.putExtra("category_of_newslist", categoryType)
                     detailIntent.putExtra("category_id", categoryId)
 
@@ -458,7 +465,7 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<INews, 
             }else{
                 return 1
             }
-        }else{
+        } else{
             return 2
         }
     }

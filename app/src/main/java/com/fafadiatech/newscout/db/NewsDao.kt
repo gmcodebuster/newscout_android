@@ -302,4 +302,17 @@ interface NewsDao {
 
     @RawQuery
     fun deleteSequenceTable(query: SupportSQLiteQuery?):Long
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertSourceNews(news: ArrayList<SourceNewsEntity>)
+
+    //Remove data from table
+    @Query("DELETE FROM SourceArticlesData")
+    fun deleteSourceArticle()
+
+    @Transaction
+    fun removeSourceNews(){
+        deleteSourceArticle()
+    }
+
 }
