@@ -63,7 +63,7 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
     lateinit var apiInterfaceObj: ApiInterface
     var token: String = ""
     lateinit var recyclerViewTopHeading: RecyclerView
-    lateinit var recyclerTopHeadingAdapter: TopHeadingMenuAdapter
+    lateinit var menuAdpt: TopHeadingMenuAdapter
     lateinit var clickListener: MenuHeaderClickListener
     var headingIdInitial: Int = 0
     var subHeadingId: Int = 0
@@ -155,14 +155,14 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
                 ?: "", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
         menuHeadinglayoutManager =
                 LinearLayoutManager(this@MainActivity, RecyclerView.HORIZONTAL, false)
-        recyclerTopHeadingAdapter = TopHeadingMenuAdapter(this@MainActivity, clickListener)
+        menuAdpt = TopHeadingMenuAdapter(this@MainActivity, clickListener)
         recyclerViewTopHeading.layoutManager = menuHeadinglayoutManager
-        recyclerViewTopHeading.adapter = recyclerTopHeadingAdapter
+        recyclerViewTopHeading.adapter = menuAdpt
 
         if (savedInstanceState != null) {
             recyclerViewTopHeading.scrollToPosition(savedInstanceState.getInt("item_position"))
         } else {
-            recyclerTopHeadingAdapter.selectedItem = 0
+            menuAdpt.selectedItem = 0
         }
 
         loadDataInMenu(savedInstanceState)
@@ -208,20 +208,20 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
                 val firstIdx = 0
                 if (curItem == lastIdx && state == 1) {
                     lastPageChange = true;
-                    if (recyclerTopHeadingAdapter.selectedItem < recyclerTopHeadingAdapter.itemCount) {
+                    if (menuAdpt.selectedItem < menuAdpt.itemCount) {
 
-                        /*recyclerTopHeadingAdapter.setPosition(recyclerTopHeadingAdapter.selectedItem+1)
-                        val newData = recyclerTopHeadingAdapter.getObject(recyclerTopHeadingAdapter.selectedItem+1)
-                        var headingData = TopHeadingData(newData.id, recyclerTopHeadingAdapter.selectedItem, newData.name)
+                        /*menuAdpt.setPosition(menuAdpt.selectedItem+1)
+                        val newData = menuAdpt.getObject(menuAdpt.selectedItem+1)
+                        var headingData = TopHeadingData(newData.id, menuAdpt.selectedItem, newData.name)
 
                         swipeNewsData(headingData)*/
 
-                        //val pos = recyclerTopHeadingAdapter.selectedItem+1
-                        //recyclerTopHeadingAdapter.changeMenu(pos)
+                        //val pos = menuAdpt.selectedItem+1
+                        //menuAdpt.changeMenu(pos)
                         //onClick(headingData)
                         //selectedItem = position
 
-                        /*val newData = recyclerTopHeadingAdapter.getObject(4)
+                        /*val newData = menuAdpt.getObject(4)
                         headingIdInitial = newData.id
                         val headingName = newData.name
                         val headingData = TopHeadingData(headingIdInitial, 0, headingName)
@@ -230,9 +230,9 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
                 } else if (curItem == firstIdx && state == 1) {
                     lastPageChange = false
 
-                    if (recyclerTopHeadingAdapter.selectedItem > 0) {
+                    if (menuAdpt.selectedItem > 0) {
 
-                        val newData = recyclerTopHeadingAdapter.getObject(3)
+                        val newData = menuAdpt.getObject(3)
                         headingIdInitial = newData.id
                         val headingName = newData.name
                         val headingData = TopHeadingData(headingIdInitial, 0, headingName)
@@ -660,9 +660,9 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
                     return true
                 } else {
                     recyclerViewTopHeading.scrollToPosition(groupPosition)
-                    recyclerTopHeadingAdapter.selectedItem = groupPosition
-                    recyclerTopHeadingAdapter.setPosition(groupPosition)
-                    recyclerTopHeadingAdapter.notifyDataSetChanged()
+                    menuAdpt.selectedItem = groupPosition
+                    menuAdpt.setPosition(groupPosition)
+                    menuAdpt.notifyDataSetChanged()
 
                     loadNewsData(headingData)
                     return true
@@ -697,13 +697,13 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
                     trendingMenu = MenuHeading(DAILYDIGEST_ID, DAILYDIGEST_NAME)
                     result.add(2, trendingMenu)
                 }
-                recyclerTopHeadingAdapter.notifyChanges(result)
+                menuAdpt.notifyChanges(result)
 
 
                 if (isFirstLoad) {
-                    if (recyclerTopHeadingAdapter.getItemCount() > 0) {
+                    if (menuAdpt.getItemCount() > 0) {
                         isFirstLoad = false
-                        val newData = recyclerTopHeadingAdapter.getObject(recyclerTopHeadingAdapter.selectedItem)
+                        val newData = menuAdpt.getObject(menuAdpt.selectedItem)
                         headingIdInitial = newData.id
                         val headingName = newData.name
                         val headingData = TopHeadingData(headingIdInitial, 0, headingName)
@@ -714,18 +714,18 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
             }
         })
 
-        if (recyclerTopHeadingAdapter.selectedItem > 0) {
+        if (menuAdpt.selectedItem > 0) {
 
-            if (recyclerTopHeadingAdapter.getItemCount() > 0) {
-                val newData = recyclerTopHeadingAdapter.getObject(recyclerTopHeadingAdapter.selectedItem)
+            if (menuAdpt.getItemCount() > 0) {
+                val newData = menuAdpt.getObject(menuAdpt.selectedItem)
                 headingIdInitial = newData.id
                 val headingName = newData.name
                 val headingData = TopHeadingData(headingIdInitial, 0, headingName)
                 loadNewsData(headingData)
             }
         } else {
-            if (recyclerTopHeadingAdapter.getItemCount() > 0) {
-                val newData = recyclerTopHeadingAdapter.getObject(recyclerTopHeadingAdapter.selectedItem)
+            if (menuAdpt.getItemCount() > 0) {
+                val newData = menuAdpt.getObject(menuAdpt.selectedItem)
                 headingIdInitial = newData.id
                 val headingName = newData.name
                 val headingData = TopHeadingData(headingIdInitial, 0, headingName)
@@ -736,7 +736,7 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
 
     fun loadNewsData(headingData: TopHeadingData) {
         var headingPos: Int = 0
-        val pos = recyclerTopHeadingAdapter.getPosition()
+        val pos = menuAdpt.getPosition()
         if (headingData.category.equals(TRENDING_NAME)) {
             tabLayout.visibility = View.GONE
             headingData.id = TRENDING_ID
@@ -817,7 +817,7 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
             trackingCallback(apiInterfaceObj, themePreference, 0, "", DAILYDIGEST_ID, DAILYDIGEST_NAME, "", ActionType.DAILYDIGESTMENUCLICK.type, deviceId
                     ?: "", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
         } else {
-            if (recyclerTopHeadingAdapter.itemCount <= 1) {
+            if (menuAdpt.itemCount <= 1) {
                 recyclerViewTopHeading.visibility = View.GONE
             } else {
                 recyclerViewTopHeading.visibility = View.VISIBLE
@@ -833,7 +833,7 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
             fetchDataViewModel.getSubMenuDataFromDb(headingData.id).observe(this, object : androidx.lifecycle.Observer<List<SubMenuResultData>> {
                 override fun onChanged(list: List<SubMenuResultData>?) {
                     var result = list as ArrayList<SubMenuResultData>
-                    if (recyclerTopHeadingAdapter.itemCount <= 1) {
+                    if (menuAdpt.itemCount <= 1) {
 
                         if (BuildConfig.showTrendingNews) {
                             val trendingSubMenu = SubMenuResultData(TRENDING_ID, TRENDING_ID, TRENDING_NAME)
@@ -973,9 +973,9 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
             vPager.setCurrentItem(position)
         } else {
             recyclerViewTopHeading.scrollToPosition(position)
-            recyclerTopHeadingAdapter.selectedItem = position
-            recyclerTopHeadingAdapter.setPosition(position)
-            recyclerTopHeadingAdapter.notifyDataSetChanged()
+            menuAdpt.selectedItem = position
+            menuAdpt.setPosition(position)
+            menuAdpt.notifyDataSetChanged()
 
             loadNewsData(headingData)
         }
@@ -984,7 +984,7 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
 
     fun swipeNewsData(headingData: TopHeadingData) {
         var headingPos: Int = 0
-        val pos = recyclerTopHeadingAdapter.getPosition()
+        val pos = menuAdpt.getPosition()
         if (headingData.category.equals(TRENDING_NAME)) {
             tabLayout.visibility = View.GONE
             headingData.id = TRENDING_ID
@@ -1066,7 +1066,7 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
             trackingCallback(apiInterfaceObj, themePreference, 0, "", DAILYDIGEST_ID, DAILYDIGEST_NAME, "", ActionType.DAILYDIGESTMENUCLICK.type, deviceId
                     ?: "", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
         } else {
-            if (recyclerTopHeadingAdapter.itemCount <= 1) {
+            if (menuAdpt.itemCount <= 1) {
                 recyclerViewTopHeading.visibility = View.GONE
             } else {
                 recyclerViewTopHeading.visibility = View.VISIBLE
@@ -1082,7 +1082,7 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
             fetchDataViewModel.getSubMenuDataFromDb(headingData.id).observe(this, object : androidx.lifecycle.Observer<List<SubMenuResultData>> {
                 override fun onChanged(list: List<SubMenuResultData>?) {
                     var result = list as ArrayList<SubMenuResultData>
-                    if (recyclerTopHeadingAdapter.itemCount <= 1) {
+                    if (menuAdpt.itemCount <= 1) {
 
                         if (BuildConfig.showTrendingNews) {
                             val trendingSubMenu = SubMenuResultData(TRENDING_ID, TRENDING_ID, TRENDING_NAME)
