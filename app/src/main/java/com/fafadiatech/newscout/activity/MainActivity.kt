@@ -59,10 +59,10 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
     lateinit var vpAdpt: MainAdapter
     lateinit var dataNotFoundReceiver: BroadcastReceiver
     lateinit var gson: Gson
-    lateinit var fetchDataViewModel: FetchDataApiViewModel
-    lateinit var apiInterfaceObj: ApiInterface
+    lateinit var dataVM: FetchDataApiViewModel
+    lateinit var nApi: ApiInterface
     var token: String = ""
-    lateinit var recyclerViewTopHeading: RecyclerView
+    lateinit var rvMenu: RecyclerView
     lateinit var menuAdpt: TopHeadingMenuAdapter
     lateinit var clickListener: MenuHeaderClickListener
     var headingIdInitial: Int = 0
@@ -79,7 +79,7 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
     val TAG: String = "TestMainActivity"
     var isFirstLoad = true
     lateinit var expandableListView: ExpandableListView
-    lateinit var drawer_layout: DrawerLayout
+    lateinit var mDrawer: DrawerLayout
     lateinit var navigationView: NavigationView
     var headerList = ArrayList<TopMenuModel>();
     var childList = HashMap<TopMenuModel, List<MenuModel>?>()
@@ -96,8 +96,8 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
         isNightMode = themePreference.getBoolean("night mode enable", false)
         var isThemeChange = themePreference.getBoolean("theme changed", false)
         token = themePreference.getString("token value", "")
-        fetchDataViewModel = ViewModelProviders.of(this@MainActivity).get(FetchDataApiViewModel::class.java)
-        apiInterfaceObj = ApiClient.getClient().create(ApiInterface::class.java)
+        dataVM = ViewModelProviders.of(this@MainActivity).get(FetchDataApiViewModel::class.java)
+        nApi = ApiClient.getClient().create(ApiInterface::class.java)
 
         setContentView(R.layout.activity_main_page)
         newsDatabase = NewsDatabase.getInstance(this)
@@ -108,9 +108,9 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
         val deviceWidth = displayMetrics.widthPixels
         deviceWidthDp = deviceWidth / Resources.getSystem().getDisplayMetrics().density
         clickListener = this as MenuHeaderClickListener
-        recyclerViewTopHeading = findViewById(R.id.rv_top_heading)
+        rvMenu = findViewById(R.id.rv_top_heading)
         toolbar = findViewById(R.id.toolbar_home_sc)
-        drawer_layout = findViewById(R.id.drawer_layout)
+        mDrawer = findViewById(R.id.drawer_layout)
         gson = Gson()
         vpAdpt = MainAdapter(this, supportFragmentManager, arrFragment, arrDataBundle)
         val query = SimpleSQLiteQuery("DELETE from sqlite_sequence")
@@ -118,7 +118,7 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
         if (token != null && token != "") {
 
             var deviceId = themePreference.getString("device_token", "")
-            var call: Call<DeviceServerResponseData> = apiInterfaceObj.sendDeviceIdToServerWithToken(token, deviceId, "android")
+            var call: Call<DeviceServerResponseData> = nApi.sendDeviceIdToServerWithToken(token, deviceId, "android")
             call.enqueue(object : Callback<DeviceServerResponseData> {
                 override fun onFailure(call: Call<DeviceServerResponseData>, t: Throwable) {
                 }
@@ -133,7 +133,7 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
             })
         } else {
             var deviceId = themePreference.getString("device_token", "")
-            var call: Call<DeviceServerResponseData> = apiInterfaceObj.sendDeviceIdToServerWithoutToken(deviceId, "android")
+            var call: Call<DeviceServerResponseData> = nApi.sendDeviceIdToServerWithoutToken(deviceId, "android")
             call.enqueue(object : Callback<DeviceServerResponseData> {
                 override fun onFailure(call: Call<DeviceServerResponseData>, t: Throwable) {
                 }
@@ -151,16 +151,16 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
         val uniqueVal = getUniqueCode(this@MainActivity, themePreference)
         var deviceId = themePreference.getString("device_token", "")
         val sessionId = getUniqueCode(this@MainActivity, themePreference)
-        trackingCallback(apiInterfaceObj, themePreference, 0, "", 0, "", "", ActionType.APPOPEN.type, deviceId
+        trackingCallback(nApi, themePreference, 0, "", 0, "", "", ActionType.APPOPEN.type, deviceId
                 ?: "", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
         menuHeadinglayoutManager =
                 LinearLayoutManager(this@MainActivity, RecyclerView.HORIZONTAL, false)
         menuAdpt = TopHeadingMenuAdapter(this@MainActivity, clickListener)
-        recyclerViewTopHeading.layoutManager = menuHeadinglayoutManager
-        recyclerViewTopHeading.adapter = menuAdpt
+        rvMenu.layoutManager = menuHeadinglayoutManager
+        rvMenu.adapter = menuAdpt
 
         if (savedInstanceState != null) {
-            recyclerViewTopHeading.scrollToPosition(savedInstanceState.getInt("item_position"))
+            rvMenu.scrollToPosition(savedInstanceState.getInt("item_position"))
         } else {
             menuAdpt.selectedItem = 0
         }
@@ -268,7 +268,7 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
                     var deviceId = themePreference.getString("device_token", "")
 
                     val sessionId = getUniqueCode(this@MainActivity, themePreference)
-                    trackingCallback(apiInterfaceObj, themePreference, 0, "", itemId, subHeadName, "", ActionType.MENUCHANGE.type, deviceId
+                    trackingCallback(nApi, themePreference, 0, "", itemId, subHeadName, "", ActionType.MENUCHANGE.type, deviceId
                             ?: "", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
                 }
             }
@@ -365,14 +365,14 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
         var deviceId = themePreference.getString("device_token", "")
         if (item?.getItemId() == android.R.id.home) {
             val sessionId = getUniqueCode(this@MainActivity, themePreference)
-            trackingCallback(apiInterfaceObj, themePreference, 0, "", 0, "", "", ActionType.BURGERICON.type, deviceId
+            trackingCallback(nApi, themePreference, 0, "", 0, "", "", ActionType.BURGERICON.type, deviceId
                     ?: "", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
 
-            drawer_layout.openDrawer(Gravity.LEFT);
+            mDrawer.openDrawer(Gravity.LEFT);
             return true
         } else {
             val sessionId = getUniqueCode(this@MainActivity, themePreference)
-            trackingCallback(apiInterfaceObj, themePreference, 0, "", 0, "", "", ActionType.OPTIONMENU.type, deviceId
+            trackingCallback(nApi, themePreference, 0, "", 0, "", "", ActionType.OPTIONMENU.type, deviceId
                     ?: "", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, ", 0")
         }
 
@@ -382,7 +382,7 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
             R.id.ic_bookmark -> {
 
                 val sessionId = getUniqueCode(this@MainActivity, themePreference)
-                trackingCallback(apiInterfaceObj, themePreference, 0, "", 0, "", "", ActionType.BOOKMARKMENUCLICK.type, deviceId
+                trackingCallback(nApi, themePreference, 0, "", 0, "", "", ActionType.BOOKMARKMENUCLICK.type, deviceId
                         ?: "", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
                 val intent = Intent(this, BookmarkActivity::class.java)
                 startActivity(intent)
@@ -391,7 +391,7 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
             R.id.ic_setting -> {
 
                 val sessionId = getUniqueCode(this@MainActivity, themePreference)
-                trackingCallback(apiInterfaceObj, themePreference, 0, "", 0, "", "", ActionType.SETTINGSMENUCLICK.type, deviceId
+                trackingCallback(nApi, themePreference, 0, "", 0, "", "", ActionType.SETTINGSMENUCLICK.type, deviceId
                         ?: "", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, ", 0")
                 val intent = Intent(this, SettingActivity::class.java)
                 startActivity(intent)
@@ -400,7 +400,7 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
             R.id.ic_search -> {
 
                 val sessionId = getUniqueCode(this@MainActivity, themePreference)
-                trackingCallback(apiInterfaceObj, themePreference, 0, "", 0, "", "", ActionType.SEARCHMENUCLICK.type, deviceId
+                trackingCallback(nApi, themePreference, 0, "", 0, "", "", ActionType.SEARCHMENUCLICK.type, deviceId
                         ?: "", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, ", 0")
                 val intent = Intent(this, SearchActivity::class.java)
                 startActivity(intent)
@@ -421,7 +421,7 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
                     isThemeChanged = true
                     defaultTheme = MODE_NIGHT_YES
                     val sessionId = getUniqueCode(this@MainActivity, themePreference)
-                    trackingCallback(apiInterfaceObj, themePreference, 0, "", 0, "", "", ActionType.MODECHANGE.type, deviceId
+                    trackingCallback(nApi, themePreference, 0, "", 0, "", "", ActionType.MODECHANGE.type, deviceId
                             ?: "", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
                 } else {
                     item.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_moon))
@@ -431,7 +431,7 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
                     isThemeChanged = true
                     defaultTheme = MODE_NIGHT_NO
                     val sessionId = getUniqueCode(this@MainActivity, themePreference)
-                    trackingCallback(apiInterfaceObj, themePreference, 0, "", 0, "", "", ActionType.MODECHANGE.type, deviceId
+                    trackingCallback(nApi, themePreference, 0, "", 0, "", "", ActionType.MODECHANGE.type, deviceId
                             ?: "", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
                 }
                 var editor = themePreference.edit()
@@ -478,9 +478,9 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
 
     override fun onBackPressed() {
 
-        drawer_layout = findViewById(R.id.drawer_layout)
-        if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
-            drawer_layout.closeDrawer(GravityCompat.START)
+        mDrawer = findViewById(R.id.drawer_layout)
+        if (mDrawer.isDrawerOpen(GravityCompat.START)) {
+            mDrawer.closeDrawer(GravityCompat.START)
             return
         }
 
@@ -648,18 +648,18 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
 
                 var deviceId = themePreference.getString("device_token", "")
                 val sessionId = getUniqueCode(this@MainActivity, themePreference)
-                trackingCallback(apiInterfaceObj, themePreference, 0, "", data.id, data.name, "", ActionType.BURGERMENUCLICK.type, deviceId
+                trackingCallback(nApi, themePreference, 0, "", data.id, data.name, "", ActionType.BURGERMENUCLICK.type, deviceId
                         ?: "", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
                 if (!(rv_top_heading.isVisible)) {
 
                     vPager.setCurrentItem(groupPosition)
-                    drawer_layout = findViewById(R.id.drawer_layout)
-                    if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
-                        drawer_layout.closeDrawer(GravityCompat.START)
+                    mDrawer = findViewById(R.id.drawer_layout)
+                    if (mDrawer.isDrawerOpen(GravityCompat.START)) {
+                        mDrawer.closeDrawer(GravityCompat.START)
                     }
                     return true
                 } else {
-                    recyclerViewTopHeading.scrollToPosition(groupPosition)
+                    rvMenu.scrollToPosition(groupPosition)
                     menuAdpt.selectedItem = groupPosition
                     menuAdpt.setPosition(groupPosition)
                     menuAdpt.notifyDataSetChanged()
@@ -678,14 +678,14 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
     }
 
     fun scrollToCenter(position: Int) {
-        val smoothScroller = CenterSmoothScroller(recyclerViewTopHeading.getContext());
+        val smoothScroller = CenterSmoothScroller(rvMenu.getContext());
         smoothScroller.setTargetPosition(position);
         menuHeadinglayoutManager.startSmoothScroll(smoothScroller);
     }
 
     fun loadDataInMenu(savedInstanceState: Bundle?) {
 
-        fetchDataViewModel.getMenuHeadingFromDb().observe(this, object : androidx.lifecycle.Observer<List<MenuHeading>> {
+        dataVM.getMenuHeadingFromDb().observe(this, object : androidx.lifecycle.Observer<List<MenuHeading>> {
             override fun onChanged(list: List<MenuHeading>?) {
                 var result = list as ArrayList<MenuHeading>
                 if (result.size > 1) {
@@ -765,7 +765,7 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
 
             var deviceId = themePreference.getString("device_token", "")
             val sessionId = getUniqueCode(this@MainActivity, themePreference)
-            trackingCallback(apiInterfaceObj, themePreference, 0, "", TRENDING_ID, TRENDING_NAME, "", ActionType.TRENDINGMENUCLICK.type, deviceId
+            trackingCallback(nApi, themePreference, 0, "", TRENDING_ID, TRENDING_NAME, "", ActionType.TRENDINGMENUCLICK.type, deviceId
                     ?: "", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
         } else if (headingData.category.equals(LATESTNEWS_NAME)) {
             tabLayout.visibility = View.GONE
@@ -790,7 +790,7 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
 
             var deviceId = themePreference.getString("device_token", "")
             val sessionId = getUniqueCode(this@MainActivity, themePreference)
-            trackingCallback(apiInterfaceObj, themePreference, 0, "", newsCategoryId, LATESTNEWS_NAME, "", ActionType.MENUCHANGE.type, deviceId
+            trackingCallback(nApi, themePreference, 0, "", newsCategoryId, LATESTNEWS_NAME, "", ActionType.MENUCHANGE.type, deviceId
                     ?: "", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
         } else if (headingData.category.equals(DAILYDIGEST_NAME)) {
             tabLayout.visibility = View.GONE
@@ -814,23 +814,23 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
 
             var deviceId = themePreference.getString("device_token", "")
             val sessionId = getUniqueCode(this@MainActivity, themePreference)
-            trackingCallback(apiInterfaceObj, themePreference, 0, "", DAILYDIGEST_ID, DAILYDIGEST_NAME, "", ActionType.DAILYDIGESTMENUCLICK.type, deviceId
+            trackingCallback(nApi, themePreference, 0, "", DAILYDIGEST_ID, DAILYDIGEST_NAME, "", ActionType.DAILYDIGESTMENUCLICK.type, deviceId
                     ?: "", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
         } else {
             if (menuAdpt.itemCount <= 1) {
-                recyclerViewTopHeading.visibility = View.GONE
+                rvMenu.visibility = View.GONE
             } else {
-                recyclerViewTopHeading.visibility = View.VISIBLE
+                rvMenu.visibility = View.VISIBLE
             }
 
             tabLayout.visibility = View.VISIBLE
             vpAdpt.removeFragment()
             var deviceId = themePreference.getString("device_token", "")
             val sessionId = getUniqueCode(this@MainActivity, themePreference)
-            trackingCallback(apiInterfaceObj, themePreference, 0, "", headingData.id, headingData.category, "", ActionType.PARENTCATEGORYCLICK.type, deviceId
+            trackingCallback(nApi, themePreference, 0, "", headingData.id, headingData.category, "", ActionType.PARENTCATEGORYCLICK.type, deviceId
                     ?: "", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
 
-            fetchDataViewModel.getSubMenuDataFromDb(headingData.id).observe(this, object : androidx.lifecycle.Observer<List<SubMenuResultData>> {
+            dataVM.getSubMenuDataFromDb(headingData.id).observe(this, object : androidx.lifecycle.Observer<List<SubMenuResultData>> {
                 override fun onChanged(list: List<SubMenuResultData>?) {
                     var result = list as ArrayList<SubMenuResultData>
                     if (menuAdpt.itemCount <= 1) {
@@ -900,7 +900,7 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
 
                             var deviceId = themePreference.getString("device_token", "")
                             val sessionId = getUniqueCode(this@MainActivity, themePreference)
-                            //trackingCallback(apiInterfaceObj, themePreference, 0, "", TRENDING_ID, TRENDING_NAME, "", ActionType.TRENDINGMENUCLICK.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
+                            //trackingCallback(nApi, themePreference, 0, "", TRENDING_ID, TRENDING_NAME, "", ActionType.TRENDINGMENUCLICK.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
                         } else if (name.equals(LATESTNEWS_NAME)) {
                             var newsCategoryId: Int = getLatestNewsID(articleNewsDao)
                             var bundle = Bundle()
@@ -941,13 +941,13 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
                     vpAdpt.notifyDataSetChanged()
                     setIconsTab(tabLayout)
                     vPager.setCurrentItem(0)
-                    trackingCallback(apiInterfaceObj, themePreference, 0, "", subMenuId, subMenuName, "", ActionType.MENUCHANGE.type, deviceId
+                    trackingCallback(nApi, themePreference, 0, "", subMenuId, subMenuName, "", ActionType.MENUCHANGE.type, deviceId
                             ?: "", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
                 }
             })
         }
-        if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
-            drawer_layout.closeDrawer(GravityCompat.START)
+        if (mDrawer.isDrawerOpen(GravityCompat.START)) {
+            mDrawer.closeDrawer(GravityCompat.START)
         }
         scrollToCenter(pos)
     }
@@ -955,7 +955,7 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
     override fun onDestroy() {
         var deviceId = themePreference.getString("device_token", "")
         val sessionId = getUniqueCode(this@MainActivity, themePreference)
-        trackingCallback(apiInterfaceObj, themePreference, 0, "", 0, "", "", ActionType.APPCLOSE.type, deviceId
+        trackingCallback(nApi, themePreference, 0, "", 0, "", "", ActionType.APPCLOSE.type, deviceId
                 ?: "", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
         super.onDestroy()
     }
@@ -966,13 +966,13 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
 
         var deviceId = themePreference.getString("device_token", "")
         val sessionId = getUniqueCode(this@MainActivity, themePreference)
-        trackingCallback(apiInterfaceObj, themePreference, 0, "", data.id, data.name, "", ActionType.BURGERMENUCLICK.type, deviceId
+        trackingCallback(nApi, themePreference, 0, "", data.id, data.name, "", ActionType.BURGERMENUCLICK.type, deviceId
                 ?: "", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
         if (!(rv_top_heading.isVisible)) {
 
             vPager.setCurrentItem(position)
         } else {
-            recyclerViewTopHeading.scrollToPosition(position)
+            rvMenu.scrollToPosition(position)
             menuAdpt.selectedItem = position
             menuAdpt.setPosition(position)
             menuAdpt.notifyDataSetChanged()
@@ -1013,7 +1013,7 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
 
             var deviceId = themePreference.getString("device_token", "")
             val sessionId = getUniqueCode(this@MainActivity, themePreference)
-            trackingCallback(apiInterfaceObj, themePreference, 0, "", TRENDING_ID, TRENDING_NAME, "", ActionType.TRENDINGMENUCLICK.type, deviceId
+            trackingCallback(nApi, themePreference, 0, "", TRENDING_ID, TRENDING_NAME, "", ActionType.TRENDINGMENUCLICK.type, deviceId
                     ?: "", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
         } else if (headingData.category.equals(LATESTNEWS_NAME)) {
             tabLayout.visibility = View.GONE
@@ -1039,7 +1039,7 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
 
             var deviceId = themePreference.getString("device_token", "")
             val sessionId = getUniqueCode(this@MainActivity, themePreference)
-            trackingCallback(apiInterfaceObj, themePreference, 0, "", newsCategoryId, LATESTNEWS_NAME, "", ActionType.MENUCHANGE.type, deviceId
+            trackingCallback(nApi, themePreference, 0, "", newsCategoryId, LATESTNEWS_NAME, "", ActionType.MENUCHANGE.type, deviceId
                     ?: "", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
         } else if (headingData.category.equals(DAILYDIGEST_NAME)) {
             tabLayout.visibility = View.GONE
@@ -1063,23 +1063,23 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
 
             var deviceId = themePreference.getString("device_token", "")
             val sessionId = getUniqueCode(this@MainActivity, themePreference)
-            trackingCallback(apiInterfaceObj, themePreference, 0, "", DAILYDIGEST_ID, DAILYDIGEST_NAME, "", ActionType.DAILYDIGESTMENUCLICK.type, deviceId
+            trackingCallback(nApi, themePreference, 0, "", DAILYDIGEST_ID, DAILYDIGEST_NAME, "", ActionType.DAILYDIGESTMENUCLICK.type, deviceId
                     ?: "", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
         } else {
             if (menuAdpt.itemCount <= 1) {
-                recyclerViewTopHeading.visibility = View.GONE
+                rvMenu.visibility = View.GONE
             } else {
-                recyclerViewTopHeading.visibility = View.VISIBLE
+                rvMenu.visibility = View.VISIBLE
             }
 
             tabLayout.visibility = View.VISIBLE
             vpAdpt.removeFragment()
             var deviceId = themePreference.getString("device_token", "")
             val sessionId = getUniqueCode(this@MainActivity, themePreference)
-            trackingCallback(apiInterfaceObj, themePreference, 0, "", headingData.id, headingData.category, "", ActionType.PARENTCATEGORYCLICK.type, deviceId
+            trackingCallback(nApi, themePreference, 0, "", headingData.id, headingData.category, "", ActionType.PARENTCATEGORYCLICK.type, deviceId
                     ?: "", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
 
-            fetchDataViewModel.getSubMenuDataFromDb(headingData.id).observe(this, object : androidx.lifecycle.Observer<List<SubMenuResultData>> {
+            dataVM.getSubMenuDataFromDb(headingData.id).observe(this, object : androidx.lifecycle.Observer<List<SubMenuResultData>> {
                 override fun onChanged(list: List<SubMenuResultData>?) {
                     var result = list as ArrayList<SubMenuResultData>
                     if (menuAdpt.itemCount <= 1) {
@@ -1149,7 +1149,7 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
 
                             var deviceId = themePreference.getString("device_token", "")
                             val sessionId = getUniqueCode(this@MainActivity, themePreference)
-                            //trackingCallback(apiInterfaceObj, themePreference, 0, "", TRENDING_ID, TRENDING_NAME, "", ActionType.TRENDINGMENUCLICK.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
+                            //trackingCallback(nApi, themePreference, 0, "", TRENDING_ID, TRENDING_NAME, "", ActionType.TRENDINGMENUCLICK.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
                         } else if (name.equals(LATESTNEWS_NAME)) {
                             var newsCategoryId: Int = getLatestNewsID(articleNewsDao)
                             var bundle = Bundle()
@@ -1190,13 +1190,13 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
                     //vpAdpt.notifyDataSetChanged()
                     setIconsTab(tabLayout)
                     //vPager.setCurrentItem(0)
-                    trackingCallback(apiInterfaceObj, themePreference, 0, "", subMenuId, subMenuName, "", ActionType.MENUCHANGE.type, deviceId
+                    trackingCallback(nApi, themePreference, 0, "", subMenuId, subMenuName, "", ActionType.MENUCHANGE.type, deviceId
                             ?: "", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
                 }
             })
         }
-        if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
-            drawer_layout.closeDrawer(GravityCompat.START)
+        if (mDrawer.isDrawerOpen(GravityCompat.START)) {
+            mDrawer.closeDrawer(GravityCompat.START)
         }
         scrollToCenter(pos)
     }
