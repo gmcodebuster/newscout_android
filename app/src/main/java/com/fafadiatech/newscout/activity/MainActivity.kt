@@ -56,7 +56,7 @@ import retrofit2.Response
 
 class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnNavigationItemSelectedListener {
     lateinit var vPager: ViewPager
-    lateinit var adapterObj: MainAdapter
+    lateinit var vpAdpt: MainAdapter
     lateinit var dataNotFoundReceiver: BroadcastReceiver
     lateinit var gson: Gson
     lateinit var fetchDataViewModel: FetchDataApiViewModel
@@ -112,7 +112,7 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
         toolbar = findViewById(R.id.toolbar_home_sc)
         drawer_layout = findViewById(R.id.drawer_layout)
         gson = Gson()
-        adapterObj = MainAdapter(this, supportFragmentManager, arrFragment, arrDataBundle)
+        vpAdpt = MainAdapter(this, supportFragmentManager, arrFragment, arrDataBundle)
         val query = SimpleSQLiteQuery("DELETE from sqlite_sequence")
         val value = articleNewsDao.deleteSequenceTable(query);
         if (token != null && token != "") {
@@ -190,7 +190,7 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
         actionBar?.setDisplayHomeAsUpEnabled(true);
 
         vPager = findViewById(R.id.vPager_main)
-        vPager.adapter = adapterObj
+        vPager.adapter = vpAdpt
 
         tabLayout.setupWithViewPager(vPager)
 
@@ -203,7 +203,7 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
         vPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             var lastPageChange = false
             override fun onPageScrollStateChanged(state: Int) {
-                val lastIdx = adapterObj.getCount() - 1;
+                val lastIdx = vpAdpt.getCount() - 1;
                 val curItem = vPager.getCurrentItem();
                 val firstIdx = 0
                 if (curItem == lastIdx && state == 1) {
@@ -244,7 +244,7 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
             }
 
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-                val lastIdx = adapterObj.getCount() - 1
+                val lastIdx = vpAdpt.getCount() - 1
                 if (lastPageChange && position == lastIdx) {
                 }
             }
@@ -284,7 +284,7 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
             val tabView = (tabLayout.getChildAt(0) as ViewGroup).getChildAt(i)
             val p = tabView.layoutParams as ViewGroup.MarginLayoutParams
             p.setMargins(8, 8, 8, 8)
-            cTab?.setCustomView(adapterObj.getTabView(i))
+            cTab?.setCustomView(vpAdpt.getTabView(i))
             tabView.requestLayout()
         }
     }
@@ -753,13 +753,13 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
             bundle.putInt("category_id", TRENDING_ID)
 
             val rootFrag = RootTrendingFragment()
-            adapterObj.removeFragment()
+            vpAdpt.removeFragment()
 
             arrFragment.add(rootFrag)
             arrDataBundle.add(bundle)
-            adapterObj = MainAdapter(this@MainActivity, supportFragmentManager, arrFragment, arrDataBundle)
-            vPager.adapter = adapterObj
-            adapterObj.notifyDataSetChanged()
+            vpAdpt = MainAdapter(this@MainActivity, supportFragmentManager, arrFragment, arrDataBundle)
+            vPager.adapter = vpAdpt
+            vpAdpt.notifyDataSetChanged()
             setIconsTab(tabLayout)
             vPager.setCurrentItem(0)
 
@@ -777,14 +777,14 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
             bundle.putInt("category_id", newsCategoryId)
 
             val newsFrag = NewsFragment()
-            adapterObj.removeFragment()
+            vpAdpt.removeFragment()
             arrFragment.add(newsFrag)
             arrDataBundle.add(bundle)
 
-            adapterObj = MainAdapter(this@MainActivity, supportFragmentManager, arrFragment, arrDataBundle)
+            vpAdpt = MainAdapter(this@MainActivity, supportFragmentManager, arrFragment, arrDataBundle)
 
-            vPager.adapter = adapterObj
-            adapterObj.notifyDataSetChanged()
+            vPager.adapter = vpAdpt
+            vpAdpt.notifyDataSetChanged()
             setIconsTab(tabLayout)
             vPager.setCurrentItem(0)
 
@@ -800,15 +800,15 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
             bundle.putInt("category_id", DAILYDIGEST_ID)
 
             val newsFrag = DailyDigestFragment()
-            adapterObj.removeFragment()
+            vpAdpt.removeFragment()
 
             arrFragment.add(newsFrag)
             arrDataBundle.add(bundle)
 
-            adapterObj = MainAdapter(this@MainActivity, supportFragmentManager, arrFragment, arrDataBundle)
+            vpAdpt = MainAdapter(this@MainActivity, supportFragmentManager, arrFragment, arrDataBundle)
 
-            vPager.adapter = adapterObj
-            adapterObj.notifyDataSetChanged()
+            vPager.adapter = vpAdpt
+            vpAdpt.notifyDataSetChanged()
             setIconsTab(tabLayout)
             vPager.setCurrentItem(0)
 
@@ -824,7 +824,7 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
             }
 
             tabLayout.visibility = View.VISIBLE
-            adapterObj.removeFragment()
+            vpAdpt.removeFragment()
             var deviceId = themePreference.getString("device_token", "")
             val sessionId = getUniqueCode(this@MainActivity, themePreference)
             trackingCallback(apiInterfaceObj, themePreference, 0, "", headingData.id, headingData.category, "", ActionType.PARENTCATEGORYCLICK.type, deviceId
@@ -866,7 +866,7 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
                     var subMenuId: Int = 0
                     var subMenuName: String = ""
                     if (result.size > 0) {
-                        adapterObj.removeFragment()
+                        vpAdpt.removeFragment()
 
                         if (!subMenuName.equals(LATESTNEWS_FIELDNAME) && !subMenuName.equals(LATESTNEWS_FIELDNAME2)) {
                             subMenuId = result.get(0).id
@@ -876,7 +876,7 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
                             //subMenuName =  result.get(1).name
                         }
                     }
-                    adapterObj.removeFragment()
+                    vpAdpt.removeFragment()
                     for (i in 0 until result.size) {
                         val name = result.get(i).name
                         if (name.equals(TRENDING_NAME)) {
@@ -936,9 +936,9 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
                             }
                         }
                     }
-                    adapterObj = MainAdapter(this@MainActivity, supportFragmentManager, arrFragment, arrDataBundle)
-                    vPager.adapter = adapterObj
-                    adapterObj.notifyDataSetChanged()
+                    vpAdpt = MainAdapter(this@MainActivity, supportFragmentManager, arrFragment, arrDataBundle)
+                    vPager.adapter = vpAdpt
+                    vpAdpt.notifyDataSetChanged()
                     setIconsTab(tabLayout)
                     vPager.setCurrentItem(0)
                     trackingCallback(apiInterfaceObj, themePreference, 0, "", subMenuId, subMenuName, "", ActionType.MENUCHANGE.type, deviceId
@@ -1001,13 +1001,13 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
             bundle.putInt("category_id", TRENDING_ID)
 
             val rootFrag = RootTrendingFragment()
-            adapterObj.removeFragment()
+            vpAdpt.removeFragment()
 
             arrFragment.add(rootFrag)
             arrDataBundle.add(bundle)
-            adapterObj = MainAdapter(this@MainActivity, supportFragmentManager, arrFragment, arrDataBundle)
-            vPager.adapter = adapterObj
-            //adapterObj.notifyDataSetChanged()
+            vpAdpt = MainAdapter(this@MainActivity, supportFragmentManager, arrFragment, arrDataBundle)
+            vPager.adapter = vpAdpt
+            //vpAdpt.notifyDataSetChanged()
             setIconsTab(tabLayout)
             //vPager.setCurrentItem(0)
 
@@ -1025,15 +1025,15 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
             bundle.putInt("category_id", newsCategoryId)
 
             val newsFrag = NewsFragment()
-            adapterObj.removeFragment()
+            vpAdpt.removeFragment()
             vPager.adapter = null
             arrFragment.add(newsFrag)
             arrDataBundle.add(bundle)
 
-            adapterObj = MainAdapter(this@MainActivity, supportFragmentManager, arrFragment, arrDataBundle)
+            vpAdpt = MainAdapter(this@MainActivity, supportFragmentManager, arrFragment, arrDataBundle)
 
-            vPager.adapter = adapterObj
-            //adapterObj.notifyDataSetChanged()
+            vPager.adapter = vpAdpt
+            //vpAdpt.notifyDataSetChanged()
             setIconsTab(tabLayout)
             //vPager.setCurrentItem(0)
 
@@ -1049,15 +1049,15 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
             bundle.putInt("category_id", DAILYDIGEST_ID)
 
             val newsFrag = DailyDigestFragment()
-            adapterObj.removeFragment()
+            vpAdpt.removeFragment()
 
             arrFragment.add(newsFrag)
             arrDataBundle.add(bundle)
 
-            adapterObj = MainAdapter(this@MainActivity, supportFragmentManager, arrFragment, arrDataBundle)
+            vpAdpt = MainAdapter(this@MainActivity, supportFragmentManager, arrFragment, arrDataBundle)
 
-            vPager.adapter = adapterObj
-            //adapterObj.notifyDataSetChanged()
+            vPager.adapter = vpAdpt
+            //vpAdpt.notifyDataSetChanged()
             setIconsTab(tabLayout)
             //vPager.setCurrentItem(0)
 
@@ -1073,7 +1073,7 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
             }
 
             tabLayout.visibility = View.VISIBLE
-            adapterObj.removeFragment()
+            vpAdpt.removeFragment()
             var deviceId = themePreference.getString("device_token", "")
             val sessionId = getUniqueCode(this@MainActivity, themePreference)
             trackingCallback(apiInterfaceObj, themePreference, 0, "", headingData.id, headingData.category, "", ActionType.PARENTCATEGORYCLICK.type, deviceId
@@ -1115,7 +1115,7 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
                     var subMenuId: Int = 0
                     var subMenuName: String = ""
                     if (result.size > 0) {
-                        adapterObj.removeFragment()
+                        vpAdpt.removeFragment()
 
                         if (!subMenuName.equals(LATESTNEWS_FIELDNAME) && !subMenuName.equals(LATESTNEWS_FIELDNAME2)) {
                             subMenuId = result.get(0).id
@@ -1125,7 +1125,7 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
                             //subMenuName =  result.get(1).name
                         }
                     }
-                    adapterObj.removeFragment()
+                    vpAdpt.removeFragment()
                     for (i in 0 until result.size) {
                         val name = result.get(i).name
                         if (name.equals(TRENDING_NAME)) {
@@ -1185,9 +1185,9 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
                             }
                         }
                     }
-                    adapterObj = MainAdapter(this@MainActivity, supportFragmentManager, arrFragment, arrDataBundle)
-                    vPager.adapter = adapterObj
-                    //adapterObj.notifyDataSetChanged()
+                    vpAdpt = MainAdapter(this@MainActivity, supportFragmentManager, arrFragment, arrDataBundle)
+                    vPager.adapter = vpAdpt
+                    //vpAdpt.notifyDataSetChanged()
                     setIconsTab(tabLayout)
                     //vPager.setCurrentItem(0)
                     trackingCallback(apiInterfaceObj, themePreference, 0, "", subMenuId, subMenuName, "", ActionType.MENUCHANGE.type, deviceId
