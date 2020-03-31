@@ -196,8 +196,10 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
 
         expandableListView = findViewById<ExpandableListView>(R.id.expandableListView)
 
-        navigationView = findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        navigationView = findViewById(R.id.nav_view)
+        navigationView.setNavigationItemSelectedListener(this)
+
+        /*
         vPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             var lastPageChange = false
             override fun onPageScrollStateChanged(state: Int) {
@@ -207,19 +209,42 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
                 if (curItem == lastIdx && state == 1) {
                     lastPageChange = true;
                     if (recyclerTopHeadingAdapter.selectedItem < recyclerTopHeadingAdapter.itemCount) {
+
+                        /*recyclerTopHeadingAdapter.setPosition(recyclerTopHeadingAdapter.selectedItem+1)
+                        val newData = recyclerTopHeadingAdapter.getObject(recyclerTopHeadingAdapter.selectedItem+1)
+                        var headingData = TopHeadingData(newData.id, recyclerTopHeadingAdapter.selectedItem, newData.name)
+
+                        swipeNewsData(headingData)*/
+
+                        //val pos = recyclerTopHeadingAdapter.selectedItem+1
+                        //recyclerTopHeadingAdapter.changeMenu(pos)
+                        //onClick(headingData)
+                        //selectedItem = position
+
+                        /*val newData = recyclerTopHeadingAdapter.getObject(4)
+                        headingIdInitial = newData.id
+                        val headingName = newData.name
+                        val headingData = TopHeadingData(headingIdInitial, 0, headingName)
+                        onClick(headingData)*/
                     }
                 } else if (curItem == firstIdx && state == 1) {
-                    lastPageChange = false;
+                    lastPageChange = false
 
                     if (recyclerTopHeadingAdapter.selectedItem > 0) {
+
+                        val newData = recyclerTopHeadingAdapter.getObject(3)
+                        headingIdInitial = newData.id
+                        val headingName = newData.name
+                        val headingData = TopHeadingData(headingIdInitial, 0, headingName)
+                        onClick(headingData)
                     }
                 } else {
-                    lastPageChange = false;
+                    lastPageChange = false
                 }
             }
 
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-                val lastIdx = adapterObj.getCount() - 1;
+                val lastIdx = adapterObj.getCount() - 1
                 if (lastPageChange && position == lastIdx) {
                 }
             }
@@ -248,7 +273,7 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
                 }
             }
         })
-
+        */
         dataNotFoundReceiver = DataNotFoundReceiver()
     }
 
@@ -733,7 +758,6 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
             arrFragment.add(rootFrag)
             arrDataBundle.add(bundle)
             adapterObj = MainAdapter(this@MainActivity, supportFragmentManager, arrFragment, arrDataBundle)
-
             vPager.adapter = adapterObj
             adapterObj.notifyDataSetChanged()
             setIconsTab(tabLayout)
@@ -754,7 +778,6 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
 
             val newsFrag = NewsFragment()
             adapterObj.removeFragment()
-
             arrFragment.add(newsFrag)
             arrDataBundle.add(bundle)
 
@@ -956,5 +979,225 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
 
             loadNewsData(headingData)
         }
+    }
+
+
+    fun swipeNewsData(headingData: TopHeadingData) {
+        var headingPos: Int = 0
+        val pos = recyclerTopHeadingAdapter.getPosition()
+        if (headingData.category.equals(TRENDING_NAME)) {
+            tabLayout.visibility = View.GONE
+            headingData.id = TRENDING_ID
+            var fm = supportFragmentManager
+            fm.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            val list = fm.fragments
+            for (i in 0 until list.size) {
+                var frag = list.get(i)
+                val cm = frag.childFragmentManager
+            }
+            var bundle = Bundle()
+            bundle.putString("category_name", TRENDING_NAME)
+            bundle.putInt("position", 0)
+            bundle.putInt("category_id", TRENDING_ID)
+
+            val rootFrag = RootTrendingFragment()
+            adapterObj.removeFragment()
+
+            arrFragment.add(rootFrag)
+            arrDataBundle.add(bundle)
+            adapterObj = MainAdapter(this@MainActivity, supportFragmentManager, arrFragment, arrDataBundle)
+            vPager.adapter = adapterObj
+            //adapterObj.notifyDataSetChanged()
+            setIconsTab(tabLayout)
+            //vPager.setCurrentItem(0)
+
+            var deviceId = themePreference.getString("device_token", "")
+            val sessionId = getUniqueCode(this@MainActivity, themePreference)
+            trackingCallback(apiInterfaceObj, themePreference, 0, "", TRENDING_ID, TRENDING_NAME, "", ActionType.TRENDINGMENUCLICK.type, deviceId
+                    ?: "", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
+        } else if (headingData.category.equals(LATESTNEWS_NAME)) {
+            tabLayout.visibility = View.GONE
+            var newsCategoryId: Int = getLatestNewsID(articleNewsDao)
+            var newsCategoryName: String = getLatestNewsName(articleNewsDao)
+            var bundle = Bundle()
+            bundle.putString("category_name", newsCategoryName)
+            bundle.putInt("position", 0)
+            bundle.putInt("category_id", newsCategoryId)
+
+            val newsFrag = NewsFragment()
+            adapterObj.removeFragment()
+            vPager.adapter = null
+            arrFragment.add(newsFrag)
+            arrDataBundle.add(bundle)
+
+            adapterObj = MainAdapter(this@MainActivity, supportFragmentManager, arrFragment, arrDataBundle)
+
+            vPager.adapter = adapterObj
+            //adapterObj.notifyDataSetChanged()
+            setIconsTab(tabLayout)
+            //vPager.setCurrentItem(0)
+
+            var deviceId = themePreference.getString("device_token", "")
+            val sessionId = getUniqueCode(this@MainActivity, themePreference)
+            trackingCallback(apiInterfaceObj, themePreference, 0, "", newsCategoryId, LATESTNEWS_NAME, "", ActionType.MENUCHANGE.type, deviceId
+                    ?: "", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
+        } else if (headingData.category.equals(DAILYDIGEST_NAME)) {
+            tabLayout.visibility = View.GONE
+            var bundle = Bundle()
+            bundle.putString("category_name", DAILYDIGEST_NAME)
+            bundle.putInt("position", 0)
+            bundle.putInt("category_id", DAILYDIGEST_ID)
+
+            val newsFrag = DailyDigestFragment()
+            adapterObj.removeFragment()
+
+            arrFragment.add(newsFrag)
+            arrDataBundle.add(bundle)
+
+            adapterObj = MainAdapter(this@MainActivity, supportFragmentManager, arrFragment, arrDataBundle)
+
+            vPager.adapter = adapterObj
+            //adapterObj.notifyDataSetChanged()
+            setIconsTab(tabLayout)
+            //vPager.setCurrentItem(0)
+
+            var deviceId = themePreference.getString("device_token", "")
+            val sessionId = getUniqueCode(this@MainActivity, themePreference)
+            trackingCallback(apiInterfaceObj, themePreference, 0, "", DAILYDIGEST_ID, DAILYDIGEST_NAME, "", ActionType.DAILYDIGESTMENUCLICK.type, deviceId
+                    ?: "", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
+        } else {
+            if (recyclerTopHeadingAdapter.itemCount <= 1) {
+                recyclerViewTopHeading.visibility = View.GONE
+            } else {
+                recyclerViewTopHeading.visibility = View.VISIBLE
+            }
+
+            tabLayout.visibility = View.VISIBLE
+            adapterObj.removeFragment()
+            var deviceId = themePreference.getString("device_token", "")
+            val sessionId = getUniqueCode(this@MainActivity, themePreference)
+            trackingCallback(apiInterfaceObj, themePreference, 0, "", headingData.id, headingData.category, "", ActionType.PARENTCATEGORYCLICK.type, deviceId
+                    ?: "", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
+
+            fetchDataViewModel.getSubMenuDataFromDb(headingData.id).observe(this, object : androidx.lifecycle.Observer<List<SubMenuResultData>> {
+                override fun onChanged(list: List<SubMenuResultData>?) {
+                    var result = list as ArrayList<SubMenuResultData>
+                    if (recyclerTopHeadingAdapter.itemCount <= 1) {
+
+                        if (BuildConfig.showTrendingNews) {
+                            val trendingSubMenu = SubMenuResultData(TRENDING_ID, TRENDING_ID, TRENDING_NAME)
+                            result.add(0, trendingSubMenu)
+                        }
+                        if (BuildConfig.showLatestNews) {
+                            val latestSubMenu = SubMenuResultData(LATESTNEWS_ID, LATESTNEWS_ID, LATESTNEWS_NAME)
+                            if (BuildConfig.showTrendingNews) {
+
+                                result.add(1, latestSubMenu)
+                            } else {
+                                result.add(0, latestSubMenu)
+                            }
+                        }
+
+                        if (BuildConfig.showDailyDigest) {
+                            val dailyDigestSubMenu = SubMenuResultData(DAILYDIGEST_ID, DAILYDIGEST_ID, DAILYDIGEST_NAME)
+
+                            if (BuildConfig.showTrendingNews && BuildConfig.showLatestNews) {
+                                result.add(2, dailyDigestSubMenu)
+                            } else if (BuildConfig.showTrendingNews && !BuildConfig.showLatestNews) {
+                                result.add(1, dailyDigestSubMenu)
+                            } else if (!BuildConfig.showTrendingNews && BuildConfig.showLatestNews) {
+                                result.add(1, dailyDigestSubMenu)
+                            } else {
+                                result.add(0, dailyDigestSubMenu)
+                            }
+                        }
+                    }
+                    var subMenuId: Int = 0
+                    var subMenuName: String = ""
+                    if (result.size > 0) {
+                        adapterObj.removeFragment()
+
+                        if (!subMenuName.equals(LATESTNEWS_FIELDNAME) && !subMenuName.equals(LATESTNEWS_FIELDNAME2)) {
+                            subMenuId = result.get(0).id
+                            subMenuName = result.get(0).name
+                        } else {
+                            //subMenuId =  result.get(1).id
+                            //subMenuName =  result.get(1).name
+                        }
+                    }
+                    adapterObj.removeFragment()
+                    for (i in 0 until result.size) {
+                        val name = result.get(i).name
+                        if (name.equals(TRENDING_NAME)) {
+                            headingData.id = TRENDING_ID
+                            var fm = supportFragmentManager
+                            fm.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                            val list = fm.fragments
+                            for (i in 0 until list.size) {
+                                var frag = list.get(i)
+                                val cm = frag.childFragmentManager
+                            }
+                            var bundle = Bundle()
+                            bundle.putString("category_name", TRENDING_NAME)
+                            bundle.putInt("position", i)
+                            bundle.putInt("category_id", TRENDING_ID)
+
+                            val rootFrag = RootTrendingFragment()
+
+                            arrFragment.add(rootFrag)
+                            arrDataBundle.add(bundle)
+
+                            var deviceId = themePreference.getString("device_token", "")
+                            val sessionId = getUniqueCode(this@MainActivity, themePreference)
+                            //trackingCallback(apiInterfaceObj, themePreference, 0, "", TRENDING_ID, TRENDING_NAME, "", ActionType.TRENDINGMENUCLICK.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
+                        } else if (name.equals(LATESTNEWS_NAME)) {
+                            var newsCategoryId: Int = getLatestNewsID(articleNewsDao)
+                            var bundle = Bundle()
+                            bundle.putString("category_name", LATESTNEWS_NAME)
+                            bundle.putInt("position", i)
+                            bundle.putInt("category_id", newsCategoryId)
+
+                            val newsFrag = NewsFragment()
+
+                            arrFragment.add(newsFrag)
+                            arrDataBundle.add(bundle)
+                        } else if (name.equals(DAILYDIGEST_NAME)) {
+                            var bundle = Bundle()
+                            bundle.putString("category_name", DAILYDIGEST_NAME)
+                            bundle.putInt("position", i)
+                            bundle.putInt("category_id", DAILYDIGEST_ID)
+
+                            val newsFrag = DailyDigestFragment()
+
+                            arrFragment.add(newsFrag)
+                            arrDataBundle.add(bundle)
+                        } else {
+                            if (!name.equals(LATESTNEWS_FIELDNAME) && !name.equals(LATESTNEWS_FIELDNAME2)) {
+                                var bundle = Bundle()
+                                bundle.putString("category_name", result.get(i).name)
+                                bundle.putInt("position", i)
+                                bundle.putInt("category_id", result.get(i).id)
+
+                                val newsFrag = NewsFragment()
+
+                                arrFragment.add(newsFrag)
+                                arrDataBundle.add(bundle)
+                            }
+                        }
+                    }
+                    adapterObj = MainAdapter(this@MainActivity, supportFragmentManager, arrFragment, arrDataBundle)
+                    vPager.adapter = adapterObj
+                    //adapterObj.notifyDataSetChanged()
+                    setIconsTab(tabLayout)
+                    //vPager.setCurrentItem(0)
+                    trackingCallback(apiInterfaceObj, themePreference, 0, "", subMenuId, subMenuName, "", ActionType.MENUCHANGE.type, deviceId
+                            ?: "", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
+                }
+            })
+        }
+        if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
+            drawer_layout.closeDrawer(GravityCompat.START)
+        }
+        scrollToCenter(pos)
     }
 }

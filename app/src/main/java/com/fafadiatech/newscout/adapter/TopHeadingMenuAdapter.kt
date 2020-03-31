@@ -129,4 +129,12 @@ class TopHeadingMenuAdapter(var context: Context, var clickListener: MenuHeaderC
     fun setPosition(pos: Int) {
         this.selectedItemPosition = pos
     }
+
+    fun changeMenu(position:Int){
+        var headingData = TopHeadingData(headingDataList.get(position).id, position, headingDataList.get(position).name)
+        setPosition(position)
+        clickListener.onClick(headingData)
+        selectedItem = position
+        notifyDataSetChanged()
+    }
 }
