@@ -21,12 +21,12 @@ import androidx.core.text.util.LinkifyCompat
 class AboutUsActivity : AppCompatActivity() {
 
     lateinit var themePreference: SharedPreferences
-    lateinit var apiInterfaceObj: ApiInterface
+    lateinit var nApi: ApiInterface
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         themePreference = getSharedPreferences(AppConstant.APPPREF, Context.MODE_PRIVATE)
-        apiInterfaceObj = ApiClient.getClient().create(ApiInterface::class.java)
+        nApi = ApiClient.getClient().create(ApiInterface::class.java)
         var themes: Int = themePreference.getInt("theme", R.style.DefaultMedium)
         this.setTheme(themes)
         setContentView(R.layout.activity_about_us)
@@ -44,7 +44,7 @@ class AboutUsActivity : AppCompatActivity() {
     fun developedValue(view: View){
         var deviceId = themePreference.getString("device_token", "")
         val sessionId = getUniqueCode(this@AboutUsActivity, themePreference)
-        trackingCallback(apiInterfaceObj, themePreference, 0, "", 0, "", "", ActionType.DEVELOPEDBY.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
+        trackingCallback(nApi, themePreference, 0, "", 0, "", "", ActionType.DEVELOPEDBY.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
 
         val uris = Uri.parse("http://"+resources.getString(R.string.developed_by_value))
         val intents = Intent(Intent.ACTION_VIEW, uris)
