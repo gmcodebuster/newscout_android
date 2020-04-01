@@ -16,11 +16,11 @@ import retrofit2.Response
 
 class SearchItemDataSource(context: Context, queryTag: String) : PageKeyedDataSource<Int, NewsEntity>() {
 
-    lateinit var interfaceObj: ApiInterface
+    lateinit var nApi: ApiInterface
     var query: String
     var newsList = ArrayList<SearchDataEntity>()
     var newsDatabase: NewsDatabase? = null
-    var articleNewsDao: NewsDao
+    var newsDao: NewsDao
 
     companion object {
         private var FIRST_PAGE = 1
@@ -28,8 +28,8 @@ class SearchItemDataSource(context: Context, queryTag: String) : PageKeyedDataSo
 
     init {
         newsDatabase = NewsDatabase.getInstance(context)
-        interfaceObj = ApiClient.getClient().create(ApiInterface::class.java)
-        articleNewsDao = newsDatabase!!.newsDao()
+        nApi = ApiClient.getClient().create(ApiInterface::class.java)
+        newsDao = newsDatabase!!.newsDao()
         query = queryTag
     }
 
@@ -38,7 +38,7 @@ class SearchItemDataSource(context: Context, queryTag: String) : PageKeyedDataSo
 
     override fun loadInitial(params: LoadInitialParams<Int>, callback: LoadInitialCallback<Int, NewsEntity>) {
 
-        var call: Call<NewsDataApi> = interfaceObj.searchPaginatedNewsFromApi(query, SearchItemDataSource.FIRST_PAGE)
+        var call: Call<NewsDataApi> = nApi.searchPaginatedNewsFromApi(query, SearchItemDataSource.FIRST_PAGE)
         call.enqueue(object : Callback<NewsDataApi> {
             override fun onFailure(call: Call<NewsDataApi>, t: Throwable) {
             }
@@ -64,8 +64,8 @@ class SearchItemDataSource(context: Context, queryTag: String) : PageKeyedDataSo
                         newsList.add(entityObj)
                     }
                     try {
-                        articleNewsDao.insertSearchNews(newsList)
-                        var list = articleNewsDao.getSearchNewsFromDb()
+                        newsDao.insertSearchNews(newsList)
+                        var list = newsDao.getSearchNewsFromDb()
                         callback.onResult(list, null, SearchItemDataSource.FIRST_PAGE + 1)
                     } catch (e: Throwable) {
                         Log.d("SearchItemDataSource", e.message)
@@ -76,7 +76,7 @@ class SearchItemDataSource(context: Context, queryTag: String) : PageKeyedDataSo
     }
 
     override fun loadAfter(params: LoadParams<Int>, callback: LoadCallback<Int, NewsEntity>) {
-        var call: Call<NewsDataApi> = interfaceObj.searchPaginatedNewsFromApi(query, params.key)
+        var call: Call<NewsDataApi> = nApi.searchPaginatedNewsFromApi(query, params.key)
         call.enqueue(object : Callback<NewsDataApi> {
             override fun onFailure(call: Call<NewsDataApi>, t: Throwable) {
             }
@@ -109,8 +109,8 @@ class SearchItemDataSource(context: Context, queryTag: String) : PageKeyedDataSo
                         newsList.add(entityObj)
                     }
                     try {
-                        articleNewsDao.insertSearchNews(newsList)
-                        var list = articleNewsDao.getSearchNewsFromDb()
+                        newsDao.insertSearchNews(newsList)
+                        var list = newsDao.getSearchNewsFromDb()
                         callback.onResult(list, key)
                     } catch (e: Throwable) {
                         Log.d("SearchItemDataSource", e.message)

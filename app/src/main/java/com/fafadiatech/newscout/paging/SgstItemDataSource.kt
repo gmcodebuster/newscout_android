@@ -21,13 +21,13 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class SgstItemDataSource(context: Context, newsId: Int) : PageKeyedDataSource<Int, INews>() {
-    lateinit var apiClient: ApiInterface
+    lateinit var nApi: ApiInterface
     lateinit var mContext: Context
     var newsId:Int = 0
     init {
         mContext = context
         this.newsId = newsId
-        apiClient = ApiClient.getClient().create(ApiInterface::class.java)
+        nApi = ApiClient.getClient().create(ApiInterface::class.java)
     }
     companion object {
         private val FIRST_PAGE = 1
@@ -37,7 +37,7 @@ class SgstItemDataSource(context: Context, newsId: Int) : PageKeyedDataSource<In
 
     override fun loadInitial(params: LoadInitialParams<Int>, callback: LoadInitialCallback<Int, INews>) {
         lateinit var articleList: ArrayList<DetailNewsData>
-        var call: Call<NewsDataApi> = apiClient.getSuggestedArticles(newsId)
+        var call: Call<NewsDataApi> = nApi.getSuggestedArticles(newsId)
         call.enqueue(object: Callback<NewsDataApi>{
             override fun onFailure(call: Call<NewsDataApi>, t: Throwable) {
 
@@ -54,8 +54,8 @@ class SgstItemDataSource(context: Context, newsId: Int) : PageKeyedDataSource<In
 
                         Log.d("SugDataSource Exception","Error :")
                         val newsDatabase = NewsDatabase.getInstance(mContext.applicationContext)
-                        val rNewsDao = newsDatabase!!.newsDao()
-                        val news = rNewsDao.getTopFiveArticles()
+                        val newsDao = newsDatabase!!.newsDao()
+                        val news = newsDao.getTopFiveArticles()
                         callback.onResult(news, null, key)
 
                     }else{
@@ -118,8 +118,8 @@ class SgstItemDataSource(context: Context, newsId: Int) : PageKeyedDataSource<In
                         }else{
                             if(newsList.isNullOrEmpty() || newsList.size == 0){
                                 val newsDatabase = NewsDatabase.getInstance(mContext.applicationContext)
-                                val rNewsDao = newsDatabase!!.newsDao()
-                                newsList = rNewsDao.getTopFiveArticles() as ArrayList<INews>
+                                val newsDao = newsDatabase!!.newsDao()
+                                newsList = newsDao.getTopFiveArticles() as ArrayList<INews>
                             }
                         }
 
@@ -136,15 +136,15 @@ class SgstItemDataSource(context: Context, newsId: Int) : PageKeyedDataSource<In
                 }else{
                     try {
                         val newsDatabase = NewsDatabase.getInstance(mContext.applicationContext)
-                        val rNewsDao = newsDatabase!!.newsDao()
-                        //newsList = rNewsDao.getTopFiveSgstArticles() as ArrayList<INews>
-                        newsList = rNewsDao.getTopFiveArticles() as ArrayList<INews>
+                        val newsDao = newsDatabase!!.newsDao()
+                        //newsList = newsDao.getTopFiveSgstArticles() as ArrayList<INews>
+                        newsList = newsDao.getTopFiveArticles() as ArrayList<INews>
                         callback.onResult(newsList, null, key)
                     }catch (e:Exception){
                         Log.d("SugDataSource Exception","Error : "+e.message)
                         val newsDatabase = NewsDatabase.getInstance(mContext.applicationContext)
-                        val rNewsDao = newsDatabase!!.newsDao()
-                        val news = rNewsDao.getTopFiveArticles()
+                        val newsDao = newsDatabase!!.newsDao()
+                        val news = newsDao.getTopFiveArticles()
                         callback.onResult(news, null, key)
                     }
                 }

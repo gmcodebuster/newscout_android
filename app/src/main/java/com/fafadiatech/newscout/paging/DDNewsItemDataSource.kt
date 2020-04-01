@@ -17,10 +17,10 @@ import retrofit2.Response
 
 class DDNewsItemDataSource(context: Context, deviceId: String) : PageKeyedDataSource<Int, DailyDigestEntity>() {
 
-    lateinit var interfaceObj: ApiInterface
+    lateinit var nApi: ApiInterface
     lateinit var deviceId: String
 
-    var articleNewsDao: NewsDao
+    var newsDao: NewsDao
     var newsDatabase: NewsDatabase? = null
     val TAG: String = "DDItemDataSource"
     lateinit var mContext: Context
@@ -33,8 +33,8 @@ class DDNewsItemDataSource(context: Context, deviceId: String) : PageKeyedDataSo
     init {
         mContext = context
         newsDatabase = NewsDatabase.getInstance(context)
-        interfaceObj = ApiClient.getClient().create(ApiInterface::class.java)
-        articleNewsDao = newsDatabase!!.newsDao()
+        nApi = ApiClient.getClient().create(ApiInterface::class.java)
+        newsDao = newsDatabase!!.newsDao()
         this.deviceId = deviceId
     }
 
@@ -43,7 +43,7 @@ class DDNewsItemDataSource(context: Context, deviceId: String) : PageKeyedDataSo
 
     override fun loadInitial(params: LoadInitialParams<Int>, callback: LoadInitialCallback<Int, DailyDigestEntity>) {
 
-        var call: Call<NewsDataApi> = interfaceObj.getDDNewsFromNodeIdByPage(FIRST_PAGE, deviceId)
+        var call: Call<NewsDataApi> = nApi.getDDNewsFromNodeIdByPage(FIRST_PAGE, deviceId)
         call.enqueue(object : Callback<NewsDataApi> {
             override fun onFailure(call: Call<NewsDataApi>, t: Throwable) {
                 print("Daily Digest : "+t.message)
@@ -109,7 +109,7 @@ class DDNewsItemDataSource(context: Context, deviceId: String) : PageKeyedDataSo
                             }
                         }
                         try {
-                            articleNewsDao.removeDDNews(newsList, hashTagArrayList, articleMediaArrayList)
+                            newsDao.removeDDNews(newsList, hashTagArrayList, articleMediaArrayList)
                             callback.onResult(newsList, null, key)
                         } catch (e: Exception) {
                             print(e.stackTrace)

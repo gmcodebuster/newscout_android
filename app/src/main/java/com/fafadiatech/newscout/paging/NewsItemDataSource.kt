@@ -23,9 +23,9 @@ import java.net.URLEncoder
 
 class NewsItemDataSource(context: Context, queryTag: String) : PageKeyedDataSource<Int, INews>() {
 
-    lateinit var interfaceObj: ApiInterface
+    lateinit var nApi: ApiInterface
     var tagName: String = ""
-    var articleNewsDao: NewsDao
+    var newsDao: NewsDao
     var newsDatabase: NewsDatabase? = null
     val TAG: String = "NewsItemDataSource"
     lateinit var mContext: Context
@@ -40,8 +40,8 @@ class NewsItemDataSource(context: Context, queryTag: String) : PageKeyedDataSour
     init {
         mContext = context
         newsDatabase = NewsDatabase.getInstance(context)
-        interfaceObj = ApiClient.getClient().create(ApiInterface::class.java)
-        articleNewsDao = newsDatabase!!.newsDao()
+        nApi = ApiClient.getClient().create(ApiInterface::class.java)
+        newsDao = newsDatabase!!.newsDao()
         tagName = queryTag
 
     }
@@ -54,7 +54,7 @@ class NewsItemDataSource(context: Context, queryTag: String) : PageKeyedDataSour
 
         if (tagName.equals(TRENDING_NAME, true)) {
             lateinit var articleList: ArrayList<INews>
-            var call: Call<TrendingDataApi> = interfaceObj.getNewsByTrending()
+            var call: Call<TrendingDataApi> = nApi.getNewsByTrending()
 
             call.enqueue(object : Callback<TrendingDataApi> {
                 override fun onFailure(call: Call<TrendingDataApi>, t: Throwable) {
@@ -66,7 +66,7 @@ class NewsItemDataSource(context: Context, queryTag: String) : PageKeyedDataSour
                     var trendingNewsList = ArrayList<TrendingEntity>()
                     var newsId: Int = 0
                     trendingResultList?.let {
-                        articleNewsDao.deleteTrendingData()
+                        newsDao.deleteTrendingData()
                         for (i in 0 until trendingResultList.size) {
                             var trendingList = trendingResultList.get(i).articles
                             var trendingListCount = trendingList.size
@@ -92,8 +92,8 @@ class NewsItemDataSource(context: Context, queryTag: String) : PageKeyedDataSour
                                 trendingNewsList.add(trendingObJ)
                             }
                         }
-                        articleNewsDao.insertNews(articleList as ArrayList<NewsEntity>)
-                        articleNewsDao.insertTrendingData(trendingNewsList)
+                        newsDao.insertNews(articleList as ArrayList<NewsEntity>)
+                        newsDao.insertTrendingData(trendingNewsList)
 
                         if(BuildConfig.showAds){
                             articleList = addAdsData(articleList)!!
@@ -108,7 +108,7 @@ class NewsItemDataSource(context: Context, queryTag: String) : PageKeyedDataSour
             return
         }
 
-        var call: Call<NewsDataApi> = interfaceObj.getNewsFromNodeIdByPage(FIRST_PAGE, tagName)
+        var call: Call<NewsDataApi> = nApi.getNewsFromNodeIdByPage(FIRST_PAGE, tagName)
         call.enqueue(object : Callback<NewsDataApi> {
             override fun onFailure(call: Call<NewsDataApi>, t: Throwable) {
             }
@@ -173,9 +173,9 @@ class NewsItemDataSource(context: Context, queryTag: String) : PageKeyedDataSour
                         }
 
                         try {
-                            articleNewsDao.insertNews(newsList as ArrayList<NewsEntity>)
-                            articleNewsDao.insertHashTagList(hashTagArrayList)
-                            articleNewsDao.insertArticleMediaList(articleMediaArrayList)
+                            newsDao.insertNews(newsList as ArrayList<NewsEntity>)
+                            newsDao.insertHashTagList(hashTagArrayList)
+                            newsDao.insertArticleMediaList(articleMediaArrayList)
                         } catch (e: Exception) {
 
                         }
@@ -195,7 +195,7 @@ class NewsItemDataSource(context: Context, queryTag: String) : PageKeyedDataSour
     }
 
     override fun loadAfter(params: LoadParams<Int>, callback: LoadCallback<Int, INews>) {
-        var call: Call<NewsDataApi> = interfaceObj.getNewsFromNodeIdByPage(params.key, tagName)
+        var call: Call<NewsDataApi> = nApi.getNewsFromNodeIdByPage(params.key, tagName)
         call.enqueue(object : Callback<NewsDataApi> {
             override fun onFailure(call: Call<NewsDataApi>, t: Throwable) {
             }
@@ -257,9 +257,9 @@ class NewsItemDataSource(context: Context, queryTag: String) : PageKeyedDataSour
                             }
                         }
                         try {
-                            articleNewsDao.insertNews(newsList as ArrayList<NewsEntity>)
-                            articleNewsDao.insertHashTagList(hashTagArrayList)
-                            articleNewsDao.insertArticleMediaList(articleMediaArrayList)
+                            newsDao.insertNews(newsList as ArrayList<NewsEntity>)
+                            newsDao.insertHashTagList(hashTagArrayList)
+                            newsDao.insertArticleMediaList(articleMediaArrayList)
                         } catch (e: Exception) {
 
                         }
@@ -280,7 +280,7 @@ class NewsItemDataSource(context: Context, queryTag: String) : PageKeyedDataSour
     }
 
     override fun loadBefore(params: LoadParams<Int>, callback: LoadCallback<Int, INews>) {
-        var call: Call<NewsDataApi> = interfaceObj.getNewsFromNodeIdByPage(params.key, tagName)
+        var call: Call<NewsDataApi> = nApi.getNewsFromNodeIdByPage(params.key, tagName)
         call.enqueue(object : Callback<NewsDataApi> {
             override fun onFailure(call: Call<NewsDataApi>, t: Throwable) {
             }

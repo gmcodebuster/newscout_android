@@ -17,12 +17,12 @@ import retrofit2.Response
 
 class SourceItemDataSource(context: Context, queryTag: String) : PageKeyedDataSource<Int, NewsEntity>() {
 
-    lateinit var interfaceObj: ApiInterface
+    lateinit var nApi: ApiInterface
     var tags: String
     var newsList = ArrayList<NewsEntity>()
     var sourceNewsList = ArrayList<SourceNewsEntity>()
     var newsDatabase: NewsDatabase? = null
-    var articleNewsDao: NewsDao
+    var newsDao: NewsDao
 
     companion object {
         private val FIRST_PAGE = 1
@@ -30,9 +30,9 @@ class SourceItemDataSource(context: Context, queryTag: String) : PageKeyedDataSo
 
     init {
         newsDatabase = NewsDatabase.getInstance(context)
-        interfaceObj = ApiClient.getClient().create(ApiInterface::class.java)
+        nApi = ApiClient.getClient().create(ApiInterface::class.java)
         tags = queryTag
-        articleNewsDao = newsDatabase!!.newsDao()
+        newsDao = newsDatabase!!.newsDao()
     }
 
     var adjacentKey: Int? = null
@@ -40,7 +40,7 @@ class SourceItemDataSource(context: Context, queryTag: String) : PageKeyedDataSo
 
     override fun loadInitial(params: LoadInitialParams<Int>, callback: LoadInitialCallback<Int, NewsEntity>) {
         //lateinit var newsList: ArrayList<INews>
-        var call: Call<NewsDataApi> = interfaceObj.getNewsFromSource(tags, SourceItemDataSource.FIRST_PAGE)
+        var call: Call<NewsDataApi> = nApi.getNewsFromSource(tags, SourceItemDataSource.FIRST_PAGE)
         try {
             call.enqueue(object : Callback<NewsDataApi> {
                 override fun onFailure(call: Call<NewsDataApi>, t: Throwable) {
@@ -53,7 +53,7 @@ class SourceItemDataSource(context: Context, queryTag: String) : PageKeyedDataSo
 
                         if (list != null && list.size > 0) {
                             //delete data from db
-                            articleNewsDao.deleteSourceArticle()
+                            newsDao.deleteSourceArticle()
 
                             for (i in 0 until list.size) {
                                 var obj = list.get(i)
@@ -76,7 +76,7 @@ class SourceItemDataSource(context: Context, queryTag: String) : PageKeyedDataSo
                                 var sourceEntityObj =
                                         SourceNewsEntity(newsId, categoryId, title, source, category, url, urlToImage, description, publishedOn, hashTags!!, articleScore.toString())
                                 sourceNewsList.add(sourceEntityObj)
-                                articleNewsDao.insertSourceNews(sourceNewsList)
+                                newsDao.insertSourceNews(sourceNewsList)
                             }
                         }
                         callback.onResult(newsList, null, FIRST_PAGE + 1)
@@ -90,7 +90,7 @@ class SourceItemDataSource(context: Context, queryTag: String) : PageKeyedDataSo
 
     override fun loadAfter(params: LoadParams<Int>, callback: LoadCallback<Int, NewsEntity>) {
         //lateinit var newsList: ArrayList<INews>
-        var call: Call<NewsDataApi> = interfaceObj.getNewsFromSource(tags, params.key)
+        var call: Call<NewsDataApi> = nApi.getNewsFromSource(tags, params.key)
         try {
             call.enqueue(object : Callback<NewsDataApi> {
                 override fun onFailure(call: Call<NewsDataApi>, t: Throwable) {
@@ -129,7 +129,7 @@ class SourceItemDataSource(context: Context, queryTag: String) : PageKeyedDataSo
                                 var sourceEntityObj =
                                         SourceNewsEntity(newsId, categoryId, title, source, category, url, urlToImage, description, publishedOn, hashTags!!, articleScore.toString())
                                 sourceNewsList.add(sourceEntityObj)
-                                articleNewsDao.insertSourceNews(sourceNewsList)
+                                newsDao.insertSourceNews(sourceNewsList)
                             }
                         }
                         try {
@@ -146,7 +146,7 @@ class SourceItemDataSource(context: Context, queryTag: String) : PageKeyedDataSo
     }
 
     override fun loadBefore(params: LoadParams<Int>, callback: LoadCallback<Int, NewsEntity>) {
-        var call: Call<NewsDataApi> = interfaceObj.getNewsFromSource(tags, params.key)
+        var call: Call<NewsDataApi> = nApi.getNewsFromSource(tags, params.key)
         call.enqueue(object : Callback<NewsDataApi> {
             override fun onFailure(call: Call<NewsDataApi>, t: Throwable) {
             }
