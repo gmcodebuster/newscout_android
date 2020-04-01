@@ -30,7 +30,7 @@ import kotlin.collections.ArrayList
 class TrendingAdapter(var context: Context, var addTrendingFragmentListener: AddTrendingFragmentListener) : RecyclerView.Adapter<TrendingAdapter.TrendingViewHolder>() {
 
     var trendingList = ArrayList<TrendingNewsData>()
-    var dateString: String? = null
+    var strDate: String? = null
     var categoryId: Int = 0
     var categoryName: String = ""
     val requestOptions = RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -83,15 +83,15 @@ class TrendingAdapter(var context: Context, var addTrendingFragmentListener: Add
         if (trendingList.get(position)?.published_on != null) {
             var timeAgo: String = ""
             try {
-                dateString = trendingList.get(position).published_on
-                if (dateString?.endsWith("Z", false) == false) {
-                    dateString += "Z"
+                strDate = trendingList.get(position).published_on
+                if (strDate?.endsWith("Z", false) == false) {
+                    strDate += "Z"
                 }
 
                 var timeZone = Calendar.getInstance().timeZone.id
                 var dateformat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
                 dateformat.timeZone = TimeZone.getTimeZone("UTC")
-                var date = dateformat.parse(dateString)
+                var date = dateformat.parse(strDate)
                 dateformat.timeZone = TimeZone.getTimeZone(timeZone)
                 dateformat.format(date)
                 timeAgo = TimeAgo.using(date.time, TimeAgoMessages.Builder().defaultLocale().build())
@@ -101,7 +101,7 @@ class TrendingAdapter(var context: Context, var addTrendingFragmentListener: Add
                     var timeZone = Calendar.getInstance().timeZone.id
                     var dateformat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'")
                     dateformat.timeZone = TimeZone.getTimeZone("UTC")
-                    var date = dateformat.parse(dateString)
+                    var date = dateformat.parse(strDate)
                     dateformat.timeZone = TimeZone.getTimeZone(timeZone)
                     dateformat.format(date)
                     timeAgo = TimeAgo.using(date.time, TimeAgoMessages.Builder().defaultLocale().build())

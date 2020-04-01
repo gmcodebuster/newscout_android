@@ -10,7 +10,7 @@ class ConnectivityReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
 
         val isConnected = checkConnection(context)
-        if (connectivityReceiverListener != null) connectivityReceiverListener?.onNetworkConnectionChanged(isConnected)
+        if (connRecvListener != null) connRecvListener?.onNetworkConnectionChanged(isConnected)
     }
 
     fun checkConnection(context: Context?): Boolean {
@@ -24,10 +24,10 @@ class ConnectivityReceiver : BroadcastReceiver() {
     }
 
     companion object {
-        var connectivityReceiverListener: ConnectivityReceiverListener? = null
+        var connRecvListener: ConnectivityReceiverListener? = null
     }
 
     fun setListener(listener: ConnectivityReceiverListener) {
-        connectivityReceiverListener = listener as ConnectivityReceiverListener
+        connRecvListener = listener as ConnectivityReceiverListener
     }
 }

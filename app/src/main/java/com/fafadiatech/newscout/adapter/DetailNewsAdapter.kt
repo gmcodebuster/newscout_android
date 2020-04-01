@@ -73,7 +73,7 @@ import kotlin.collections.ArrayList
 class DetailNewsAdapter(val context: Context) : PagerAdapter() {
 
     var mLayoutInflater: LayoutInflater
-    var interfaceObj: ApiInterface
+    var nApi: ApiInterface
     var isBookmark: Int = 0
     var isLike: Int = 1
     lateinit var rootLayout: ConstraintLayout
@@ -84,7 +84,7 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
     lateinit var themePreference: SharedPreferences
     lateinit var gson: Gson
     var categoryName: String = ""
-    lateinit var fetchDataViewModel: FetchDataApiViewModel
+    lateinit var dataVM: FetchDataApiViewModel
     var newHeadingHeightInDp: Int = 0
     var deviceHeightInDp: Float = 0f
     var imageHeightInDp: Int = 0
@@ -101,9 +101,9 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
 
     init {
         mLayoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        interfaceObj = ApiClient.getClient().create(ApiInterface::class.java)
+        nApi = ApiClient.getClient().create(ApiInterface::class.java)
         themePreference = context.getSharedPreferences(AppConstant.APPPREF, Context.MODE_PRIVATE)
-        fetchDataViewModel = ViewModelProviders.of(context as FragmentActivity).get(FetchDataApiViewModel::class.java)
+        dataVM = ViewModelProviders.of(context as FragmentActivity).get(FetchDataApiViewModel::class.java)
         newsDatabase = NewsDatabase.getInstance(context)
         newsDao = newsDatabase!!.newsDao()
         requestOptions = RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL).timeout(5000)
@@ -160,10 +160,10 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
         rvSuggestedNews.layoutManager = layoutManagerHz
         rvSuggestedNews.adapter = rvSuggestedAdapter
 
-        fetchDataViewModel = ViewModelProviders.of(context as FragmentActivity).get(FetchDataApiViewModel::class.java)
+        dataVM = ViewModelProviders.of(context as FragmentActivity).get(FetchDataApiViewModel::class.java)
 
         newsId = detailList.get(position).article_id
-        fetchDataViewModel.suggestedNews(newsId, 1).observe(context as LifecycleOwner, object: Observer<List<INews>> {
+        dataVM.suggestedNews(newsId, 1).observe(context as LifecycleOwner, object: Observer<List<INews>> {
             override fun onChanged(list: List<INews>?) {
                 val newsList = list as PagedList<DetailNewsData>
                 rvSuggestedAdapter.submitList(newsList)
@@ -284,7 +284,7 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
             var deviceId = themePreference.getString("device_token", "")
             var sourceName = detailList.get(position).source
             val sessionId = getUniqueCode(context, themePreference)
-            trackingCallback(interfaceObj, themePreference, newsId, newsTitle, cId, cName, "", ActionType.SHAREARTICLE.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId,sourceName,0)
+            trackingCallback(nApi, themePreference, newsId, newsTitle, cId, cName, "", ActionType.SHAREARTICLE.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId,sourceName,0)
 
             var sendIntent = Intent().apply {
                 action = Intent.ACTION_SEND_MULTIPLE
@@ -308,7 +308,7 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
             if (MyApplication.checkInternet == true && token != "") {
                 isBookmark = detailList.get(position).bookmark_status
                 var newsId = detailList.get(position).article_id
-                var call: Call<BookmarkArticleData> = interfaceObj.bookmarkArticlesByApi(token, newsId)
+                var call: Call<BookmarkArticleData> = nApi.bookmarkArticlesByApi(token, newsId)
                 try {
                     call.enqueue(object : Callback<BookmarkArticleData> {
                         override fun onFailure(call: Call<BookmarkArticleData>, t: Throwable) {
@@ -345,9 +345,9 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
                                 var deviceId = themePreference.getString("device_token", "")
                                 val sessionId = getUniqueCode(context, themePreference)
                                 val cId = MyApplication.categoryIdHashMap.get(category) ?: 0
-                                trackingCallback(interfaceObj, themePreference, id, title, cId, category, "", ActionType.BOOKMARK.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, source, 0)
+                                trackingCallback(nApi, themePreference, id, title, cId, category, "", ActionType.BOOKMARK.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, source, 0)
 
-                                fetchDataViewModel.startBookmarkWorkManager(token, isBookmark, newsId)
+                                dataVM.startBookmarkWorkManager(token, isBookmark, newsId)
                                 notifyDataSetChanged()
                             } else if (isBookmark == 1) {
                                 it.setBackgroundResource(R.drawable.ic_bookmark_empty)
@@ -355,7 +355,7 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
                                 isBookmark = 0
                                 detailList.get(position).bookmark_status = 0
                                 var newsId = detailList.get(position).article_id
-                                fetchDataViewModel.startBookmarkWorkManager(token, isBookmark, newsId)
+                                dataVM.startBookmarkWorkManager(token, isBookmark, newsId)
                                 notifyDataSetChanged()
                             }
                         }
@@ -377,7 +377,7 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
             val cName = detailList.get(position).category
             val cId = MyApplication.categoryIdHashMap.get(cName) ?: 0
             val sessionId = getUniqueCode(context, themePreference)
-            trackingCallback(interfaceObj, themePreference, newsId, itemName, cId,cName,"", ActionType.SOURCECLICK.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, sourceName, 0)
+            trackingCallback(nApi, themePreference, newsId, itemName, cId,cName,"", ActionType.SOURCECLICK.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, sourceName, 0)
             var intent = Intent(context, SourceActivity::class.java)
             var source = detailList.get(position).source
             intent.putExtra("source_from_detail", source)
@@ -390,7 +390,7 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
             val cName = detailList.get(position).category
             val cId = MyApplication.categoryIdHashMap.get(cName) ?: 0
             val sessionId = getUniqueCode(context, themePreference)
-            trackingCallback(interfaceObj, themePreference, newsId, itemName, cId, cName, "", ActionType.READMORE.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId,"",0)
+            trackingCallback(nApi, themePreference, newsId, itemName, cId, cName, "", ActionType.READMORE.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId,"",0)
             var url = detailList.get(position).source_url
             if (url.isNullOrBlank()) {
                 Toast.makeText(context, "Page not found", Toast.LENGTH_SHORT).show()
@@ -406,7 +406,7 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
         }
 
         imgBtnShuffle.setOnClickListener {
-            var shuffleList = fetchDataViewModel.getSuffledNewsFromDb()
+            var shuffleList = dataVM.getSuffledNewsFromDb()
             shuffleList as ArrayList<DetailNewsData>
             setData(shuffleList)
 

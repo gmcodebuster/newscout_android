@@ -54,8 +54,8 @@ class AppConstant {
     }
 }
 
-fun trackUserSelection(apiInterfaceObj: ApiInterface, menuClick: String, deviceId: String, deviceType: String, itemId: Int, itemName: String) {
-    var call: Call<Void> = apiInterfaceObj.trackUserSelection(menuClick, deviceId, deviceType, itemId, itemName)
+fun trackUserSelection(nApi: ApiInterface, menuClick: String, deviceId: String, deviceType: String, itemId: Int, itemName: String) {
+    var call: Call<Void> = nApi.trackUserSelection(menuClick, deviceId, deviceType, itemId, itemName)
     call.enqueue(object : Callback<Void> {
         override fun onFailure(call: Call<Void>, t: Throwable) {
         }
@@ -71,8 +71,8 @@ fun trackUserSelection(apiInterfaceObj: ApiInterface, menuClick: String, deviceI
     })
 }
 
-fun trackUserSearch(apiInterfaceObj: ApiInterface, search: String, deviceId: String, deviceType: String, query: String) {
-    var call: Call<Void> = apiInterfaceObj.trackUserSearchQuery(search, deviceId, deviceType, query)
+fun trackUserSearch(nApi: ApiInterface, search: String, deviceId: String, deviceType: String, query: String) {
+    var call: Call<Void> = nApi.trackUserSearchQuery(search, deviceId, deviceType, query)
     call.enqueue(object : Callback<Void> {
         override fun onFailure(call: Call<Void>, t: Throwable) {
         }
@@ -102,9 +102,8 @@ fun getIMEINo(con:Context, activity: Activity){
     try{
         val tm = con.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
         val IMEI = tm.imei
-        if (IMEI != null)
-            Toast.makeText(con, "IMEI number: " + IMEI,
-                    Toast.LENGTH_LONG).show()
+        if (IMEI != null){}
+            //Toast.makeText(con, "IMEI number: " + IMEI, Toast.LENGTH_LONG).show()
 
     }catch (ex:Exception){
         Log.e("",ex.message)

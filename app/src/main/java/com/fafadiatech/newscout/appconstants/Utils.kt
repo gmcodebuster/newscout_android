@@ -173,9 +173,9 @@ enum class ViewType(val type: String){
     MONETIZATIONVIEW("MONETIZATION_VIEW")
 }
 
-fun trackingCallback(apiInterfaceObj: ApiInterface, themePreference: SharedPreferences, itemId:Int, itemName:String, categoryId: Int, categoryName: String, authorName:String, action:String, deviceId:String, plateform:String, type:String, sessionId:String, sourceName:String, sourceId:Int = 0, clusterId: Int = 0){
+fun trackingCallback(nApi: ApiInterface, themePreference: SharedPreferences, itemId:Int, itemName:String, categoryId: Int, categoryName: String, authorName:String, action:String, deviceId:String, plateform:String, type:String, sessionId:String, sourceName:String, sourceId:Int = 0, clusterId: Int = 0){
 
-    var tCall: Call<Void> = apiInterfaceObj.trackApp(itemId, itemName, categoryId, categoryName, authorName, action, deviceId, plateform, type, sessionId, sourceName, sourceId, clusterId) //getUniqueCode(con, themePreference)
+    var tCall: Call<Void> = nApi.trackApp(itemId, itemName, categoryId, categoryName, authorName, action, deviceId, plateform, type, sessionId, sourceName, sourceId, clusterId) //getUniqueCode(con, themePreference)
     tCall.enqueue(object: Callback<Void> {
         override fun onFailure(call: Call<Void>, t: Throwable) {
             Log.e("Utils: ", "Error")
@@ -187,9 +187,9 @@ fun trackingCallback(apiInterfaceObj: ApiInterface, themePreference: SharedPrefe
     })
 }
 
-fun adsTrackingCallback(apiInterfaceObj: ApiInterface, themePreference: SharedPreferences, itemId:Int, itemName:String, categoryId: Int, categoryName: String, authorName:String, action:String, deviceId:String, plateform:String, type:String, sessionId:String, sourceName:String, sourceId:Int = 0, clusterId: Int = 0){
+fun adsTrackingCallback(nApi: ApiInterface, themePreference: SharedPreferences, itemId:Int, itemName:String, categoryId: Int, categoryName: String, authorName:String, action:String, deviceId:String, plateform:String, type:String, sessionId:String, sourceName:String, sourceId:Int = 0, clusterId: Int = 0){
 
-    var tCall: Call<Void> = apiInterfaceObj.trackApp(itemId, itemName, categoryId, categoryName, authorName, action, deviceId, plateform, type, sessionId, sourceName, sourceId, clusterId) //getUniqueCode(con, themePreference)
+    var tCall: Call<Void> = nApi.trackApp(itemId, itemName, categoryId, categoryName, authorName, action, deviceId, plateform, type, sessionId, sourceName, sourceId, clusterId) //getUniqueCode(con, themePreference)
     tCall.enqueue(object: Callback<Void> {
         override fun onFailure(call: Call<Void>, t: Throwable) {
             Log.e("Utils: ", "Error")
@@ -201,9 +201,9 @@ fun adsTrackingCallback(apiInterfaceObj: ApiInterface, themePreference: SharedPr
     })
 }
 
-fun signinTrackingCallback(apiInterfaceObj: ApiInterface, themePreference: SharedPreferences, action:String, deviceId:String, plateform:String, type:String, sessionId:String, firstname: String, lastname: String, token: String, email:String){
+fun signinTrackingCallback(nApi: ApiInterface, themePreference: SharedPreferences, action:String, deviceId:String, plateform:String, type:String, sessionId:String, firstname: String, lastname: String, token: String, email:String){
 
-    var tCall: Call<Void> = apiInterfaceObj.signInTrackApp( action, deviceId, plateform, type, sessionId, firstname, lastname, token, email) //getUniqueCode(con, themePreference)
+    var tCall: Call<Void> = nApi.signInTrackApp( action, deviceId, plateform, type, sessionId, firstname, lastname, token, email) //getUniqueCode(con, themePreference)
     tCall.enqueue(object: Callback<Void> {
         override fun onFailure(call: Call<Void>, t: Throwable) {
             Log.e("Utils: ", "Error")
@@ -215,9 +215,9 @@ fun signinTrackingCallback(apiInterfaceObj: ApiInterface, themePreference: Share
     })
 }
 
-fun signupTrackingCallback(apiInterfaceObj: ApiInterface, themePreference: SharedPreferences, action:String, deviceId:String, plateform:String, type:String, sessionId:String, firstname: String, lastname: String, token: String, email:String){
+fun signupTrackingCallback(nApi: ApiInterface, themePreference: SharedPreferences, action:String, deviceId:String, plateform:String, type:String, sessionId:String, firstname: String, lastname: String, token: String, email:String){
 
-    var tCall: Call<Void> = apiInterfaceObj.signInTrackApp( action, deviceId, plateform, type, sessionId, firstname, lastname, token, email) //getUniqueCode(con, themePreference)
+    var tCall: Call<Void> = nApi.signInTrackApp( action, deviceId, plateform, type, sessionId, firstname, lastname, token, email) //getUniqueCode(con, themePreference)
     tCall.enqueue(object: Callback<Void> {
         override fun onFailure(call: Call<Void>, t: Throwable) {
             Log.e("Utils: ", "Error")
@@ -243,9 +243,9 @@ fun getLatestNewsName(newsDao: NewsDao): String {
     return LatestNewsName
 }
 
-fun searchTrackingCallback(apiInterfaceObj: ApiInterface, themePreference: SharedPreferences, action:String, deviceId:String, plateform:String, type:String, sessionId:String, searchText:String){
+fun searchTrackingCallback(nApi: ApiInterface, themePreference: SharedPreferences, action:String, deviceId:String, plateform:String, type:String, sessionId:String, searchText:String){
 
-    /*var tCall: Call<Void> = apiInterfaceObj.signInTrackApp( action, deviceId, plateform, type, sessionId, searchText) //getUniqueCode(con, themePreference)
+    /*var tCall: Call<Void> = nApi.signInTrackApp( action, deviceId, plateform, type, sessionId, searchText) //getUniqueCode(con, themePreference)
     tCall.enqueue(object: Callback<Void> {
         override fun onFailure(call: Call<Void>, t: Throwable) {
             Log.e("Utils: ", "Error")

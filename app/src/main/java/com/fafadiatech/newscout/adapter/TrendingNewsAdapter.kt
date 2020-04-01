@@ -42,9 +42,9 @@ class TrendingNewsAdapter(context: Context, category: String) : RecyclerView.Ada
     var clusterId: Int = 0
     val requestOptions = RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL)
     lateinit var themePreference: SharedPreferences
-    lateinit var apiInterfaceObj: ApiInterface
+    lateinit var nApi: ApiInterface
     init {
-        apiInterfaceObj = ApiClient.getClient().create(ApiInterface::class.java)
+        nApi = ApiClient.getClient().create(ApiInterface::class.java)
         themePreference = context.getSharedPreferences(AppConstant.APPPREF, Context.MODE_PRIVATE)
     }
 
@@ -149,7 +149,7 @@ class TrendingNewsAdapter(context: Context, category: String) : RecyclerView.Ada
                     val source = trendingList.get(position)!!.source
                     val cName = trendingList.get(position)!!.category
 
-                    trackingCallback(apiInterfaceObj, themePreference, id, itemTitle, categoryId, cName, "", ActionType.TRENDINGLISTCLICK.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, source, 0)
+                    trackingCallback(nApi, themePreference, id, itemTitle, categoryId, cName, "", ActionType.TRENDINGLISTCLICK.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, source, 0)
 
                     var detailIntent = Intent(con, DetailNewsActivity::class.java)
                     detailIntent.putExtra("indexPosition", itemIndex!!)
@@ -240,7 +240,7 @@ class TrendingNewsAdapter(context: Context, category: String) : RecyclerView.Ada
                     val source = trendingList.get(position)!!.source
                     val cName = trendingList.get(position)!!.category
 
-                    trackingCallback(apiInterfaceObj, themePreference, id, itemTitle, categoryId, cName, "", ActionType.TRENDINGLISTCLICK.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, source, 0)
+                    trackingCallback(nApi, themePreference, id, itemTitle, categoryId, cName, "", ActionType.TRENDINGLISTCLICK.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, source, 0)
 
                     var detailIntent = Intent(con, DetailNewsActivity::class.java)
                     detailIntent.putExtra("indexPosition", itemIndex!!)

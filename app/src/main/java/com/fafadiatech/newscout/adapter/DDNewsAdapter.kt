@@ -45,10 +45,10 @@ class DDNewsAdapter(context: Context) : PagedListAdapter<DailyDigestEntity, Recy
     var itemIndex: Int? = null
     var list = ArrayList<DailyDigestEntity>()
     var detailArticleList = ArrayList<DetailNewsData>()
-    var fetchDataViewModel: FetchDataApiViewModel
+    var dataVM: FetchDataApiViewModel
     var dateString: String? = null
     var categoryId: Int = 0
-    lateinit var apiInterfaceObj: ApiInterface
+    lateinit var nApi: ApiInterface
     lateinit var themePreference: SharedPreferences
     var placeHolderListener: PlaceHolderImageListener? = null
 
@@ -68,8 +68,8 @@ class DDNewsAdapter(context: Context) : PagedListAdapter<DailyDigestEntity, Recy
     }
 
     init {
-        fetchDataViewModel = ViewModelProviders.of(context as FragmentActivity).get(FetchDataApiViewModel::class.java)
-        apiInterfaceObj = ApiClient.getClient().create(ApiInterface::class.java)
+        dataVM = ViewModelProviders.of(context as FragmentActivity).get(FetchDataApiViewModel::class.java)
+        nApi = ApiClient.getClient().create(ApiInterface::class.java)
         themePreference = context.getSharedPreferences(AppConstant.APPPREF, Context.MODE_PRIVATE)
         if (context is PlaceHolderImageListener) {
             placeHolderListener = context as PlaceHolderImageListener
@@ -182,7 +182,7 @@ class DDNewsAdapter(context: Context) : PagedListAdapter<DailyDigestEntity, Recy
                     rightItemViewholder.itemRootView.setOnClickListener {
                         itemIndex = position
                         var id = getItem(position)!!.id
-                        fetchDataViewModel.startRecommendNewsWorkManager(id)
+                        dataVM.startRecommendNewsWorkManager(id)
                         categoryId = getItem(position)!!.category_id
                         var itemTitle = getItem(position)!!.title
                         var deviceId = themePreference.getString("device_token", "")
@@ -191,7 +191,7 @@ class DDNewsAdapter(context: Context) : PagedListAdapter<DailyDigestEntity, Recy
                         val sessionId = getUniqueCode(con, themePreference)
                         val cName = getItem(position)!!.category
                         val source = getItem(position)!!.source
-                        trackingCallback(apiInterfaceObj, themePreference, id, itemTitle, categoryId, cName, "", ActionType.DAILYDIGESTLISTCLICK.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, source, 0)
+                        trackingCallback(nApi, themePreference, id, itemTitle, categoryId, cName, "", ActionType.DAILYDIGESTLISTCLICK.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, source, 0)
 
                         var detailIntent = Intent(con, DetailNewsActivity::class.java)
                         detailIntent.putExtra("indexPosition", itemIndex!!)
@@ -291,7 +291,7 @@ class DDNewsAdapter(context: Context) : PagedListAdapter<DailyDigestEntity, Recy
 
                     itemIndex = position
                     var id = getItem(position)!!.id
-                    fetchDataViewModel.startRecommendNewsWorkManager(id)
+                    dataVM.startRecommendNewsWorkManager(id)
                     categoryId = getItem(position)!!.category_id
                     var itemTitle = getItem(position)!!.title
                     var deviceId = themePreference.getString("device_token", "")
@@ -300,7 +300,7 @@ class DDNewsAdapter(context: Context) : PagedListAdapter<DailyDigestEntity, Recy
                     val sessionId = getUniqueCode(con, themePreference)
                     val cName = getItem(position)!!.category
                     val source = getItem(position)!!.source
-                    trackingCallback(apiInterfaceObj, themePreference, id, itemTitle, categoryId, cName, "", ActionType.DAILYDIGESTLISTCLICK.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, source, 0)
+                    trackingCallback(nApi, themePreference, id, itemTitle, categoryId, cName, "", ActionType.DAILYDIGESTLISTCLICK.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, source, 0)
 
                     var detailIntent = Intent(con, DetailNewsActivity::class.java)
                     detailIntent.putExtra("indexPosition", itemIndex!!)

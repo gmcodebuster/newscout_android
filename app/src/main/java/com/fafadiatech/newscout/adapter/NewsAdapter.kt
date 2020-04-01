@@ -59,13 +59,13 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<INews, 
     var con: Context = context
     var itemIndex: Int? = null
     var list = ArrayList<NewsEntity>()
-    var detailArticleList = ArrayList<DetailNewsData>()
+    var daList = ArrayList<DetailNewsData>()
     var categoryType = category
-    var fetchDataViewModel: FetchDataApiViewModel
-    var dateString: String? = null
+    var dataVM: FetchDataApiViewModel
+    var strDate: String? = null
     var categoryId: Int = 0
-    lateinit var apiInterfaceObj: ApiInterface
-    lateinit var apiAdsInterfaceObj : ApiInterface
+    lateinit var nApi: ApiInterface
+    lateinit var nAdsApi : ApiInterface
     lateinit var themePreference: SharedPreferences
     var placeHolderListener: PlaceHolderImageListener? = null
     val liveDataAds = MutableLiveData<NewsAdsApi>()
@@ -93,9 +93,9 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<INews, 
     }
 
     init {
-        fetchDataViewModel = ViewModelProviders.of(context as FragmentActivity).get(FetchDataApiViewModel::class.java)
-        apiInterfaceObj = ApiClient.getClient().create(ApiInterface::class.java)
-        apiAdsInterfaceObj= ApiClient.getADSClient().create(ApiInterface::class.java)
+        dataVM = ViewModelProviders.of(context as FragmentActivity).get(FetchDataApiViewModel::class.java)
+        nApi = ApiClient.getClient().create(ApiInterface::class.java)
+        nAdsApi= ApiClient.getADSClient().create(ApiInterface::class.java)
         themePreference = context.getSharedPreferences(AppConstant.APPPREF, Context.MODE_PRIVATE)
         if (context is PlaceHolderImageListener) {
             placeHolderListener = context as PlaceHolderImageListener
@@ -181,16 +181,16 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<INews, 
                     if (it?.published_on != null) {
                         var timeAgo: String = ""
                         try {
-                            dateString = it!!.published_on
+                            strDate = it!!.published_on
 
-                            if (dateString?.endsWith("Z", false) == false) {
-                                dateString += "Z"
+                            if (strDate?.endsWith("Z", false) == false) {
+                                strDate += "Z"
                             }
 
                             var timeZone = Calendar.getInstance().timeZone.id
                             var dateformat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
                             dateformat.timeZone = TimeZone.getTimeZone("UTC")
-                            var date = dateformat.parse(dateString)
+                            var date = dateformat.parse(strDate)
                             dateformat.timeZone = TimeZone.getTimeZone(timeZone)
                             dateformat.format(date)
                             timeAgo = TimeAgo.using(date.time, TimeAgoMessages.Builder().defaultLocale().build())
@@ -200,7 +200,7 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<INews, 
                                 var timeZone = Calendar.getInstance().timeZone.id
                                 var dateformat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'")
                                 dateformat.timeZone = TimeZone.getTimeZone("UTC")
-                                var date = dateformat.parse(dateString)
+                                var date = dateformat.parse(strDate)
                                 dateformat.timeZone = TimeZone.getTimeZone(timeZone)
                                 dateformat.format(date)
                                 timeAgo = TimeAgo.using(date.time, TimeAgoMessages.Builder().defaultLocale().build())
@@ -215,7 +215,7 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<INews, 
 
                     rightItemViewholder.itemRootView.setOnClickListener {
                         itemIndex = position
-                        fetchDataViewModel.setCurrentListNews(newsList)
+                        dataVM.setCurrentListNews(newsList)
                         var id = news!!.id
                         categoryId = news!!.category_id
                         val categoryName = MyApplication.categoryNameHashMap.get(categoryId) ?: ""
@@ -227,7 +227,7 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<INews, 
                         val title = news!!.title
                         val cName = news!!.category
                         val source = news!!.source
-                        trackingCallback(apiInterfaceObj, themePreference, id, title, categoryId, cName, "", ActionType.ARTICLEDETAIL.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, source, 0)
+                        trackingCallback(nApi, themePreference, id, title, categoryId, cName, "", ActionType.ARTICLEDETAIL.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, source, 0)
 
                         if(BuildConfig.showAds) {
                             var difference: Int = 0
@@ -293,15 +293,15 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<INews, 
                     if (it?.published_on != null) {
                         var timeAgo: String = ""
                         try {
-                            dateString = it!!.published_on
-                            if (dateString?.endsWith("Z", false) == false) {
-                                dateString += "Z"
+                            strDate = it!!.published_on
+                            if (strDate?.endsWith("Z", false) == false) {
+                                strDate += "Z"
                             }
 
                             var timeZone = Calendar.getInstance().timeZone.id
                             var dateformat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
                             dateformat.timeZone = TimeZone.getTimeZone("UTC")
-                            var date = dateformat.parse(dateString)
+                            var date = dateformat.parse(strDate)
                             dateformat.timeZone = TimeZone.getTimeZone(timeZone)
                             dateformat.format(date)
                             timeAgo = TimeAgo.using(date.time, TimeAgoMessages.Builder().defaultLocale().build())
@@ -313,7 +313,7 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<INews, 
                                 var timeZone = Calendar.getInstance().timeZone.id
                                 var dateformat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'")
                                 dateformat.timeZone = TimeZone.getTimeZone("UTC")
-                                var date = dateformat.parse(dateString)
+                                var date = dateformat.parse(strDate)
                                 dateformat.timeZone = TimeZone.getTimeZone(timeZone)
                                 dateformat.format(date)
                                 timeAgo = TimeAgo.using(date.time, TimeAgoMessages.Builder().defaultLocale().build())
@@ -329,10 +329,10 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<INews, 
                 }
 
                 leftItemViewholder.itemRootView.setOnClickListener {
-                    fetchDataViewModel.setCurrentListNews(newsList)
+                    dataVM.setCurrentListNews(newsList)
                     itemIndex = position
                     var id = news!!.id
-                    fetchDataViewModel.startRecommendNewsWorkManager(id)
+                    dataVM.startRecommendNewsWorkManager(id)
                     categoryId = news!!.category_id
                     var itemTitle = news!!.title
                     var deviceId = themePreference.getString("device_token", "")
@@ -343,7 +343,7 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<INews, 
                     val title = news!!.title
                     val cName = news!!.category
                     val source = news!!.source
-                    trackingCallback(apiInterfaceObj, themePreference, id, title, categoryId, cName, "", ActionType.ARTICLEDETAIL.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, source, 0)
+                    trackingCallback(nApi, themePreference, id, title, categoryId, cName, "", ActionType.ARTICLEDETAIL.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, source, 0)
                     if(BuildConfig.showAds) {
                         var difference: Int = 0
                         if (position > (ADFACTOR - 1)) {
@@ -366,7 +366,7 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<INews, 
 
             2 -> {
                 var adsViewholder = holder as AdsItemViewHolder
-                fetchDataViewModel.getAdsTitle().observeOnce(con as LifecycleOwner, Observer<NewsAdsBodyData> {
+                dataVM.getAdsTitle().observeOnce(con as LifecycleOwner, Observer<NewsAdsBodyData> {
                     if (it != null) {
                         holder?.adsTitle?.text = it?.ad_text
                         val adsurl = it?.ad_url
@@ -388,7 +388,7 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<INews, 
                         holder?.adsCardview.setOnClickListener {
                             var deviceId = themePreference.getString("device_token", "")
                             val sessionId = getUniqueCode(con, themePreference)
-                            trackingCallback(apiInterfaceObj, themePreference, 0, "", 0, "", "", ActionType.ADCLICK.type, deviceId?:"", PLATFORM, ViewType.MONETIZATIONVIEW.type, sessionId, "", 0)
+                            trackingCallback(nApi, themePreference, 0, "", 0, "", "", ActionType.ADCLICK.type, deviceId?:"", PLATFORM, ViewType.MONETIZATIONVIEW.type, sessionId, "", 0)
 
                             var url = adsurl
                             if (url.isNullOrBlank()) {
@@ -411,8 +411,8 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<INews, 
         if (result == null) {
 
         } else {
-            this.detailArticleList.clear()
-            this.detailArticleList.addAll(result)
+            this.daList.clear()
+            this.daList.addAll(result)
             notifyDataSetChanged()
         }
     }
@@ -493,7 +493,7 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<INews, 
 
     fun getAdsDetail(){
 
-        var call: Call<NewsAdsApi> = apiAdsInterfaceObj.getAds(categoryType)
+        var call: Call<NewsAdsApi> = nAdsApi.getAds(categoryType)
         call.enqueue(object : Callback<NewsAdsApi> {
             override fun onFailure(call: Call<NewsAdsApi>, t: Throwable) {
                 Log.d("TestMainActivity", "Inside Failure")
@@ -506,7 +506,7 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<INews, 
                 if(code == 200) {
                     val bodyData = response.body()
                     bodyData?.body?.let{
-                        fetchDataViewModel.setAdsTitle(bodyData?.body)
+                        dataVM.setAdsTitle(bodyData?.body)
                     }
                 }
             }

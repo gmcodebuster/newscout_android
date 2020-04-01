@@ -83,10 +83,10 @@ class MainAdapter(context: Context, fragManager: FragmentManager, data : ArrayLi
     fun getTabView(position: Int): View {
         val bData = dataBundleList.get(position)
         var name = bData.getString("category_name")
-        val view = LayoutInflater.from(con).inflate(R.layout.custom_tab, null);
-        val tvTitle = view.findViewById(R.id.tab_title) as TextView;
-        tvTitle.setText(name);
+        val view = LayoutInflater.from(con).inflate(R.layout.custom_tab, null)
+        val tvTitle = view.findViewById(R.id.tab_title) as TextView
+        tvTitle.setText(name)
 
-        return view;
+        return view
     }
 }

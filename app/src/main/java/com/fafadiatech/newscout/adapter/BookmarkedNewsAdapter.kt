@@ -38,12 +38,12 @@ class BookmarkedNewsAdapter(var con: Context, var category: String) : RecyclerVi
     var heightInPixel: Int = 0
     var bookmarkedList = ArrayList<DetailNewsData>()
     val requestOptions = RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL)
-    lateinit var apiInterfaceObj: ApiInterface
+    lateinit var nApi: ApiInterface
     lateinit var themePreference: SharedPreferences
     init {
         widthInPixel = convertDpToPx(con, 75)
         heightInPixel = convertDpToPx(con, 75)
-        apiInterfaceObj = ApiClient.getClient().create(ApiInterface::class.java)
+        nApi = ApiClient.getClient().create(ApiInterface::class.java)
         themePreference = con.getSharedPreferences(AppConstant.APPPREF, Context.MODE_PRIVATE)
     }
 
@@ -162,7 +162,7 @@ class BookmarkedNewsAdapter(var con: Context, var category: String) : RecyclerVi
                     val cName = bookmarkedList.get(position)!!.category
                     val categoryId = MyApplication.categoryIdHashMap.get(cName) ?: 0
                     val source = bookmarkedList.get(position)!!.source
-                    trackingCallback(apiInterfaceObj, themePreference, id, title, categoryId, cName, "", ActionType.BOOKMARKARTICLEDETAIL.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, source, 0)
+                    trackingCallback(nApi, themePreference, id, title, categoryId, cName, "", ActionType.BOOKMARKARTICLEDETAIL.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, source, 0)
 
                     var detailIntent = Intent(con, DetailNewsActivity::class.java)
                     detailIntent.putExtra("indexPosition", position)
@@ -248,7 +248,7 @@ class BookmarkedNewsAdapter(var con: Context, var category: String) : RecyclerVi
                     val cName = bookmarkedList.get(position)!!.category
                     val categoryId = MyApplication.categoryIdHashMap.get(cName) ?: 0
                     val source = bookmarkedList.get(position)!!.source
-                    trackingCallback(apiInterfaceObj, themePreference, id, title, categoryId, cName, "", ActionType.BOOKMARKARTICLEDETAIL.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, source, 0)
+                    trackingCallback(nApi, themePreference, id, title, categoryId, cName, "", ActionType.BOOKMARKARTICLEDETAIL.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, source, 0)
 
                     var detailIntent = Intent(con, DetailNewsActivity::class.java)
                     detailIntent.putExtra("indexPosition", position)

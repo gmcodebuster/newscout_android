@@ -43,10 +43,10 @@ class SearchAdapter(context: Context, category: String, var progressBarListener:
     var itemIndex: Int? = null
     var list = ArrayList<NewsEntity>()
     var categoryType = category
-    var fetchDataViewModel: FetchDataApiViewModel
-    var dateString: String? = null
+    var dataVM: FetchDataApiViewModel
+    var strDate: String? = null
     var categoryId: Int = 0
-    lateinit var apiInterfaceObj: ApiInterface
+    lateinit var nApi: ApiInterface
     lateinit var themePreference: SharedPreferences
 
     companion object {
@@ -65,8 +65,8 @@ class SearchAdapter(context: Context, category: String, var progressBarListener:
     }
 
     init {
-        fetchDataViewModel = ViewModelProviders.of(context as FragmentActivity).get(FetchDataApiViewModel::class.java)
-        apiInterfaceObj = ApiClient.getClient().create(ApiInterface::class.java)
+        dataVM = ViewModelProviders.of(context as FragmentActivity).get(FetchDataApiViewModel::class.java)
+        nApi = ApiClient.getClient().create(ApiInterface::class.java)
         themePreference = context.getSharedPreferences(AppConstant.APPPREF, Context.MODE_PRIVATE)
     }
 
@@ -136,15 +136,15 @@ class SearchAdapter(context: Context, category: String, var progressBarListener:
                     if (it?.published_on != null) {
                         var timeAgo: String = ""
                         try {
-                            dateString = it!!.published_on
-                            if (dateString?.endsWith("Z", false) == false) {
-                                dateString += "Z"
+                            strDate = it!!.published_on
+                            if (strDate?.endsWith("Z", false) == false) {
+                                strDate += "Z"
                             }
 
                             var timeZone = Calendar.getInstance().timeZone.id
                             var dateformat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
                             dateformat.timeZone = TimeZone.getTimeZone("UTC")
-                            var date = dateformat.parse(dateString)
+                            var date = dateformat.parse(strDate)
                             dateformat.timeZone = TimeZone.getTimeZone(timeZone)
                             dateformat.format(date)
                             timeAgo = TimeAgo.using(date.time, TimeAgoMessages.Builder().defaultLocale().build())
@@ -154,7 +154,7 @@ class SearchAdapter(context: Context, category: String, var progressBarListener:
                                 var timeZone = Calendar.getInstance().timeZone.id
                                 var dateformat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'")
                                 dateformat.timeZone = TimeZone.getTimeZone("UTC")
-                                var date = dateformat.parse(dateString)
+                                var date = dateformat.parse(strDate)
                                 dateformat.timeZone = TimeZone.getTimeZone(timeZone)
                                 dateformat.format(date)
 
@@ -171,7 +171,7 @@ class SearchAdapter(context: Context, category: String, var progressBarListener:
                     rightItemViewholder.itemRootView.setOnClickListener {
                         itemIndex = position
                         var id = getItem(position)!!.id
-                        fetchDataViewModel.startRecommendNewsWorkManager(id)
+                        dataVM.startRecommendNewsWorkManager(id)
                         categoryId = getItem(position)!!.category_id
                         var itemTitle = getItem(position)!!.title
                         var deviceId = themePreference.getString("device_token", "")
@@ -181,7 +181,7 @@ class SearchAdapter(context: Context, category: String, var progressBarListener:
                         val cName = getItem(position)!!.category
                         val categoryId = getItem(position)!!.category_id
                         val source = getItem(position)!!.source
-                        trackingCallback(apiInterfaceObj, themePreference, id, title, categoryId, cName, "", ActionType.ARTICLESEARCHDETAIL.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, source, 0)
+                        trackingCallback(nApi, themePreference, id, title, categoryId, cName, "", ActionType.ARTICLESEARCHDETAIL.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, source, 0)
 
                         var detailIntent = Intent(con, DetailNewsActivity::class.java)
                         detailIntent.putExtra("indexPosition", itemIndex!!)
@@ -236,16 +236,16 @@ class SearchAdapter(context: Context, category: String, var progressBarListener:
                     if (it?.published_on != null) {
                         var timeAgo: String = ""
                         try {
-                            dateString = it!!.published_on
+                            strDate = it!!.published_on
 
-                            if (dateString?.endsWith("Z", false) == false) {
-                                dateString += "Z"
+                            if (strDate?.endsWith("Z", false) == false) {
+                                strDate += "Z"
                             }
 
                             var timeZone = Calendar.getInstance().timeZone.id
                             var dateformat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
                             dateformat.timeZone = TimeZone.getTimeZone("UTC")
-                            var date = dateformat.parse(dateString)
+                            var date = dateformat.parse(strDate)
                             dateformat.timeZone = TimeZone.getTimeZone(timeZone)
                             dateformat.format(date)
                             timeAgo = TimeAgo.using(date.time, TimeAgoMessages.Builder().defaultLocale().build())
@@ -255,7 +255,7 @@ class SearchAdapter(context: Context, category: String, var progressBarListener:
                                 var timeZone = Calendar.getInstance().timeZone.id
                                 var dateformat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'")
                                 dateformat.timeZone = TimeZone.getTimeZone("UTC")
-                                var date = dateformat.parse(dateString)
+                                var date = dateformat.parse(strDate)
                                 dateformat.timeZone = TimeZone.getTimeZone(timeZone)
                                 dateformat.format(date)
                                 timeAgo = TimeAgo.using(date.time, TimeAgoMessages.Builder().defaultLocale().build())
@@ -272,7 +272,7 @@ class SearchAdapter(context: Context, category: String, var progressBarListener:
                 leftItemViewholder.itemRootView.setOnClickListener {
                     itemIndex = position
                     var id = getItem(position)!!.id
-                    fetchDataViewModel.startRecommendNewsWorkManager(id)
+                    dataVM.startRecommendNewsWorkManager(id)
                     categoryId = getItem(position)!!.category_id
                     var itemTitle = getItem(position)!!.title
                     var deviceId = themePreference.getString("device_token", "")
@@ -282,7 +282,7 @@ class SearchAdapter(context: Context, category: String, var progressBarListener:
                     val cName = getItem(position)!!.category
                     val categoryId = getItem(position)!!.category_id
                     val source = getItem(position)!!.source
-                    trackingCallback(apiInterfaceObj, themePreference, id, title, categoryId, cName, "", ActionType.ARTICLESEARCHDETAIL.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, source, 0)
+                    trackingCallback(nApi, themePreference, id, title, categoryId, cName, "", ActionType.ARTICLESEARCHDETAIL.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, source, 0)
 
                     var detailIntent = Intent(con, DetailNewsActivity::class.java)
                     detailIntent.putExtra("indexPosition", itemIndex!!)

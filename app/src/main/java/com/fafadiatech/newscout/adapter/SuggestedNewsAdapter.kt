@@ -36,12 +36,12 @@ class SuggestedNewsAdapter(val context: Context) : PagedListAdapter<DetailNewsDa
     var heightInPixel: Int = 0
     val requestOptions = RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL)
     lateinit var themePreference: SharedPreferences
-    var interfaceObj: ApiInterface
+    var nApi: ApiInterface
 
     init {
         widthInPixel = convertDpToPx(context, 160)
         heightInPixel = convertDpToPx(context, 80)
-        interfaceObj = ApiClient.getClient().create(ApiInterface::class.java)
+        nApi = ApiClient.getClient().create(ApiInterface::class.java)
         themePreference = context.getSharedPreferences(AppConstant.APPPREF, Context.MODE_PRIVATE)
     }
 
@@ -137,7 +137,7 @@ class SuggestedNewsAdapter(val context: Context) : PagedListAdapter<DetailNewsDa
                         detailIntent.putParcelableArrayListExtra("arrayList", detailList)
                     }
                     val sessionId = getUniqueCode(context, themePreference)
-                    trackingCallback(interfaceObj, themePreference, newsId, itemName, cId,cName,"", ActionType.RECOMMENDATION.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, sourceName, 0)
+                    trackingCallback(nApi, themePreference, newsId, itemName, cId,cName,"", ActionType.RECOMMENDATION.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, sourceName, 0)
 
                     context.startActivity(detailIntent)
                 }
