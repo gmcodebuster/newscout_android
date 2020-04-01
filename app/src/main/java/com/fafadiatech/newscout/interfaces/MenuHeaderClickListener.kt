@@ -4,6 +4,6 @@ import com.fafadiatech.newscout.model.TopHeadingData
 
 interface MenuHeaderClickListener {
 
-    fun onClick(newsData: TopHeadingData) {
+    fun onClick(heading: TopHeadingData) {
     }
 }

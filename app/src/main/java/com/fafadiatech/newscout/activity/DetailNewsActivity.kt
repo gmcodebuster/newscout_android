@@ -225,7 +225,7 @@ class DetailNewsActivity : BaseActivity(), VerticalViewPager.SwiperListener, ITo
         }
     }
 
-    override fun gotofirstNews() {
+    override fun gotoFirstNews() {
         vPagerDetail.setCurrentItem(0, false)
         detailNewsAdpt.notifyDataSetChanged()
     }

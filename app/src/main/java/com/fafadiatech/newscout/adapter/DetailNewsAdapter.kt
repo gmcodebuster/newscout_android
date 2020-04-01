@@ -413,7 +413,7 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
         }
 
         btnTopNews.setOnClickListener {
-            itopNews.gotofirstNews()
+            itopNews.gotoFirstNews()
 
         }
 
