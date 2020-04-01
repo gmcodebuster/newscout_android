@@ -55,13 +55,13 @@ class TrendingFragment : Fragment(), AddTrendingFragmentListener {
 
     lateinit var rvTrending: RecyclerView
     var trendingList = ArrayList<TrendingNewsData>()
-    lateinit var fetchDataViewModel: FetchDataApiViewModel
+    lateinit var dataVM: FetchDataApiViewModel
     lateinit var addTrendingFragmentListener: AddTrendingFragmentListener
     lateinit var loadTrendFragment: TrendingFragListener
     lateinit var refreshTrendingNews: SwipyRefreshLayout
-    lateinit var articleNewsDao: NewsDao
+    lateinit var newsDao: NewsDao
     var newsDatabase: NewsDatabase? = null
-    lateinit var apiInterfaceObj: ApiInterface
+    lateinit var nApi: ApiInterface
     lateinit var fabReturnTop: FloatingActionButton
     lateinit var trendingAdapter: TrendingAdapter
     lateinit var themePreference: SharedPreferences
@@ -98,8 +98,8 @@ class TrendingFragment : Fragment(), AddTrendingFragmentListener {
         deviceWidthDp = deviceWidth / Resources.getSystem().getDisplayMetrics().density
         var view = LayoutInflater.from(context).inflate(R.layout.fragment_trending, container, false)
 
-        apiInterfaceObj = ApiClient.getClient().create(ApiInterface::class.java)
-        articleNewsDao = newsDatabase!!.newsDao()
+        nApi = ApiClient.getClient().create(ApiInterface::class.java)
+        newsDao = newsDatabase!!.newsDao()
         themePreference = this.activity!!.getSharedPreferences(AppConstant.APPPREF, Context.MODE_PRIVATE)
         var isNightModeEnable = themePreference.getBoolean("night mode enable", false)
         rvTrending = view.findViewById(R.id.rv_trending)
@@ -171,7 +171,7 @@ class TrendingFragment : Fragment(), AddTrendingFragmentListener {
         fabReturnTop.setOnClickListener {
             var deviceId = themePreference.getString("device_token", "")
             val sessionId = getUniqueCode(activity!!.baseContext, themePreference)
-            trackingCallback(apiInterfaceObj, themePreference, 0, "", 0, "", "", ActionType.SCROLLTOTOP.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId,"", 0)
+            trackingCallback(nApi, themePreference, 0, "", 0, "", "", ActionType.SCROLLTOTOP.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId,"", 0)
 
             rvTrending.smoothScrollToPosition(0)
         }
@@ -189,8 +189,8 @@ class TrendingFragment : Fragment(), AddTrendingFragmentListener {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        fetchDataViewModel = ViewModelProviders.of(this).get(FetchDataApiViewModel::class.java)
-        fetchDataViewModel.getTrendingData().observe(viewLifecycleOwner, Observer {
+        dataVM = ViewModelProviders.of(this).get(FetchDataApiViewModel::class.java)
+        dataVM.getTrendingData().observe(viewLifecycleOwner, Observer {
             var tNews = it as ArrayList<TrendingNewsData>
             progressBar?.visibility = View.GONE
             if (tNews.size > 0) {
@@ -214,14 +214,14 @@ class TrendingFragment : Fragment(), AddTrendingFragmentListener {
 
         val sessionId = getUniqueCode(mContext, themePreference)
         var deviceId = themePreference.getString("device_token", "")
-        trackingCallback(apiInterfaceObj, themePreference, 0, "", 0, "", "", ActionType.TRENDINGGROUPCLICK.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
+        trackingCallback(nApi, themePreference, 0, "", 0, "", "", ActionType.TRENDINGGROUPCLICK.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
 
         this.pos = pos
         loadTrendFragment.loadFragment(clusterId, pos)
     }
 
     fun fetchData() {
-        var call: Call<TrendingDataApi> = apiInterfaceObj.getNewsByTrending()
+        var call: Call<TrendingDataApi> = nApi.getNewsByTrending()
         call.enqueue(object : Callback<TrendingDataApi> {
             override fun onFailure(call: Call<TrendingDataApi>, t: Throwable) {
 
@@ -270,7 +270,7 @@ class TrendingFragment : Fragment(), AddTrendingFragmentListener {
                         }
                     }
                     try {
-                        articleNewsDao.removeTrending(trendingArticleList, trendingNewsList)
+                        newsDao.removeTrending(trendingArticleList, trendingNewsList)
                     }catch(e:Exception){
                         if(e is SQLiteFullException){
                             //clear table values
@@ -284,7 +284,7 @@ class TrendingFragment : Fragment(), AddTrendingFragmentListener {
     }
 
     override fun onDestroyView() {
-        fetchDataViewModel.getTrendingDataFromDb().removeObservers(this)
+        dataVM.getTrendingDataFromDb().removeObservers(this)
         super.onDestroyView()
     }
 

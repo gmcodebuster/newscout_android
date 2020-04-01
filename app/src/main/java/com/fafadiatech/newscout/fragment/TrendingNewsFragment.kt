@@ -43,17 +43,17 @@ class TrendingNewsFragment : Fragment() {
     var deviceWidthDp: Float = 0f
     lateinit var tagName: String
     var tagId: Int = 0
-    lateinit var adapter: TrendingNewsAdapter
+    lateinit var trandingAdpt: TrendingNewsAdapter
     lateinit var layoutManager: RecyclerView.LayoutManager
     lateinit var fetchDataViewModel: FetchDataApiViewModel
     lateinit var fabReturnTop: com.github.clans.fab.FloatingActionButton
-    lateinit var apiInterfaceObj: ApiInterface
+    lateinit var nApi: ApiInterface
     var checkInternet: Boolean = false
     var lessThenTen = false
     var moreThenTen = true
     lateinit var animFadein: Animation
     lateinit var animFadeout : Animation
-    var progressBar : ProgressBar? = null
+    var pBar : ProgressBar? = null
     lateinit var imgViewNoDataFound: ImageView
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -77,7 +77,7 @@ class TrendingNewsFragment : Fragment() {
 
             }
         }
-        apiInterfaceObj = ApiClient.getClient().create(ApiInterface::class.java)
+        nApi = ApiClient.getClient().create(ApiInterface::class.java)
         var theme: Int = themePreference.getInt("theme", R.style.DefaultMedium)
         var isNightModeEnable = themePreference.getBoolean("night mode enable", false)
         activity?.setTheme(theme)
@@ -99,8 +99,8 @@ class TrendingNewsFragment : Fragment() {
         tagId = arguments!!.getInt("category_id", 0)
         var clusterId = arguments!!.getInt("cluster_id", 0)
 
-        adapter = TrendingNewsAdapter(context!!, tagName)
-        adapter.setClustedId(clusterId)
+        trandingAdpt = TrendingNewsAdapter(context!!, tagName)
+        trandingAdpt.setClustedId(clusterId)
 
         val itemDecorator = DividerItemDecoration(context!!, DividerItemDecoration.VERTICAL)
 
@@ -120,7 +120,7 @@ class TrendingNewsFragment : Fragment() {
 
         animFadein = AnimationUtils.loadAnimation(activity, R.anim.fade_in)
         animFadeout = AnimationUtils.loadAnimation(activity, R.anim.fade_out)
-        progressBar = view.findViewById<ProgressBar>(R.id.pbar_loading)
+        pBar = view.findViewById<ProgressBar>(R.id.pbar_loading)
         imgViewNoDataFound = view.findViewById<ImageView>(R.id.img_view_data_not_found)
         imgViewNoDataFound.visibility = View.GONE
         fabReturnTop.visibility = View.GONE
@@ -156,7 +156,7 @@ class TrendingNewsFragment : Fragment() {
         fabReturnTop.setOnClickListener {
             var deviceId = themePreference.getString("device_token", "")
             val sessionId = getUniqueCode(activity!!.baseContext, themePreference)
-            trackingCallback(apiInterfaceObj, themePreference, 0, "", 0, "", "", ActionType.SCROLLTOTOP.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId,"", 0)
+            trackingCallback(nApi, themePreference, 0, "", 0, "", "", ActionType.SCROLLTOTOP.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId,"", 0)
 
             rvNews.smoothScrollToPosition(0)
         }
@@ -167,7 +167,7 @@ class TrendingNewsFragment : Fragment() {
 
             fetchDataViewModel.getTrendingByClusterIdFromDb(clusterId).observe(this, object : androidx.lifecycle.Observer<List<NewsEntity>> {
                 override fun onChanged(list: List<NewsEntity>?) {
-                    progressBar?.visibility = View.GONE
+                    pBar?.visibility = View.GONE
 
                    list?.let {
                        if(list.size == 0){
@@ -178,7 +178,7 @@ class TrendingNewsFragment : Fragment() {
                    }
                     var trendingList = list as ArrayList<NewsEntity>
 
-                    adapter.setTrendingData(trendingList)
+                    trandingAdpt.setTrendingData(trendingList)
                 }
             })
         }
@@ -186,7 +186,7 @@ class TrendingNewsFragment : Fragment() {
 
 
 
-        rvNews.adapter = adapter
+        rvNews.adapter = trandingAdpt
 
         return view
     }

@@ -46,7 +46,7 @@ import com.omadahealth.github.swipyrefreshlayout.library.SwipyRefreshLayoutDirec
 class DailyDigestFragment() : Fragment(), ConnectivityReceiver.ConnectivityReceiverListener, PlaceHolderImageListener {
     lateinit var fragRecyclerview: RecyclerView
     lateinit var themePreference: SharedPreferences
-    lateinit var fetchDataViewModel: FetchDataApiViewModel
+    lateinit var dataVM: FetchDataApiViewModel
     lateinit var tokenId: String
     lateinit var mContext: Context
     var checkInternet: Boolean = false
@@ -54,7 +54,7 @@ class DailyDigestFragment() : Fragment(), ConnectivityReceiver.ConnectivityRecei
     var isShown: Boolean = false
     lateinit var tagName: String
     var tagId: Int = 0
-    lateinit var adapter: DDNewsAdapter
+    lateinit var newsAdpt: DDNewsAdapter
     lateinit var itemPagedList: LiveData<PagedList<DailyDigestEntity>>
     lateinit var liveDataSource: LiveData<PageKeyedDataSource<Int, DailyDigestEntity>>
     var deviceWidthDp: Float = 0f
@@ -68,7 +68,7 @@ class DailyDigestFragment() : Fragment(), ConnectivityReceiver.ConnectivityRecei
     var moreThenTen = true
     lateinit var animFadein: Animation
     lateinit var animFadeout : Animation
-    var progressBar : ProgressBar? = null
+    var pBar : ProgressBar? = null
 
     companion object {
         var newsList = ArrayList<NewsEntity>()
@@ -108,10 +108,10 @@ class DailyDigestFragment() : Fragment(), ConnectivityReceiver.ConnectivityRecei
         fabReturnTop = view.findViewById(R.id.fab_return_top)
         tagName = arguments!!.getString("category_name", "")
         tagId = arguments!!.getInt("category_id", 0)
-        adapter = DDNewsAdapter(context!!)
+        newsAdpt = DDNewsAdapter(context!!)
         imgViewNoDataFound.visibility = View.GONE
         fabReturnTop.visibility = View.GONE
-        progressBar = view.findViewById(R.id.pbar_loading)
+        pBar = view.findViewById(R.id.pbar_loading)
         animFadein = AnimationUtils.loadAnimation(activity, R.anim.fade_in)
         animFadeout = AnimationUtils.loadAnimation(activity, R.anim.fade_out)
         fabReturnTop.isClickable = false
@@ -159,7 +159,7 @@ class DailyDigestFragment() : Fragment(), ConnectivityReceiver.ConnectivityRecei
         fragRecyclerview.layoutManager = object : LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false) {
             override fun onLayoutCompleted(state: RecyclerView.State?) {
                 super.onLayoutCompleted(state)
-                if (showReturnToTopButton && (findLastVisibleItemPosition() - findFirstVisibleItemPosition() + 1 < adapter.itemCount)) {
+                if (showReturnToTopButton && (findLastVisibleItemPosition() - findFirstVisibleItemPosition() + 1 < newsAdpt.itemCount)) {
                     showReturnToTopButton = false
                 }
             }
@@ -170,11 +170,11 @@ class DailyDigestFragment() : Fragment(), ConnectivityReceiver.ConnectivityRecei
         }
 
         fragRecyclerview.layoutManager = layoutManager
-        fetchDataViewModel = ViewModelProviders.of(this, ViewModelProviderFactory(activity!!.application, tagName)).get(FetchDataApiViewModel::class.java)
-        fetchDataViewModel.initializeDailyDigestNews(deviceId).observe(getViewLifecycleOwner(), Observer<PagedList<DailyDigestEntity>> {
+        dataVM = ViewModelProviders.of(this, ViewModelProviderFactory(activity!!.application, tagName)).get(FetchDataApiViewModel::class.java)
+        dataVM.initializeDailyDigestNews(deviceId).observe(getViewLifecycleOwner(), Observer<PagedList<DailyDigestEntity>> {
 
-            adapter.setPlaceHolderImage(placeHolderListener)
-            adapter.submitList(it)
+            newsAdpt.setPlaceHolderImage(placeHolderListener)
+            newsAdpt.submitList(it)
         })
 
         checkInternet = MyApplication.checkInternet
@@ -183,7 +183,7 @@ class DailyDigestFragment() : Fragment(), ConnectivityReceiver.ConnectivityRecei
             override fun onRefresh(direction: SwipyRefreshLayoutDirection?) {
                 var deviceId = themePreference.getString("device_token", "")
                 if (direction == SwipyRefreshLayoutDirection.TOP) {
-                    fetchDataViewModel.invalidateDataSource()
+                    dataVM.invalidateDataSource()
                     if (checkInternet == true) {
 
                         val itemDataSourceFactory = DDNewsDataSourceFactory(activity!!.application, deviceId)
@@ -198,7 +198,7 @@ class DailyDigestFragment() : Fragment(), ConnectivityReceiver.ConnectivityRecei
                                 .build()
                         itemPagedList.observe(getViewLifecycleOwner(), Observer<PagedList<DailyDigestEntity>> {
 
-                            adapter.submitList(it)
+                            newsAdpt.submitList(it)
 
                         })
                     } else {
@@ -213,9 +213,9 @@ class DailyDigestFragment() : Fragment(), ConnectivityReceiver.ConnectivityRecei
                     var tagsArray = arrayOfNulls<String>(tagItems.size)
                     tagItems.toArray(tagsArray)
 
-                    fetchDataViewModel.initializeDailyDigestNews("tagId").observe(getViewLifecycleOwner(), Observer<PagedList<DailyDigestEntity>> {
+                    dataVM.initializeDailyDigestNews("tagId").observe(getViewLifecycleOwner(), Observer<PagedList<DailyDigestEntity>> {
 
-                        adapter.submitList(it)
+                        newsAdpt.submitList(it)
                     })
                 }
                 layoutSwipeRefresh.isRefreshing = false
@@ -230,7 +230,7 @@ class DailyDigestFragment() : Fragment(), ConnectivityReceiver.ConnectivityRecei
             }
         }
 
-        fragRecyclerview.adapter = adapter
+        fragRecyclerview.adapter = newsAdpt
 
         return view
     }
@@ -258,7 +258,7 @@ class DailyDigestFragment() : Fragment(), ConnectivityReceiver.ConnectivityRecei
     }
 
     override fun showPlaceHolder(size: Int?) {
-        progressBar?.visibility = View.GONE
+        pBar?.visibility = View.GONE
         if (size!! > 0) {
             imgViewNoDataFound.visibility = View.GONE
         } else {

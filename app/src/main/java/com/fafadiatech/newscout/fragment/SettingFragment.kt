@@ -34,7 +34,7 @@ class SettingFragment() : PreferenceFragmentCompat() {
     lateinit var fontSize: String
     var themes: Int = R.style.DefaultMedium
     lateinit var fontSizeListPref: ListPreference
-    lateinit var apiInterfaceObj: ApiInterface
+    lateinit var nApi: ApiInterface
     val TAG = SettingFragment::class.java.simpleName
     lateinit var preference: Preference
     lateinit var mEditor: SharedPreferences.Editor
@@ -55,7 +55,7 @@ class SettingFragment() : PreferenceFragmentCompat() {
         super.onCreate(savedInstanceState)
         themePreference = this.activity!!.getSharedPreferences(AppConstant.APPPREF, Context.MODE_PRIVATE)
         nightModeEnable = themePreference.getBoolean("night mode enable", false)
-        apiInterfaceObj = ApiClient.getClient().create(ApiInterface::class.java)
+        nApi = ApiClient.getClient().create(ApiInterface::class.java)
         newsDao = newsDatabase!!.newsDao()
 
         val gso: GoogleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -204,7 +204,7 @@ class SettingFragment() : PreferenceFragmentCompat() {
             } else if (preference.summary.contains("Logout")) {
                 var deviceId = themePreference.getString("device_token", "")
                 val sessionId = getUniqueCode(activity!!.baseContext, themePreference)
-                trackingCallback(apiInterfaceObj, themePreference, 0, "", 0, "", "", ActionType.LOGOUT.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
+                trackingCallback(nApi, themePreference, 0, "", 0, "", "", ActionType.LOGOUT.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
 
                 LoginManager.getInstance().logOut()
                 if (mGoogleApiClient != null) {
@@ -223,7 +223,7 @@ class SettingFragment() : PreferenceFragmentCompat() {
         } else if (key == "profile") {
             var deviceId = themePreference.getString("device_token", "")
             val sessionId = getUniqueCode(activity!!.baseContext, themePreference)
-            trackingCallback(apiInterfaceObj, themePreference, 0, "", 0, "", "", ActionType.PROFILEVIEW.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
+            trackingCallback(nApi, themePreference, 0, "", 0, "", "", ActionType.PROFILEVIEW.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
 
             val i = Intent(activity, ProfileActivity::class.java)
             startActivity(i)
@@ -232,7 +232,7 @@ class SettingFragment() : PreferenceFragmentCompat() {
 
             var deviceId = themePreference.getString("device_token", "")
             val sessionId = getUniqueCode(activity!!.baseContext, themePreference)
-            trackingCallback(apiInterfaceObj, themePreference, 0, "", 0, "", "", ActionType.SHARETHISAPP.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
+            trackingCallback(nApi, themePreference, 0, "", 0, "", "", ActionType.SHARETHISAPP.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
 
             var sendIntent = Intent()
             sendIntent.action = Intent.ACTION_SEND
@@ -243,14 +243,14 @@ class SettingFragment() : PreferenceFragmentCompat() {
         } else if (key == "rate_app") {
             var deviceId = themePreference.getString("device_token", "")
             val sessionId = getUniqueCode(activity!!.baseContext, themePreference)
-            trackingCallback(apiInterfaceObj, themePreference, 0, "", 0, "", "", ActionType.RATETHISAPP.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
+            trackingCallback(nApi, themePreference, 0, "", 0, "", "", ActionType.RATETHISAPP.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
 
             return true
         } else if (key == "about_us") {
 
             var deviceId = themePreference.getString("device_token", "")
             val sessionId = getUniqueCode(activity!!.baseContext, themePreference)
-            trackingCallback(apiInterfaceObj, themePreference, 0, "", 0, "", "", ActionType.ABOUTUS.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
+            trackingCallback(nApi, themePreference, 0, "", 0, "", "", ActionType.ABOUTUS.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
             var aboutIntent = Intent(activity, AboutUsActivity::class.java)
             startActivity(aboutIntent)
             return true
@@ -277,7 +277,7 @@ class SettingFragment() : PreferenceFragmentCompat() {
     }
 
     fun logOut(token: String) {
-        var call: Call<VoteArticleData> = apiInterfaceObj.logoutByApi(token)
+        var call: Call<VoteArticleData> = nApi.logoutByApi(token)
         try {
             call.enqueue(object : Callback<VoteArticleData> {
                 override fun onFailure(call: Call<VoteArticleData>, t: Throwable) {

@@ -51,9 +51,9 @@ import retrofit2.Call
 
 class NewsFragment() : Fragment(), ConnectivityReceiver.ConnectivityReceiverListener, PlaceHolderImageListener {
 
-    lateinit var fragRecyclerview: RecyclerView
+    lateinit var rvNews: RecyclerView
     lateinit var themePreference: SharedPreferences
-    lateinit var fetchDataViewModel: FetchDataApiViewModel
+    lateinit var dataVM: FetchDataApiViewModel
     lateinit var tokenId: String
     lateinit var mContext: Context
     var checkInternet: Boolean = false
@@ -67,7 +67,7 @@ class NewsFragment() : Fragment(), ConnectivityReceiver.ConnectivityReceiverList
     var deviceWidthDp: Float = 0f
     lateinit var layoutManager: RecyclerView.LayoutManager
     lateinit var fabReturnTop: com.github.clans.fab.FloatingActionButton
-    var showReturnToTopButton: Boolean = true
+    var showTopButton: Boolean = true
     lateinit var placeHolderListener: PlaceHolderImageListener
     lateinit var placeHolderImage: ImageView
     lateinit var imgViewNoDataFound: ImageView
@@ -75,7 +75,7 @@ class NewsFragment() : Fragment(), ConnectivityReceiver.ConnectivityReceiverList
     var moreThenTen = true
     lateinit var animFadein: Animation
     lateinit var animFadeout : Animation
-    var progressBar :ProgressBar? = null
+    var pBar :ProgressBar? = null
 
     companion object {
         var newsList = ArrayList<NewsEntity>()
@@ -113,7 +113,7 @@ class NewsFragment() : Fragment(), ConnectivityReceiver.ConnectivityReceiverList
         var rootLayout = view.findViewById<ConstraintLayout>(R.id.root_layout_main_fragment)
 
         var layoutSwipeRefresh = view.findViewById<SwipyRefreshLayout>(R.id.layout_swipe_refresh)
-        fragRecyclerview = view.findViewById(R.id.rv_frag_main)
+        rvNews = view.findViewById(R.id.rv_frag_main)
         placeHolderImage = view.findViewById<ImageView>(R.id.img_view_placeholder)
         imgViewNoDataFound = view.findViewById<ImageView>(R.id.img_view_data_not_found)
         fabReturnTop = view.findViewById(R.id.fab_return_top)
@@ -125,10 +125,10 @@ class NewsFragment() : Fragment(), ConnectivityReceiver.ConnectivityReceiverList
         fabReturnTop.isClickable = false
         animFadein = AnimationUtils.loadAnimation(activity, R.anim.fade_in)
         animFadeout = AnimationUtils.loadAnimation(activity, R.anim.fade_out)
-        progressBar = view.findViewById(R.id.pbar_loading)
+        pBar = view.findViewById(R.id.pbar_loading)
         val apiInterfaceObj = ApiClient.getClient().create(ApiInterface::class.java)
 
-        fragRecyclerview?.addOnScrollListener(object: RecyclerView.OnScrollListener(){
+        rvNews?.addOnScrollListener(object: RecyclerView.OnScrollListener(){
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
             }
@@ -171,11 +171,11 @@ class NewsFragment() : Fragment(), ConnectivityReceiver.ConnectivityReceiverList
 
         }
 
-        fragRecyclerview.layoutManager = object : LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false) {
+        rvNews.layoutManager = object : LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false) {
             override fun onLayoutCompleted(state: RecyclerView.State?) {
                 super.onLayoutCompleted(state)
-                if (showReturnToTopButton && (findLastVisibleItemPosition() - findFirstVisibleItemPosition() + 1 < adapter.itemCount)) {
-                    showReturnToTopButton = false
+                if (showTopButton && (findLastVisibleItemPosition() - findFirstVisibleItemPosition() + 1 < adapter.itemCount)) {
+                    showTopButton = false
                 }
             }
         }
@@ -186,14 +186,14 @@ class NewsFragment() : Fragment(), ConnectivityReceiver.ConnectivityReceiverList
             //trackingCallback(tCall)
             val sessionId = getUniqueCode(activity!!.baseContext, themePreference)
             trackingCallback(apiInterfaceObj, themePreference, 0, "", 0, "", "", ActionType.SCROLLTOTOP.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
-            fragRecyclerview.smoothScrollToPosition(0)
+            rvNews.smoothScrollToPosition(0)
         }
 
-        fragRecyclerview.layoutManager = layoutManager
+        rvNews.layoutManager = layoutManager
 
         if (!tagName.equals("Trending")) {
-            fetchDataViewModel = ViewModelProviders.of(this, ViewModelProviderFactory(activity!!.application, "")).get(FetchDataApiViewModel::class.java)
-            fetchDataViewModel.initializeNews(tagName, 1).observe(viewLifecycleOwner, Observer<PagedList<INews>> {
+            dataVM = ViewModelProviders.of(this, ViewModelProviderFactory(activity!!.application, "")).get(FetchDataApiViewModel::class.java)
+            dataVM.initializeNews(tagName, 1).observe(viewLifecycleOwner, Observer<PagedList<INews>> {
 
                 adapter.setPlaceHolderImage(placeHolderListener)
 
@@ -208,7 +208,7 @@ class NewsFragment() : Fragment(), ConnectivityReceiver.ConnectivityReceiverList
         layoutSwipeRefresh.setOnRefreshListener(object : SwipyRefreshLayout.OnRefreshListener {
             override fun onRefresh(direction: SwipyRefreshLayoutDirection?) {
                 if (direction == SwipyRefreshLayoutDirection.TOP) {
-                    fetchDataViewModel.invalidateDataSource()
+                    dataVM.invalidateDataSource()
                     if (checkInternet == true) {
                         val itemDataSourceFactory = NewsDataSourceFactory(activity!!.application, tagName)
                         liveDataSource = itemDataSourceFactory.itemLiveDataSource
@@ -234,7 +234,7 @@ class NewsFragment() : Fragment(), ConnectivityReceiver.ConnectivityReceiverList
 
                     var tagsArray = arrayOfNulls<String>(tagItems.size)
                     tagItems.toArray(tagsArray)
-                    fetchDataViewModel.initializeNews(tagName, 1).observe(viewLifecycleOwner, Observer<PagedList<INews>> {
+                    dataVM.initializeNews(tagName, 1).observe(viewLifecycleOwner, Observer<PagedList<INews>> {
                         val newsList = it as PagedList<INews>
                         adapter.submitList(newsList)
                     })
@@ -250,7 +250,7 @@ class NewsFragment() : Fragment(), ConnectivityReceiver.ConnectivityReceiverList
             }
         }
 
-        fragRecyclerview.adapter = adapter
+        rvNews.adapter = adapter
         return view
     }
 
@@ -273,7 +273,7 @@ class NewsFragment() : Fragment(), ConnectivityReceiver.ConnectivityReceiverList
     }
 
     override fun showPlaceHolder(size: Int?) {
-        progressBar?.visibility = View.GONE
+        pBar?.visibility = View.GONE
         if (size!! > 0) {
             imgViewNoDataFound.visibility = View.GONE
 
@@ -283,5 +283,5 @@ class NewsFragment() : Fragment(), ConnectivityReceiver.ConnectivityReceiverList
     }
 
     private val lastVisibleItemPosition: Int
-        get() = (fragRecyclerview!!.layoutManager!! as LinearLayoutManager).findLastVisibleItemPosition()
+        get() = (rvNews!!.layoutManager!! as LinearLayoutManager).findLastVisibleItemPosition()
 }
