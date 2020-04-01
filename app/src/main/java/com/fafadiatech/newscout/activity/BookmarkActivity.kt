@@ -1,7 +1,6 @@
 package com.fafadiatech.newscout.activity
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.content.res.Resources
 import android.os.Bundle
 import android.util.DisplayMetrics
@@ -10,7 +9,6 @@ import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -19,7 +17,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.fafadiatech.newscout.R
 import com.fafadiatech.newscout.adapter.BookmarkedNewsAdapter
-import com.fafadiatech.newscout.appconstants.AppConstant
 import com.fafadiatech.newscout.broadcast.ConnectivityReceiver
 import com.fafadiatech.newscout.customcomponent.MyItemDecoration
 import com.fafadiatech.newscout.model.DetailNewsData
@@ -29,11 +26,11 @@ import com.fafadiatech.newscout.viewmodel.FetchDataApiViewModel
 class BookmarkActivity : BaseActivity(), ConnectivityReceiver.ConnectivityReceiverListener {
 
     lateinit var rvBookmark: RecyclerView
-    var bookmarkedList = ArrayList<DetailNewsData>()
-    lateinit var emptyListTextView: TextView
+    var bmList = ArrayList<DetailNewsData>()
+    lateinit var tvEmpty: TextView
     var category: String = ""
-    lateinit var fetchDataViewModel: FetchDataApiViewModel
-    lateinit var bookmarkAdapter: BookmarkedNewsAdapter
+    lateinit var dataVM: FetchDataApiViewModel
+    lateinit var bmAdapter: BookmarkedNewsAdapter
     lateinit var token: String
     var deviceWidthDp: Float = 0f
     lateinit var layoutManager: LinearLayoutManager
@@ -53,26 +50,26 @@ class BookmarkActivity : BaseActivity(), ConnectivityReceiver.ConnectivityReceiv
         token = themePreference.getString("token value", "")
 
         setContentView(R.layout.activity_bookmark)
-        fetchDataViewModel = ViewModelProviders.of(this).get(FetchDataApiViewModel::class.java)
-        emptyListTextView = findViewById(R.id.empty_message)
+        dataVM = ViewModelProviders.of(this).get(FetchDataApiViewModel::class.java)
+        tvEmpty = findViewById(R.id.empty_message)
         rvBookmark = findViewById(R.id.rv_bookmark)
-        bookmarkAdapter = BookmarkedNewsAdapter(this, category)
+        bmAdapter = BookmarkedNewsAdapter(this, category)
         fabReturnTop = findViewById(R.id.fab_return_top)
         if (token == "") {
-            emptyListTextView.text = resources.getString(R.string.see_bookmark_msg)
+            tvEmpty.text = resources.getString(R.string.see_bookmark_msg)
         } else {
 
-            fetchDataViewModel.getBookmarkNewsFromDb()
+            dataVM.getBookmarkNewsFromDb()
                     .observe(this, object : androidx.lifecycle.Observer<List<DetailNewsData>> {
                         override fun onChanged(list: List<DetailNewsData>?) {
-                            bookmarkedList = list as ArrayList<DetailNewsData>
-                            bookmarkAdapter.setData(bookmarkedList)
+                            bmList = list as ArrayList<DetailNewsData>
+                            bmAdapter.setData(bmList)
 
-                            if (bookmarkedList.size == 0 || bookmarkedList == null) {
-                                emptyListTextView.text = resources.getString(R.string.no_bookmark)
-                                emptyListTextView.visibility = View.VISIBLE
+                            if (bmList.size == 0 || bmList == null) {
+                                tvEmpty.text = resources.getString(R.string.no_bookmark)
+                                tvEmpty.visibility = View.VISIBLE
                             } else {
-                                emptyListTextView.visibility = View.GONE
+                                tvEmpty.visibility = View.GONE
                             }
                         }
                     })
@@ -100,7 +97,7 @@ class BookmarkActivity : BaseActivity(), ConnectivityReceiver.ConnectivityReceiv
         }
 
         rvBookmark.layoutManager = layoutManager
-        rvBookmark.adapter = bookmarkAdapter
+        rvBookmark.adapter = bmAdapter
 
         fabReturnTop.visibility = View.INVISIBLE
         animFadein = AnimationUtils.loadAnimation(this@BookmarkActivity, R.anim.fade_in)
@@ -138,13 +135,13 @@ class BookmarkActivity : BaseActivity(), ConnectivityReceiver.ConnectivityReceiv
     override fun onResume() {
         super.onResume()
         if (token == "") {
-            emptyListTextView.text = resources.getString(R.string.see_bookmark_msg)
+            tvEmpty.text = resources.getString(R.string.see_bookmark_msg)
         } else {
-            bookmarkAdapter = BookmarkedNewsAdapter(this@BookmarkActivity, "")
-            var result = fetchDataViewModel.getBookmarkListFromDb()
-            bookmarkedList = result as ArrayList<DetailNewsData>
-            rvBookmark.adapter = bookmarkAdapter
-            bookmarkAdapter.setData(bookmarkedList)
+            bmAdapter = BookmarkedNewsAdapter(this@BookmarkActivity, "")
+            var result = dataVM.getBookmarkListFromDb()
+            bmList = result as ArrayList<DetailNewsData>
+            rvBookmark.adapter = bmAdapter
+            bmAdapter.setData(bmList)
         }
     }
 

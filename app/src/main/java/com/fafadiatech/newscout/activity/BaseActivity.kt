@@ -13,7 +13,7 @@ import com.fafadiatech.newscout.broadcast.ConnectivityReceiver
 
 open class BaseActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityReceiverListener {
 
-    lateinit var connectivityReceiver: ConnectivityReceiver
+    lateinit var connRecv: ConnectivityReceiver
     lateinit var themePreference: SharedPreferences
     var themes: Int = R.style.DefaultMedium
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,25 +24,25 @@ open class BaseActivity : AppCompatActivity(), ConnectivityReceiver.Connectivity
         themes = themePreference.getInt("theme", R.style.DefaultMedium)
 
         this.setTheme(themes)
-        connectivityReceiver = ConnectivityReceiver()
-        connectivityReceiver.setListener(this)
+        connRecv = ConnectivityReceiver()
+        connRecv.setListener(this)
         getUniqueCode(this, themePreference)
     }
 
     override fun onResume() {
         super.onResume()
-        registerReceiver(connectivityReceiver, IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"))
+        registerReceiver(connRecv, IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"))
     }
 
     override fun onStart() {
         super.onStart()
-        registerReceiver(connectivityReceiver, IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"))
+        registerReceiver(connRecv, IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"))
     }
 
     override fun onStop() {
 
-        if (connectivityReceiver != null)
-            unregisterReceiver(connectivityReceiver)
+        if (connRecv != null)
+            unregisterReceiver(connRecv)
         super.onStop()
     }
 
