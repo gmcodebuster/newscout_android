@@ -31,13 +31,13 @@ import io.fabric.sdk.android.Fabric
 
 class DetailNewsActivity : BaseActivity(), VerticalViewPager.SwiperListener, ITopNews {
 
-    var detailArticleList = ArrayList<DetailNewsData>()
+    var daList = ArrayList<DetailNewsData>()
     var currentItem: Int? = null
-    var newsListCategory: String? = null
+    var strCategory: String? = null
     lateinit var vPagerDetail: VerticalViewPager
-    lateinit var vPagerDetailAdapter: DetailNewsAdapter
+    lateinit var detailNewsAdpt: DetailNewsAdapter
     var index: Int = 0
-    lateinit var fetchDataViewModel: FetchDataApiViewModel
+    lateinit var dataVM: FetchDataApiViewModel
     var categoryId: Int = 0
     var token: String = ""
     lateinit var topLayout : ConstraintLayout
@@ -45,7 +45,7 @@ class DetailNewsActivity : BaseActivity(), VerticalViewPager.SwiperListener, ITo
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Fabric.with(this, Answers())
-        fetchDataViewModel = ViewModelProviders.of(this).get(FetchDataApiViewModel::class.java)
+        dataVM = ViewModelProviders.of(this).get(FetchDataApiViewModel::class.java)
         token = themePreference.getString("token value", "")
         setContentView(R.layout.activity_news_detail)
 
@@ -59,42 +59,42 @@ class DetailNewsActivity : BaseActivity(), VerticalViewPager.SwiperListener, ITo
                 this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
             }
         }
-        vPagerDetailAdapter = DetailNewsAdapter(this)
+        detailNewsAdpt = DetailNewsAdapter(this)
         vPagerDetail = findViewById(R.id.vPager_detail_screen)
-        vPagerDetail.adapter = vPagerDetailAdapter
+        vPagerDetail.adapter = detailNewsAdpt
         index = intent.getIntExtra("indexPosition", 0)
-        newsListCategory = intent.getStringExtra("category_of_newslist")
+        strCategory = intent.getStringExtra("category_of_newslist")
         categoryId = intent.getIntExtra("category_id", 0)
         //fabReturnTop = findViewById(R.id.fab_return_top)
         topLayout = findViewById(R.id.top_layout_detailSc)
 
-        if (newsListCategory == "") {
-            fetchDataViewModel.getDetailNewsFromDb().observe(this, object : androidx.lifecycle.Observer<List<DetailNewsData>> {
+        if (strCategory == "") {
+            dataVM.getDetailNewsFromDb().observe(this, object : androidx.lifecycle.Observer<List<DetailNewsData>> {
                 override fun onChanged(list: List<DetailNewsData>?) {
-                    detailArticleList = list as ArrayList<DetailNewsData>
-                    vPagerDetailAdapter.setData(detailArticleList)
+                    daList = list as ArrayList<DetailNewsData>
+                    detailNewsAdpt.setData(daList)
                     vPagerDetail.currentItem = index
                 }
             })
-        } else if (newsListCategory == "Bookmark") {
-            fetchDataViewModel.getBookmarkNewsFromDb().observe(this, object : androidx.lifecycle.Observer<List<DetailNewsData>> {
+        } else if (strCategory == "Bookmark") {
+            dataVM.getBookmarkNewsFromDb().observe(this, object : androidx.lifecycle.Observer<List<DetailNewsData>> {
                 override fun onChanged(list: List<DetailNewsData>?) {
-                    detailArticleList = list as ArrayList<DetailNewsData>
-                    vPagerDetailAdapter.setData(detailArticleList)
+                    daList = list as ArrayList<DetailNewsData>
+                    detailNewsAdpt.setData(daList)
 
-                    if (index == detailArticleList.size) {
+                    if (index == daList.size) {
                         index = index - 1
                     } else {
                         vPagerDetail.currentItem = index
                     }
                 }
             })
-        } else if (newsListCategory == "Search") {
+        } else if (strCategory == "Search") {
 
-            var list = fetchDataViewModel.getDetailSearchNewsFromDb() as ArrayList<DetailNewsData>
-            vPagerDetailAdapter.setData(list)
+            var list = dataVM.getDetailSearchNewsFromDb() as ArrayList<DetailNewsData>
+            detailNewsAdpt.setData(list)
             vPagerDetail.currentItem = index
-        } else if (newsListCategory == "Source") {
+        } else if (strCategory == "Source") {
             var list = intent.getParcelableArrayListExtra<NewsEntity>("source_list") as ArrayList<NewsEntity>
             var detailList = ArrayList<DetailNewsData>()
 
@@ -105,42 +105,42 @@ class DetailNewsActivity : BaseActivity(), VerticalViewPager.SwiperListener, ITo
             }
 
 
-            vPagerDetailAdapter.setData(detailList)
+            detailNewsAdpt.setData(detailList)
             vPagerDetail.currentItem = index
-        } else if (newsListCategory == "Trending") {
+        } else if (strCategory == "Trending") {
             var clusterId = intent.getIntExtra("cluster_id", 0)
 
-            fetchDataViewModel.getTrendingDetailByClusterIdFromDb(clusterId).observe(this, object : androidx.lifecycle.Observer<List<DetailNewsData>> {
+            dataVM.getTrendingDetailByClusterIdFromDb(clusterId).observe(this, object : androidx.lifecycle.Observer<List<DetailNewsData>> {
                 override fun onChanged(list: List<DetailNewsData>?) {
                     var trendingList = list as ArrayList<DetailNewsData>
-                    vPagerDetailAdapter.setData(trendingList)
+                    detailNewsAdpt.setData(trendingList)
                     vPagerDetail.currentItem = index
                 }
             })
-        } else if (newsListCategory == "DailyDigest") {
-            fetchDataViewModel.dailyDigestDetailNews().observe(this, object : androidx.lifecycle.Observer<List<DetailNewsData>> {
+        } else if (strCategory == "DailyDigest") {
+            dataVM.dailyDigestDetailNews().observe(this, object : androidx.lifecycle.Observer<List<DetailNewsData>> {
                 override fun onChanged(list: List<DetailNewsData>?) {
-                    detailArticleList = list as ArrayList<DetailNewsData>
-                    vPagerDetailAdapter.setData(detailArticleList)
+                    daList = list as ArrayList<DetailNewsData>
+                    detailNewsAdpt.setData(daList)
                     vPagerDetail.currentItem = index
                 }
             })
         } else {
 
             if (token != "") {
-                var list = fetchDataViewModel.getDetailNewsFromDb(categoryId)
+                var list = dataVM.getDetailNewsFromDb(categoryId)
 
-                detailArticleList = list as ArrayList<DetailNewsData>
+                daList = list as ArrayList<DetailNewsData>
             } else {
-                var list = fetchDataViewModel.getDefaultDetailNewsFromDb(categoryId)
+                var list = dataVM.getDefaultDetailNewsFromDb(categoryId)
 
-                detailArticleList = list as ArrayList<DetailNewsData>
+                daList = list as ArrayList<DetailNewsData>
             }
-            vPagerDetailAdapter.setData(detailArticleList)
+            detailNewsAdpt.setData(daList)
             vPagerDetail.currentItem = index
         }
 
-        vPagerDetailAdapter.setCategory(newsListCategory!!)
+        detailNewsAdpt.setCategory(strCategory!!)
 
         vPagerDetail.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(state: Int) {
@@ -151,7 +151,7 @@ class DetailNewsActivity : BaseActivity(), VerticalViewPager.SwiperListener, ITo
 
             override fun onPageSelected(position: Int) {
 
-                if (position == detailArticleList.size - 1) {
+                if (position == daList.size - 1) {
                     Toast.makeText(this@DetailNewsActivity, "You have reached at last news", Toast.LENGTH_SHORT).show()
                 }
 
@@ -182,14 +182,14 @@ class DetailNewsActivity : BaseActivity(), VerticalViewPager.SwiperListener, ITo
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         index = intent.getIntExtra("indexPosition", 0)
-        detailArticleList = intent.getParcelableArrayListExtra<DetailNewsData>("arrayList") ?: arrayListOf()
-        if (detailArticleList != null) {
-            vPagerDetailAdapter.setData(detailArticleList)
-            vPagerDetailAdapter.setCategory(newsListCategory!!)
+        daList = intent.getParcelableArrayListExtra<DetailNewsData>("arrayList") ?: arrayListOf()
+        if (daList != null) {
+            detailNewsAdpt.setData(daList)
+            detailNewsAdpt.setCategory(strCategory!!)
         } else {
-            detailArticleList = ArrayList<DetailNewsData>()
-            vPagerDetailAdapter.setData(detailArticleList)
-            vPagerDetailAdapter.setCategory(newsListCategory!!)
+            daList = ArrayList<DetailNewsData>()
+            detailNewsAdpt.setData(daList)
+            detailNewsAdpt.setCategory(strCategory!!)
         }
     }
 
@@ -227,6 +227,6 @@ class DetailNewsActivity : BaseActivity(), VerticalViewPager.SwiperListener, ITo
 
     override fun gotofirstNews() {
         vPagerDetail.setCurrentItem(0, false)
-        vPagerDetailAdapter.notifyDataSetChanged()
+        detailNewsAdpt.notifyDataSetChanged()
     }
 }

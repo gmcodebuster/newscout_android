@@ -21,19 +21,19 @@ import com.fafadiatech.newscout.viewmodel.FetchDataApiViewModel
 
 class IntroActivity : AppCompatActivity() {
 
-    private var viewPager: ViewPager? = null
-    private var myViewPagerAdapter: MyViewPagerAdapter? = null
+    private var vpIntro: ViewPager? = null
+    private var introAdpt: MyViewPagerAdapter? = null
     private var dotsLayout: LinearLayout? = null
     var dots: Array<TextView?>? = null
     private var layouts: IntArray? = null
     lateinit var btnGetStarted: Button
 
     private var prefManager: PrefManager? = null
-    lateinit var fetchDataViewModel: FetchDataApiViewModel
+    lateinit var dataVM: FetchDataApiViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        fetchDataViewModel = ViewModelProviders.of(this).get(FetchDataApiViewModel::class.java)
+        dataVM = ViewModelProviders.of(this).get(FetchDataApiViewModel::class.java)
 
         prefManager = PrefManager(this)
         if (!prefManager!!.isFirstTimeLaunch()) {
@@ -41,21 +41,21 @@ class IntroActivity : AppCompatActivity() {
         }
 
         setContentView(R.layout.activity_intro_screen)
-        viewPager = findViewById<View>(R.id.view_pager) as ViewPager
+        vpIntro = findViewById<View>(R.id.view_pager) as ViewPager
         dotsLayout = findViewById(R.id.layoutDots)
         btnGetStarted = findViewById(R.id.btn_get_started)
         layouts = intArrayOf(R.layout.welcome_slide_one, R.layout.welcome_slide_two, R.layout.welcome_slide_three,
                 R.layout.welcome_slide_four, R.layout.welcome_slide_five, R.layout.welcome_slide_six)
         addBottomDots(0)
-        myViewPagerAdapter = MyViewPagerAdapter()
-        viewPager!!.setAdapter(myViewPagerAdapter)
-        viewPager!!.addOnPageChangeListener(viewPagerPageChangeListener)
+        introAdpt = MyViewPagerAdapter()
+        vpIntro!!.setAdapter(introAdpt)
+        vpIntro!!.addOnPageChangeListener(viewPagerPageChangeListener)
 
         btnGetStarted.setOnClickListener {
             launchHomeScreen()
         }
 
-        fetchDataViewModel.startMenuWorkManager()
+        dataVM.startMenuWorkManager()
     }
 
     private fun addBottomDots(currentPage: Int) {
@@ -74,7 +74,7 @@ class IntroActivity : AppCompatActivity() {
     }
 
     private fun getItem(i: Int): Int {
-        return viewPager!!.getCurrentItem() + i
+        return vpIntro!!.getCurrentItem() + i
     }
 
     private fun launchHomeScreen() {

@@ -26,7 +26,7 @@ class ChangePasswordActivity : BaseActivity() {
     lateinit var oldPasswordText: String
     lateinit var newPasswordText: String
     lateinit var confirmPasswordText: String
-    lateinit var interfaceObj: ApiInterface
+    lateinit var nApi: ApiInterface
     lateinit var token: String
     lateinit var sharedPref: SharedPreferences
     var status: Int? = null
@@ -43,7 +43,7 @@ class ChangePasswordActivity : BaseActivity() {
         newPassword = findViewById(R.id.et_new_password)
         confirmPassword = findViewById(R.id.et_confirm_pass)
         btnSubmit = findViewById(R.id.btn_enter)
-        interfaceObj = ApiClient.getClient().create(ApiInterface::class.java)
+        nApi = ApiClient.getClient().create(ApiInterface::class.java)
         sharedPref = getSharedPreferences(AppConstant.APPPREF, Context.MODE_PRIVATE)
         token = sharedPref.getString("token value", "")
         name = sharedPref.getString("user name", "")
@@ -57,7 +57,7 @@ class ChangePasswordActivity : BaseActivity() {
     }
 
     fun changePassword() {
-        var call: Call<ChangePasswordData> = interfaceObj.changePassword(token, newPasswordText, confirmPasswordText, oldPasswordText)
+        var call: Call<ChangePasswordData> = nApi.changePassword(token, newPasswordText, confirmPasswordText, oldPasswordText)
         try {
             call.enqueue(object : Callback<ChangePasswordData> {
                 override fun onFailure(call: Call<ChangePasswordData>, t: Throwable) {
@@ -70,7 +70,7 @@ class ChangePasswordActivity : BaseActivity() {
 
                         var deviceId = themePreference.getString("device_token", "")
                         val sessionId = getUniqueCode(this@ChangePasswordActivity, themePreference)
-                        trackingCallback(interfaceObj, themePreference, 0, "", 0, "", "", ActionType.CHANGEPASSWORD.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
+                        trackingCallback(nApi, themePreference, 0, "", 0, "", "", ActionType.CHANGEPASSWORD.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
                         val resultMessage: String? = response.body()?.body?.Msg
 
                         finish()

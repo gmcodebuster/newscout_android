@@ -23,7 +23,7 @@ import retrofit2.Response
 
 class ForgotPasswordActivity : BaseActivity() {
 
-    lateinit var interfaceObj: ApiInterface
+    lateinit var nApi: ApiInterface
     lateinit var emailText: String
     var status: Int? = null
     lateinit var pBar: ProgressBar
@@ -32,7 +32,7 @@ class ForgotPasswordActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_forgot_password)
-        interfaceObj = ApiClient.getClient().create(ApiInterface::class.java)
+        nApi = ApiClient.getClient().create(ApiInterface::class.java)
         var edTextEmail = findViewById<AppCompatEditText>(R.id.et_email)
 
         var btnSubmit = findViewById<Button>(R.id.btn_enter_forgot_pass)
@@ -49,7 +49,7 @@ class ForgotPasswordActivity : BaseActivity() {
 
     fun forgotPassword() {
 
-        var call: Call<ForgotPasswordData> = interfaceObj.forgotPassword(emailText)
+        var call: Call<ForgotPasswordData> = nApi.forgotPassword(emailText)
         try {
 
             call.enqueue(object : Callback<ForgotPasswordData> {
@@ -72,7 +72,7 @@ class ForgotPasswordActivity : BaseActivity() {
                             //dismiss progress bar
                             var deviceId = themePreference.getString("device_token", "")
                             val sessionId = getUniqueCode(this@ForgotPasswordActivity, themePreference)
-                            trackingCallback(interfaceObj, themePreference, 0, "", 0, "", "", ActionType.FORGOTPASSWORD.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
+                            trackingCallback(nApi, themePreference, 0, "", 0, "", "", ActionType.FORGOTPASSWORD.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, "", 0)
 
                         } else if (status == 0) {
                             //Display Dialog

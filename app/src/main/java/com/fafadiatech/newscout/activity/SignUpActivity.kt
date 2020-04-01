@@ -23,17 +23,17 @@ import retrofit2.Response
 
 class SignUpActivity : BaseActivity() {
 
-    lateinit var firstName: AppCompatEditText
-    lateinit var lastName: AppCompatEditText
-    lateinit var userEmail: AppCompatEditText
-    lateinit var userPassWord: AppCompatEditText
-    lateinit var retypePassword: AppCompatEditText
+    lateinit var etFirstName: AppCompatEditText
+    lateinit var etLastName: AppCompatEditText
+    lateinit var etEmail: AppCompatEditText
+    lateinit var etPassWord: AppCompatEditText
+    lateinit var etRePassWord: AppCompatEditText
     lateinit var btnRegister: Button
-    lateinit var firstNameText: String
-    lateinit var lastNameText: String
-    lateinit var userEmailText: String
-    lateinit var userPasswordText: String
-    lateinit var apiInterfaceSignUp: ApiInterface
+    lateinit var strFirstName: String
+    lateinit var strLastName: String
+    lateinit var strEmail: String
+    lateinit var strPassword: String
+    lateinit var nApi: ApiInterface
     var status: Int? = null
     var isNetwork: Boolean = false
 
@@ -41,24 +41,24 @@ class SignUpActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_up)
         var toolbarText = findViewById<TextView>(R.id.toolbar_title)
-        apiInterfaceSignUp = ApiClient.getClient().create(ApiInterface::class.java)
+        nApi = ApiClient.getClient().create(ApiInterface::class.java)
         val login = findViewById<TextView>(R.id.txt_already_member)
         login.setOnClickListener {
             val intent = Intent(this, SignInActivity::class.java)
             startActivity(intent)
         }
-        firstName = findViewById(R.id.ed_first_name)
-        lastName = findViewById(R.id.ed_last_name)
-        userEmail = findViewById(R.id.ed_enter_email)
-        userPassWord = findViewById(R.id.ed_password)
-        retypePassword = findViewById(R.id.retype_ed_password)
+        etFirstName = findViewById(R.id.ed_first_name)
+        etLastName = findViewById(R.id.ed_last_name)
+        etEmail = findViewById(R.id.ed_enter_email)
+        etPassWord = findViewById(R.id.ed_password)
+        etRePassWord = findViewById(R.id.retype_ed_password)
         btnRegister = findViewById(R.id.btn_register)
 
         btnRegister.setOnClickListener {
-            firstNameText = firstName.text.toString()
-            lastNameText = lastName.text.toString()
-            userEmailText = userEmail.text.toString()
-            userPasswordText = userPassWord.text.toString()
+            strFirstName = etFirstName.text.toString()
+            strLastName = etLastName.text.toString()
+            strEmail = etEmail.text.toString()
+            strPassword = etPassWord.text.toString()
             if (isNetwork) {
                 signupThroughApi()
             } else {
@@ -70,7 +70,7 @@ class SignUpActivity : BaseActivity() {
 
     fun signupThroughApi() {
         try {
-            var call: Call<SignUpMessageData> = apiInterfaceSignUp.signUpByApi(firstNameText, lastNameText, userEmailText, userPasswordText)
+            var call: Call<SignUpMessageData> = nApi.signUpByApi(strFirstName, strLastName, strEmail, strPassword)
             call.enqueue(object : Callback<SignUpMessageData> {
 
                 override fun onResponse(call: Call<SignUpMessageData>, response: Response<SignUpMessageData>) {
@@ -78,7 +78,7 @@ class SignUpActivity : BaseActivity() {
                     if (responseCode >= 200 && responseCode < 400) {
                         var deviceId = themePreference.getString("device_token", "")
                         val sessionId = getUniqueCode(this@SignUpActivity, themePreference)
-                        signupTrackingCallback(apiInterfaceSignUp, themePreference, ActionType.SIGNUP.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, firstNameText?:"", lastNameText?:"", "", userEmailText)
+                        signupTrackingCallback(nApi, themePreference, ActionType.SIGNUP.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, strFirstName?:"", strLastName?:"", "", strEmail)
                         status = response.body()?.header?.status
                         var result: String = response.body()?.body!!.Msg
                         Toast.makeText(this@SignUpActivity, result, Toast.LENGTH_SHORT).show()

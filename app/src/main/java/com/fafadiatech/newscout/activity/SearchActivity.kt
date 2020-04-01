@@ -43,10 +43,10 @@ class SearchActivity : AppCompatActivity(), ProgressBarListener {
     lateinit var searchView: SearchView
     lateinit var rvNews: RecyclerView
     lateinit var query: String
-    lateinit var apiInterface: ApiInterface
-    lateinit var progressBar: ProgressBar
+    lateinit var nApi: ApiInterface
+    lateinit var pBar: ProgressBar
     lateinit var themePreference: SharedPreferences
-    lateinit var fetchDataViewModel: FetchDataApiViewModel
+    lateinit var dataVM: FetchDataApiViewModel
     lateinit var emptyText: LinearLayout
     var emptyTextFlag: Boolean = false
     var deviceWidthDp: Float = 0f
@@ -74,12 +74,12 @@ class SearchActivity : AppCompatActivity(), ProgressBarListener {
         getDelegate().setLocalNightMode(defaultNightMode)
         var themes: Int = themePreference.getInt("theme", R.style.DefaultMedium)
         var isNightModeEnable = themePreference.getBoolean("night mode enable", false)
-        fetchDataViewModel = ViewModelProviders.of(this).get(FetchDataApiViewModel::class.java)
+        dataVM = ViewModelProviders.of(this).get(FetchDataApiViewModel::class.java)
         this.setTheme(themes)
         setContentView(R.layout.activity_search)
         var toolbarText = findViewById<TextView>(R.id.toolbar_title)
         searchView = findViewById(R.id.search_view)
-        progressBar = findViewById(R.id.progressBar_searchScreen)
+        pBar = findViewById(R.id.progressBar_searchScreen)
         emptyText = findViewById(R.id.empty_message)
         var btnCross: ImageView = this.searchView.findViewById(androidx.appcompat.R.id.search_close_btn)
 
@@ -122,7 +122,7 @@ class SearchActivity : AppCompatActivity(), ProgressBarListener {
             }
         })
 
-        fetchDataViewModel.getSearchSuggestedData().observe(this, object : androidx.lifecycle.Observer<List<String>> {
+        dataVM.getSearchSuggestedData().observe(this, object : androidx.lifecycle.Observer<List<String>> {
             override fun onChanged(list: List<String>?) {
                 suggestionList = list as ArrayList<String>
                 val suggestionAdapter = ArrayAdapter(this@SearchActivity, android.R.layout.simple_dropdown_item_1line, suggestionList)
@@ -151,11 +151,11 @@ class SearchActivity : AppCompatActivity(), ProgressBarListener {
                 } else {
 
                     var deviceId = themePreference.getString("device_token", "")
-                    fetchDataViewModel.startSearchSuggestionWorkManager(query)
-                    //trackUserSearch(apiInterface, "search", deviceId, "android", query)
+                    dataVM.startSearchSuggestionWorkManager(query)
+                    //trackUserSearch(nApi, "search", deviceId, "android", query)
 
-                    progressBar.visibility = View.VISIBLE
-                    fetchDataViewModel.deleteSearchTableWork()
+                    pBar.visibility = View.VISIBLE
+                    dataVM.deleteSearchTableWork()
 
                     var searchAdapter = SearchAdapter(this@SearchActivity, "Search", progressBarListener)
                     val itemDataSourceFactory = SearchDataSourceFactory(this@SearchActivity, query)
@@ -172,7 +172,7 @@ class SearchActivity : AppCompatActivity(), ProgressBarListener {
 
 
                     itemPagedList.observe(this@SearchActivity, Observer<PagedList<NewsEntity>> {
-                        progressBar.visibility = View.VISIBLE
+                        pBar.visibility = View.VISIBLE
                         Log.d("Search Activity", "Paged List :"+ it.size)
 
                         Log.d("Search Activity", "Paged List snapshot :"+ it.snapshot().size)
@@ -184,11 +184,11 @@ class SearchActivity : AppCompatActivity(), ProgressBarListener {
                                 Log.d("SearchActivity", "onChanged Size : "+count)
                                 if(count == 0){
                                     Log.d("","")
-                                    progressBar.visibility = View.GONE
+                                    pBar.visibility = View.GONE
                                     emptyText.visibility = View.VISIBLE
                                     //emptyText.text = "No data found"
                                 }else{
-                                    progressBar.visibility = View.VISIBLE
+                                    pBar.visibility = View.VISIBLE
                                     emptyText.visibility = View.GONE
                                 }
                             }
@@ -196,11 +196,11 @@ class SearchActivity : AppCompatActivity(), ProgressBarListener {
                             override fun onInserted(position: Int, count: Int) {
                                 Log.d("SearchActivity", "onInserted Size : "+count)
                                 if(count == 0){
-                                    progressBar.visibility = View.GONE
+                                    pBar.visibility = View.GONE
                                     emptyText.visibility = View.VISIBLE
                                     //emptyText.text = "No data found"
                                 }else{
-                                    progressBar.visibility = View.GONE
+                                    pBar.visibility = View.GONE
                                     rvNews.visibility = View.VISIBLE
                                     emptyText.visibility = View.GONE
                                 }
@@ -213,7 +213,7 @@ class SearchActivity : AppCompatActivity(), ProgressBarListener {
 
                     })
                     val sessionId = getUniqueCode(this@SearchActivity, themePreference)
-                    trackingCallback(apiInterface, themePreference, 0, queryText, 0, "", "", ActionType.SEARCHQUERY.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId,"",0)
+                    trackingCallback(nApi, themePreference, 0, queryText, 0, "", "", ActionType.SEARCHQUERY.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId,"",0)
 
                 }
                 return false
@@ -222,7 +222,7 @@ class SearchActivity : AppCompatActivity(), ProgressBarListener {
             override fun onQueryTextChange(newText: String?): Boolean {
                 if (newText!!.length >= 2) {
                     var query = newText + "%"
-                    var titleList = fetchDataViewModel.getTitleBySearch(query)
+                    var titleList = dataVM.getTitleBySearch(query)
                     val suggestionAdapter = ArrayAdapter(this@SearchActivity, android.R.layout.simple_dropdown_item_1line, titleList)
                     searchAutoComplete.setAdapter(suggestionAdapter)
 
@@ -234,14 +234,14 @@ class SearchActivity : AppCompatActivity(), ProgressBarListener {
         btnCross.setOnClickListener {
             searchEditText.text.clear()
             emptyText.visibility = View.INVISIBLE
-            fetchDataViewModel.deleteSearchTableWork()
+            dataVM.deleteSearchTableWork()
             emptyTextFlag = false
             val suggestionAdapter = ArrayAdapter(this@SearchActivity, android.R.layout.simple_dropdown_item_1line, suggestionList)
             searchAutoComplete.setAdapter(suggestionAdapter)
 
         }
 
-        apiInterface = ApiClient.getClient().create(ApiInterface::class.java)
+        nApi = ApiClient.getClient().create(ApiInterface::class.java)
         val itemDecorator = DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
         if (deviceWidthDp < 600) {
             layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
@@ -260,11 +260,11 @@ class SearchActivity : AppCompatActivity(), ProgressBarListener {
 
     override fun onBackPressed() {
         super.onBackPressed()
-        fetchDataViewModel.deleteSearchTableWork()
+        dataVM.deleteSearchTableWork()
     }
 
     override fun showProgress() {
-        progressBar.visibility = View.GONE
+        pBar.visibility = View.GONE
     }
 
     override fun onResume() {
@@ -279,7 +279,7 @@ class SearchActivity : AppCompatActivity(), ProgressBarListener {
         get() = (rvNews!!.layoutManager!! as LinearLayoutManager).findLastVisibleItemPosition()
 
     private fun showEmptyList(show: Boolean) {
-        progressBar.visibility = View.GONE
+        pBar.visibility = View.GONE
         if (show) {
             emptyText.visibility = View.VISIBLE
             rvNews.visibility = View.GONE

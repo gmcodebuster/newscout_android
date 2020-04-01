@@ -39,10 +39,10 @@ import com.fafadiatech.newscout.paging.SourceItemDataSource
 
 class SourceActivity : AppCompatActivity(), PlaceHolderImageListener {
 
-    lateinit var interfaceObj: ApiInterface
+    lateinit var nApi: ApiInterface
     var list = ArrayList<ArticlesData>()
     var newsList = ArrayList<NewsEntity>()
-    lateinit var adapter: NewsAdapter
+    //lateinit var adapter: NewsAdapter
     lateinit var itemPagedList: LiveData<PagedList<NewsEntity>>
     lateinit var liveDataSource: LiveData<PageKeyedDataSource<Int, NewsEntity>>
     var source: String = ""
@@ -81,8 +81,8 @@ class SourceActivity : AppCompatActivity(), PlaceHolderImageListener {
         var emptyView = findViewById<TextView>(R.id.empty_view)
         var toolbarTitle = findViewById<TextView>(R.id.toolbar_title)
         emptyView.visibility = View.GONE
-        interfaceObj = ApiClient.getClient().create(ApiInterface::class.java)
-        var adapterObj = NewsAdapter(this, "Source")
+        nApi = ApiClient.getClient().create(ApiInterface::class.java)
+        var newsAdpt = NewsAdapter(this, "Source")
         fabReturnTop = findViewById(R.id.fab_return_top)
         fabReturnTop.visibility = View.INVISIBLE
         val itemDecorator = DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
@@ -97,7 +97,7 @@ class SourceActivity : AppCompatActivity(), PlaceHolderImageListener {
         }
 
         rvSource.layoutManager = layoutManager
-        rvSource.adapter = adapterObj
+        rvSource.adapter = newsAdpt
         var intent = intent
         var source = intent.getStringExtra("source_from_detail")
         val itemDataSourceFactory = SourceDataSourceFactory(this.application, source)
@@ -117,7 +117,7 @@ class SourceActivity : AppCompatActivity(), PlaceHolderImageListener {
                     newsList.add(index, AdsData("",""))
                 }
             }*/
-            adapterObj.submitList(it)
+            newsAdpt.submitList(it)
         })
 
         animFadein = AnimationUtils.loadAnimation(this@SourceActivity, R.anim.fade_in)

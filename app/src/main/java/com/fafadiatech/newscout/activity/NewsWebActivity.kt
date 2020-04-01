@@ -17,15 +17,15 @@ class NewsWebActivity : BaseActivity() {
 
     lateinit var urlLink: String
     val activity: Activity = this
-    lateinit var progressBar: ProgressBar
+    lateinit var pBar: ProgressBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_web_view)
-        progressBar = findViewById(R.id.progress_bar)
-        progressBar.max = 100
-        progressBar.progress = 1
+        pBar = findViewById(R.id.progress_bar)
+        pBar.max = 100
+        pBar.progress = 1
         var browser: CustomWebView = findViewById(R.id.webView) as CustomWebView
         var webSettings: WebSettings = browser.settings
         webSettings.javaScriptEnabled = true
@@ -36,20 +36,20 @@ class NewsWebActivity : BaseActivity() {
 
         browser.webChromeClient = object : WebChromeClient() {
             override fun onProgressChanged(view: WebView, progress: Int) {
-                progressBar.progress = progress
+                pBar.progress = progress
                 if (progress == 100) {
-                    progressBar.visibility = View.GONE
+                    pBar.visibility = View.GONE
                 }
             }
         }
 
         browser.webViewClient = object : WebViewClient() {
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
-                progressBar.visibility = View.VISIBLE
+                pBar.visibility = View.VISIBLE
             }
 
             override fun onPageFinished(view: WebView?, url: String?) {
-                progressBar.visibility = View.GONE
+                pBar.visibility = View.GONE
             }
         }
 

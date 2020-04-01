@@ -40,11 +40,11 @@ import kotlin.collections.ArrayList
 
 class SignInActivity : BaseActivity() {
 
-    lateinit var interfaceObj: ApiInterface
-    lateinit var emailText: String
-    lateinit var passwordText: String
+    lateinit var nApi: ApiInterface
+    lateinit var strEmail: String
+    lateinit var strPassword: String
     var status: Int? = null
-    lateinit var txtViewcreateAccount: TextView
+    lateinit var tvCreateAcc: TextView
     lateinit var email: AppCompatEditText
     private var mCallbackManager: CallbackManager? = null
     lateinit var mGoogleSignInClient: GoogleSignInClient
@@ -52,9 +52,9 @@ class SignInActivity : BaseActivity() {
     var success: Int = 0
     lateinit var btnSignIn: Button
     lateinit var password: AppCompatEditText
-    var categoryListServer = ArrayList<String>()
+    var categoryList = ArrayList<String>()
     var isNetwork: Boolean = false
-    lateinit var fetchDataViewModel: FetchDataApiViewModel
+    lateinit var dataVM: FetchDataApiViewModel
     var position: Int = 0
     var token: String? = ""
     lateinit var btnLoginGoogle: SignInButton
@@ -64,7 +64,7 @@ class SignInActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        fetchDataViewModel = ViewModelProviders.of(this).get(FetchDataApiViewModel::class.java)
+        dataVM = ViewModelProviders.of(this).get(FetchDataApiViewModel::class.java)
 
         position = intent.getIntExtra("detail_news_item_position", 0)
         setContentView(R.layout.activity_sign_in)
@@ -72,14 +72,14 @@ class SignInActivity : BaseActivity() {
         var fontTypeface = Typeface.createFromAsset(assets, "HelveticaNeueMed.ttf")
 
         mCallbackManager = CallbackManager.Factory.create()
-        interfaceObj = ApiClient.getClient().create(ApiInterface::class.java)
+        nApi = ApiClient.getClient().create(ApiInterface::class.java)
         email = findViewById<AppCompatEditText>(R.id.ed_enter_email_signIn)
         password = findViewById<AppCompatEditText>(R.id.ed_password_signIn)
         btnSignIn = findViewById<Button>(R.id.btn_sign_in)
         var btnForgotPassword = findViewById<Button>(R.id.btn_forgot_password)
         val btnLoginFacebook = findViewById<LoginButton>(R.id.btn_login_facebook)
         btnLoginGoogle = findViewById<SignInButton>(R.id.btn_login_google)
-        txtViewcreateAccount = findViewById(R.id.create_Account)
+        tvCreateAcc = findViewById(R.id.create_Account)
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail().requestIdToken(getString(R.string.web_client_id)).build()
@@ -87,8 +87,8 @@ class SignInActivity : BaseActivity() {
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
 
         btnSignIn.setOnClickListener {
-            emailText = email.text.toString()
-            passwordText = password.text.toString()
+            strEmail = email.text.toString()
+            strPassword = password.text.toString()
 
             if (isNetwork == true) {
                 signIn()
@@ -102,7 +102,7 @@ class SignInActivity : BaseActivity() {
             startActivity(intent)
         }
 
-        txtViewcreateAccount.setOnClickListener {
+        tvCreateAcc.setOnClickListener {
             val startIntent = Intent(this, SignUpActivity::class.java)
             startActivity(startIntent)
         }
@@ -133,7 +133,7 @@ class SignInActivity : BaseActivity() {
 
                 var facebookToken = loginResult.accessToken.token
                 var deviceId: String = themePreference.getString("device_token", "")
-                var call: Call<MessageLoginData> = interfaceObj.loginBySocial("facebook", deviceId, "android", facebookToken)
+                var call: Call<MessageLoginData> = nApi.loginBySocial("facebook", deviceId, "android", facebookToken)
                 call.enqueue(object : Callback<MessageLoginData> {
                     override fun onFailure(call: Call<MessageLoginData>, t: Throwable) {
 
@@ -147,11 +147,11 @@ class SignInActivity : BaseActivity() {
                                 val sessionId = getUniqueCode(this@SignInActivity, themePreference)
                                 var token = response.body()!!.body.user.token
                                 token = "Token " + token
-                                fetchDataViewModel.startVoteServerDataWorkManager(token)
+                                dataVM.startVoteServerDataWorkManager(token)
                                 var firstName = response.body()?.body?.user?.first_name
                                 var lastName = response.body()?.body?.user?.last_name
                                 var userName = firstName + " " + lastName
-                                signinTrackingCallback(interfaceObj, themePreference, ActionType.LOGIN.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, firstName?:"", lastName?:"", token?:"", "")
+                                signinTrackingCallback(nApi, themePreference, ActionType.LOGIN.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, firstName?:"", lastName?:"", token?:"", "")
                                 var editor = themePreference.edit()
                                 editor.putString("token value", token)
                                 editor.putString("user name", userName)
@@ -204,7 +204,7 @@ class SignInActivity : BaseActivity() {
 
     fun signIn() {
         try {
-            var call: Call<MessageLoginData> = interfaceObj.loginByApi(emailText, passwordText, AppConstant.DEVICE_ID, AppConstant.DEVICE_NAME)
+            var call: Call<MessageLoginData> = nApi.loginByApi(strEmail, strPassword, AppConstant.DEVICE_ID, AppConstant.DEVICE_NAME)
             call.enqueue(object : Callback<MessageLoginData> {
                 override fun onFailure(call: Call<MessageLoginData>, t: Throwable) {
 
@@ -221,23 +221,23 @@ class SignInActivity : BaseActivity() {
                         token = response.body()?.body?.user?.token
                         val editor = themePreference.edit()
                         token = "Token " + token
-                        fetchDataViewModel.startVoteServerDataWorkManager(token!!)
+                        dataVM.startVoteServerDataWorkManager(token!!)
                         editor.putString("token value", token)
-                        editor.putString("login success", emailText)
+                        editor.putString("login success", strEmail)
                         var firstName = response.body()?.body?.user?.first_name
                         var lastName = response.body()?.body?.user?.last_name
                         var savedCategoryList: ArrayList<UserPassionData> = response.body()?.body?.user?.passion!!
                         for (i in 0 until savedCategoryList.size) {
                             var entity = savedCategoryList.get(i)
-                            categoryListServer.add(entity.name)
+                            categoryList.add(entity.name)
                         }
 
                         var deviceId = themePreference.getString("device_token", "")
                         val sessionId = getUniqueCode(this@SignInActivity, themePreference)
-                        signinTrackingCallback(interfaceObj, themePreference, ActionType.LOGIN.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, firstName?:"", lastName?:"", token?:"", emailText)
+                        signinTrackingCallback(nApi, themePreference, ActionType.LOGIN.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, firstName?:"", lastName?:"", token?:"", strEmail)
 
                         var gson = Gson()
-                        var json: String = gson.toJson(categoryListServer)
+                        var json: String = gson.toJson(categoryList)
                         var userName = firstName + " " + lastName
                         editor.putString("user name", userName)
                         editor.putString("saved_category_list", json)
@@ -287,7 +287,7 @@ class SignInActivity : BaseActivity() {
             var deviceId = themePreference.getString("device_token", "")
 
             Toast.makeText(this, "Login Successful using Google", Toast.LENGTH_SHORT).show()
-            var call: Call<MessageLoginData> = interfaceObj.loginBySocial("google", deviceId, "android", webToken!!)
+            var call: Call<MessageLoginData> = nApi.loginBySocial("google", deviceId, "android", webToken!!)
             call.enqueue(object : Callback<MessageLoginData> {
                 override fun onFailure(call: Call<MessageLoginData>, t: Throwable) {
                     success = 0
@@ -299,14 +299,14 @@ class SignInActivity : BaseActivity() {
                         if(code >= 200 && code < 300){
                             var token = response.body()!!.body.user.token
                             token = "Token " + token
-                            fetchDataViewModel.startVoteServerDataWorkManager(token)
+                            dataVM.startVoteServerDataWorkManager(token)
                             var firstName = response.body()?.body?.user?.first_name
                             var lastName = response.body()?.body?.user?.last_name
                             var userName = firstName + " " + lastName
 
                             val sessionId = getUniqueCode(this@SignInActivity, themePreference)
 
-                            signinTrackingCallback(interfaceObj, themePreference, ActionType.LOGIN.type, deviceId
+                            signinTrackingCallback(nApi, themePreference, ActionType.LOGIN.type, deviceId
                                     ?: "", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, firstName
                                     ?: "", lastName ?: "", token ?: "", "")
                             var editor = themePreference.edit()
@@ -365,7 +365,7 @@ class SignInActivity : BaseActivity() {
     }
 
     fun getLikedListFromServer(token: String) {
-        var call: Call<VoteArticleDataServer> = interfaceObj.getLikedListFromServer(token)
+        var call: Call<VoteArticleDataServer> = nApi.getLikedListFromServer(token)
         call.enqueue(object : Callback<VoteArticleDataServer> {
             override fun onFailure(call: Call<VoteArticleDataServer>, t: Throwable) {
             }

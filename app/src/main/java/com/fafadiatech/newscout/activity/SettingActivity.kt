@@ -17,7 +17,7 @@ class SettingActivity : AppCompatActivity() {
 
     lateinit var themePreference: SharedPreferences
     lateinit var emailText: String
-    lateinit var interfaceObj: ApiInterface
+    lateinit var nApi: ApiInterface
     lateinit var token: String
     var isNightMode: Boolean = false
 
@@ -31,7 +31,7 @@ class SettingActivity : AppCompatActivity() {
         this.setTheme(themes)
         setContentView(R.layout.activity_setting)
         var toolbarText = findViewById<TextView>(R.id.toolbar_title)
-        interfaceObj = ApiClient.getClient().create(ApiInterface::class.java)
+        nApi = ApiClient.getClient().create(ApiInterface::class.java)
         token = themePreference.getString("token value", "")
         emailText = themePreference.getString("login success", "")
 
