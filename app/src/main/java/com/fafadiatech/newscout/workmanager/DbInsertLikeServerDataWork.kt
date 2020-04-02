@@ -16,19 +16,19 @@ import retrofit2.Response
 class DbInsertLikeServerDataWork(context: Context, params: WorkerParameters) : Worker(context, params) {
 
     private var newsDatabase: NewsDatabase? = null
-    var apiInterface: ApiInterface
-    var likeDao: NewsDao
+    var nApi: ApiInterface
+    var newsDao: NewsDao
 
     init {
         newsDatabase = NewsDatabase.getInstance(context)
-        likeDao = newsDatabase!!.newsDao()
-        apiInterface = ApiClient.getClient().create(ApiInterface::class.java)
+        newsDao = newsDatabase!!.newsDao()
+        nApi = ApiClient.getClient().create(ApiInterface::class.java)
     }
 
     override fun doWork(): Result {
         var token = inputData.getString("token_value_from_sign_in")
         var resultList = ArrayList<LikeEntity>()
-        var call: Call<VoteArticleDataServer> = apiInterface.getLikedListFromServer(token!!)
+        var call: Call<VoteArticleDataServer> = nApi.getLikedListFromServer(token!!)
         try {
             var response: Response<VoteArticleDataServer> = call.execute()
             if (response.isSuccessful) {
@@ -38,7 +38,7 @@ class DbInsertLikeServerDataWork(context: Context, params: WorkerParameters) : W
                     var likeEntity = LikeEntity(0, obj.article, obj.is_like)
                     resultList.add(likeEntity)
                 }
-                likeDao.insertLikeServerData(resultList)
+                newsDao.insertLikeServerData(resultList)
             }
             return Result.success()
         } catch (e: Throwable) {

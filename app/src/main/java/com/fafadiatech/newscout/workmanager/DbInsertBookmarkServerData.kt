@@ -16,19 +16,19 @@ import retrofit2.Response
 class DbInsertBookmarkServerData(context: Context, params: WorkerParameters) : Worker(context, params) {
 
     private var newsDatabase: NewsDatabase? = null
-    var apiInterface: ApiInterface
-    var bookmarkDao: NewsDao
+    var nApi: ApiInterface
+    var newsDao: NewsDao
 
     init {
         newsDatabase = NewsDatabase.getInstance(context)
-        apiInterface = ApiClient.getClient().create(ApiInterface::class.java)
-        bookmarkDao = newsDatabase!!.newsDao()
+        nApi = ApiClient.getClient().create(ApiInterface::class.java)
+        newsDao = newsDatabase!!.newsDao()
     }
 
     override fun doWork(): Result {
         var token = inputData.getString("token_value_from_sign_in")
         var result = ArrayList<BookmarkEntity>()
-        var call: Call<BookmarkArticleDataServer> = apiInterface.getBookmarkListFromServer(token!!)
+        var call: Call<BookmarkArticleDataServer> = nApi.getBookmarkListFromServer(token!!)
         try {
             var response: Response<BookmarkArticleDataServer> = call.execute()
             if (response.isSuccessful) {
@@ -38,7 +38,7 @@ class DbInsertBookmarkServerData(context: Context, params: WorkerParameters) : W
                     var bookmarkEntity = BookmarkEntity(0, entity.article, entity.status)
                     result.add(bookmarkEntity)
                 }
-                bookmarkDao.insertBookmarkServerData(result)
+                newsDao.insertBookmarkServerData(result)
             }
 
             return Result.success()

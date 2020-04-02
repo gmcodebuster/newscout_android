@@ -12,22 +12,22 @@ import com.fafadiatech.newscout.db.SearchSuggestionEntity
 
 class DbInsertSearchSuggestionWork(context: Context, params: WorkerParameters) : Worker(context, params) {
 
-    var articleNewsDao: NewsDao
+    var newsDao: NewsDao
     private var newsDatabase: NewsDatabase? = null
     var list = ArrayList<SearchDataEntity>()
-    var apiInterface: ApiInterface
+    var nApi: ApiInterface
 
     init {
         newsDatabase = NewsDatabase.getInstance(context)
-        articleNewsDao = newsDatabase!!.newsDao()
-        apiInterface = ApiClient.getClient().create(ApiInterface::class.java)
+        newsDao = newsDatabase!!.newsDao()
+        nApi = ApiClient.getClient().create(ApiInterface::class.java)
     }
 
     override fun doWork(): Result {
         var searchQuery: String? = inputData.getString("search_query_text")
         var searchEntity = SearchSuggestionEntity()
         searchEntity.query = searchQuery
-        articleNewsDao.insertSearchQuery(searchEntity)
+        newsDao.insertSearchQuery(searchEntity)
         return Result.success()
     }
 }

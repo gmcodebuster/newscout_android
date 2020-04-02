@@ -15,26 +15,26 @@ import retrofit2.Response
 
 class DbInsertSearchWork(context: Context, params: WorkerParameters) : Worker(context, params) {
 
-    var articleNewsDao: NewsDao
+    var newsDao: NewsDao
     private var newsDatabase: NewsDatabase? = null
     var newsList = ArrayList<SearchDataEntity>()
-    var apiInterface: ApiInterface
+    var nApi: ApiInterface
     var context: Context
 
     init {
         newsDatabase = NewsDatabase.getInstance(context)
-        articleNewsDao = newsDatabase!!.newsDao()
-        apiInterface = ApiClient.getClient().create(ApiInterface::class.java)
+        newsDao = newsDatabase!!.newsDao()
+        nApi = ApiClient.getClient().create(ApiInterface::class.java)
         this.context = context
     }
 
     override fun doWork(): Result {
         var query: String? = inputData.getString("search_query")
-        var call: Call<NewsDataApi> = apiInterface.searchNewsFromApi(query!!)
+        var call: Call<NewsDataApi> = nApi.searchNewsFromApi(query!!)
         try {
             var response: Response<NewsDataApi> = call.execute()
             var responseCode = response.code()
-            articleNewsDao.deleteSearchTableData()
+            newsDao.deleteSearchTableData()
             if (responseCode == 200) {
                 var list = ArrayList<ArticlesData>()
 
@@ -57,11 +57,11 @@ class DbInsertSearchWork(context: Context, params: WorkerParameters) : Worker(co
                         newsList.add(entityObj)
                     }
 
-                    articleNewsDao.insertSearchNews(newsList)
+                    newsDao.insertSearchNews(newsList)
                 }
             } else {
                 newsList.clear()
-                articleNewsDao.insertSearchNews(newsList)
+                newsDao.insertSearchNews(newsList)
             }
             return Result.success()
         } catch (exeption: Throwable) {

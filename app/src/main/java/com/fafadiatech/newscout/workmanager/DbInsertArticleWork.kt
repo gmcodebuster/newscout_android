@@ -14,10 +14,10 @@ import retrofit2.Response
 
 class DbInsertArticleWork(context: Context, params: WorkerParameters) : Worker(context, params) {
 
-    var articleNewsDao: NewsDao
+    var newsDao: NewsDao
     private var newsDatabase: NewsDatabase? = null
     var newsList = ArrayList<NewsEntity>()
-    var apiInterface: ApiInterface
+    var nApi: ApiInterface
     var nextPageUrl: String? = null
     var prevPageUrl: String? = null
     var cursorNext: String? = null
@@ -25,14 +25,14 @@ class DbInsertArticleWork(context: Context, params: WorkerParameters) : Worker(c
 
     init {
         newsDatabase = NewsDatabase.getInstance(context)
-        articleNewsDao = newsDatabase!!.newsDao()
-        apiInterface = ApiClient.getClient().create(ApiInterface::class.java)
+        newsDao = newsDatabase!!.newsDao()
+        nApi = ApiClient.getClient().create(ApiInterface::class.java)
     }
 
     override fun doWork(): Result {
         var categoryValue = inputData.getString("category_value_worker")
         var tag = inputData.getString("tag_value")
-        var call: Call<NewsDataApi> = apiInterface.getNewsFromTag(tag!!)
+        var call: Call<NewsDataApi> = nApi.getNewsFromTag(tag!!)
         try {
             var response: Response<NewsDataApi> = call.execute()
             var responseCode = response.code()
@@ -84,9 +84,9 @@ class DbInsertArticleWork(context: Context, params: WorkerParameters) : Worker(c
                             articleMediaArrayList.add(articleMediaEntity)
                         }
                     }
-                    articleNewsDao.insertNews(newsList)
-                    articleNewsDao.insertHashTagList(hashTagArrayList)
-                    articleNewsDao.insertArticleMediaList(articleMediaArrayList)
+                    newsDao.insertNews(newsList)
+                    newsDao.insertHashTagList(hashTagArrayList)
+                    newsDao.insertArticleMediaList(articleMediaArrayList)
                 }
                 return Result.success()
             }

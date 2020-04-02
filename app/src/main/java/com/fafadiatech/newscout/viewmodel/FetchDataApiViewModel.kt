@@ -27,7 +27,7 @@ import com.fafadiatech.newscout.workmanager.*
 
 
 class FetchDataApiViewModel(application: Application, mParams: String) : AndroidViewModel(application) {
-    var apiInterface = ApiClient.getClient().create(ApiInterface::class.java)
+    var nApi = ApiClient.getClient().create(ApiInterface::class.java)
     var articleList = MutableLiveData<ArrayList<ArticlesData>>()
     var cursorNext: String? = null
     var nextPageUrl: String? = null

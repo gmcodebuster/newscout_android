@@ -15,13 +15,13 @@ import retrofit2.Response
 class DbInsertLikeDataWork(context: Context, params: WorkerParameters) : Worker(context, params) {
 
     private var newsDatabase: NewsDatabase? = null
-    var apiInterface: ApiInterface
-    var likeDao: NewsDao
+    var nApi: ApiInterface
+    var newsDao: NewsDao
 
     init {
         newsDatabase = NewsDatabase.getInstance(context)
-        likeDao = newsDatabase!!.newsDao()
-        apiInterface = ApiClient.getClient().create(ApiInterface::class.java)
+        newsDao = newsDatabase!!.newsDao()
+        nApi = ApiClient.getClient().create(ApiInterface::class.java)
     }
 
     override fun doWork(): Result {
@@ -29,12 +29,12 @@ class DbInsertLikeDataWork(context: Context, params: WorkerParameters) : Worker(
         var id: Int = 0
         var newsId: Int = inputData.getInt("news_id_detail", 0)
         var isLike: Int = inputData.getInt("is_like_value_detail", 2)
-        var call: Call<VoteArticleData> = apiInterface.voteArticlesByApi(tokenValue!!, isLike, newsId)
+        var call: Call<VoteArticleData> = nApi.voteArticlesByApi(tokenValue!!, isLike, newsId)
         try {
             var response: Response<VoteArticleData> = call.execute()
             var message = response.body()?.body?.Msg
             var likeEntity = LikeEntity(id, newsId, isLike)
-            likeDao.insertLike(likeEntity)
+            newsDao.insertLike(likeEntity)
             return Result.success()
         } catch (e: Throwable) {
             return Result.failure()

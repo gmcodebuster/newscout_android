@@ -8,16 +8,16 @@ import com.fafadiatech.newscout.db.NewsDatabase
 
 class DeleteSearchTableWork(context: Context, params: WorkerParameters) : Worker(context, params) {
 
-    var articleNewsDao: NewsDao
+    var newsDao: NewsDao
     private var newsDatabase: NewsDatabase? = null
 
     init {
         newsDatabase = NewsDatabase.getInstance(context)
-        articleNewsDao = newsDatabase!!.newsDao()
+        newsDao = newsDatabase!!.newsDao()
     }
 
     override fun doWork(): Result {
-        articleNewsDao.deleteSearchTableData()
+        newsDao.deleteSearchTableData()
         return Result.success()
     }
 }

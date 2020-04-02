@@ -18,7 +18,7 @@ class DbInsertMenuWork(context: Context, params: WorkerParameters) : Worker(cont
 
     var newsDao: NewsDao
     private var newsDatabase: NewsDatabase? = null
-    var apiInterface: ApiInterface
+    var nApi: ApiInterface
     var headingList = ArrayList<String>()
     var subList = ArrayList<String>()
     val fileName: String = "navmenu.json"
@@ -29,12 +29,12 @@ class DbInsertMenuWork(context: Context, params: WorkerParameters) : Worker(cont
         this.context = context
         newsDatabase = NewsDatabase.getInstance(context)
         newsDao = newsDatabase!!.newsDao()
-        apiInterface = ApiClient.getClient().create(ApiInterface::class.java)
+        nApi = ApiClient.getClient().create(ApiInterface::class.java)
     }
 
     override fun doWork(): Result {
         try {
-            var call: Call<CategoryResponseData> = apiInterface.getMenusFromApi()
+            var call: Call<CategoryResponseData> = nApi.getMenusFromApi()
             var response: Response<CategoryResponseData> = call.execute()
             var result = response.body()!!.body.results
             val jsonStrRes = Gson().toJson(response.body())

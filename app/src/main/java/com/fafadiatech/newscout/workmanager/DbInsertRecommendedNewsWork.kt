@@ -14,26 +14,26 @@ import retrofit2.Response
 
 class DbInsertRecommendedNewsWork(context: Context, params: WorkerParameters) : Worker(context, params) {
 
-    var articleNewsDao: NewsDao
+    var newsDao: NewsDao
     private var newsDatabase: NewsDatabase? = null
     var newsList = ArrayList<RecommendedDataEntity>()
-    var apiInterface: ApiInterface
+    var nApi: ApiInterface
     var context: Context
 
     init {
         newsDatabase = NewsDatabase.getInstance(context)
-        articleNewsDao = newsDatabase!!.newsDao()
-        apiInterface = ApiClient.getClient().create(ApiInterface::class.java)
+        newsDao = newsDatabase!!.newsDao()
+        nApi = ApiClient.getClient().create(ApiInterface::class.java)
         this.context = context
     }
 
     override fun doWork(): Result {
         var newsId = inputData.getInt("recommended_news_id", 0)
-        var call: Call<RecommendedDataApi> = apiInterface.getRecommendedArticles(newsId)
+        var call: Call<RecommendedDataApi> = nApi.getRecommendedArticles(newsId)
         try {
             var response: Response<RecommendedDataApi> = call.execute()
             var responseCode = response.code()
-            articleNewsDao.deleteRecommendedTableData()
+            newsDao.deleteRecommendedTableData()
             if (responseCode == 200) {
                 var list = response.body()?.body?.results!!
                 if (list != null && list.size > 0) {
@@ -51,7 +51,7 @@ class DbInsertRecommendedNewsWork(context: Context, params: WorkerParameters) : 
                         var entityObj = RecommendedDataEntity(newsId, title, source, category, sourceUrl, urlToImage, description, publishedOn, articleScore)
                         newsList.add(entityObj)
                     }
-                    articleNewsDao.insertRecommendedNews(newsList)
+                    newsDao.insertRecommendedNews(newsList)
                 }
             }
             return Result.success()
