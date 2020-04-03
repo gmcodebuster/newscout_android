@@ -19,8 +19,8 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/listPreferredItemHeightSmall"
         android:gravity="center_vertical"
-        android:paddingLeft="?android:attr/expandableListPreferredItemPaddingLeft"
-        android:paddingRight="?attr/listPreferredItemPaddingRight"
+        android:paddingLeft="@dimen/margin_medium"
+        android:paddingRight="@dimen/margin_medium"
         android:layout_gravity="center_vertical"
         style="@style/GroupHeader"
         />

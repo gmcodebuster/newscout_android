@@ -175,7 +175,11 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
             slideTopStoriesDown(view, btnReadMore, tvMoreStories)
 
         }
-
+        if (android.os.Build.VERSION.SDK_INT >= 21) {
+            newsTopImage.clipToOutline = true
+        } else {
+            newsTopImage.background = ContextCompat.getDrawable(context, R.drawable.round_outline)
+        }
         var suggestedNewsHeight = rvSuggestedNews.height
         gson = Gson()
         var imageObserver: ViewTreeObserver = newsHeading.getViewTreeObserver()

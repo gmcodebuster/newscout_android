@@ -12,13 +12,18 @@
         android:id="@+id/news_top_img_detail"
         android:layout_width="@dimen/size_0dp"
         android:layout_height="@dimen/size_0dp"
+        android:layout_marginTop="@dimen/margin_small"
+        android:layout_marginStart="@dimen/margin_small"
+        android:layout_marginEnd="@dimen/margin_small"
         android:contentDescription="@string/placeholder"
-        android:scaleType="fitXY"
         android:src="@drawable/image_not_found"
+        android:scaleType="fitXY"
         app:layout_constraintDimensionRatio="H,16:9"
+        android:background="@drawable/round_outline"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        />
 
     <TextView
         android:id="@+id/news_heading_detail"
@@ -129,10 +134,9 @@
             android:id="@+id/rv_suggested_news"
             android:layout_width="match_parent"
             android:layout_height="@dimen/size_0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
             android:background="@color/colorPrimary"
-            >
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent">
 
         </androidx.recyclerview.widget.RecyclerView>
 

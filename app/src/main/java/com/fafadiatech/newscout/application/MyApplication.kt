@@ -50,7 +50,7 @@ class MyApplication : Application() {
 
 
         fun setConnectionListener(listener: ConnectivityReceiver.ConnectivityReceiverListener) {
-            ConnectivityReceiver.connectivityReceiverListener = listener
+            ConnectivityReceiver.connRecvListener = listener
         }
     }
 
