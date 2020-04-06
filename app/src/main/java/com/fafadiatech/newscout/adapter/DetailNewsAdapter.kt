@@ -49,6 +49,7 @@ import com.fafadiatech.newscout.api.ApiClient
 import com.fafadiatech.newscout.api.ApiInterface
 import com.fafadiatech.newscout.appconstants.*
 import com.fafadiatech.newscout.application.MyApplication
+import com.fafadiatech.newscout.comments.CommentsActivity
 import com.fafadiatech.newscout.customcomponent.BaseAlertDialog
 import com.fafadiatech.newscout.db.NewsDao
 import com.fafadiatech.newscout.db.NewsDatabase
@@ -418,6 +419,8 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
 
         btnTopNews.setOnClickListener {
             itopNews.gotoFirstNews()
+            //val intent = Intent(context, CommentsActivity::class.java)
+            //context.startActivity(intent)
 
         }
 

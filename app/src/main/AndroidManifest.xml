@@ -102,6 +102,9 @@
             android:name=".activity.SourceActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
+        <activity android:name=".comments.CommentsActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
 
         <service
             android:name=".service.NotificationMessagingService"
