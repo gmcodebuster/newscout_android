@@ -2,6 +2,7 @@ package com.fafadiatech.newscout.api
 
 import com.fafadiatech.newscout.BuildConfig
 import com.fafadiatech.newscout.appconstants.TRACKING_URL
+import com.fafadiatech.newscout.comments.CapchaResponseData
 import com.fafadiatech.newscout.model.*
 import com.fafadiatech.newscout.model.trending.TrendingDataHeaderApi
 import retrofit2.Call
@@ -150,4 +151,7 @@ interface ApiInterface {
 
     @GET("articles/{id}/recommendations/")
     fun getSuggestedArticles(@Path("id") id: Int): Call<NewsDataApi>
+
+    @GET("comment-captcha/")
+    fun getCaptchaText(@Header("authorization") token: String): Call<CapchaResponseData>
 }

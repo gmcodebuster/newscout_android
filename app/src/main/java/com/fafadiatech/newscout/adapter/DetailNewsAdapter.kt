@@ -94,6 +94,7 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
     lateinit var rvSuggestedNews: RecyclerView
     lateinit var imgBtnBookmark: ImageView
     lateinit var imgBtnShuffle: ImageButton
+    lateinit var imgBtnComment: ImageButton
     lateinit var newsDao: NewsDao
     private var newsDatabase: NewsDatabase? = null
     var height: Int = 0
@@ -148,6 +149,7 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
         var btnTopNews = view.findViewById<ImageButton>(R.id.btn_top_news)
         var parentLayoutRvSuggested: ConstraintLayout = view.findViewById(R.id.parent_rv_suggested)
         var moreStoriesParent: ConstraintLayout = view.findViewById(R.id.bottom_layout_like_menu_bar)
+        imgBtnComment = view.findViewById(R.id.img_btn_comment)
         height = moreStoriesParent.layoutParams.height
         imgBtnShare = view.findViewById(R.id.btn_bottom_share_detail)
         rvSuggestedNews = view.findViewById<RecyclerView>(R.id.rv_suggested_news)
@@ -419,9 +421,12 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
 
         btnTopNews.setOnClickListener {
             itopNews.gotoFirstNews()
-            //val intent = Intent(context, CommentsActivity::class.java)
-            //context.startActivity(intent)
 
+        }
+
+        imgBtnComment.setOnClickListener {
+            val intent = Intent(context, CommentsActivity::class.java)
+            context.startActivity(intent)
         }
 
         container.addView(view)
