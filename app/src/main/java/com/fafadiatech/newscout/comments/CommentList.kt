@@ -1,3 +1,9 @@
 package com.fafadiatech.newscout.comments
 
-data class CommentList(val id:Int)
+import com.fafadiatech.newscout.model.NewsStatus
+
+data class CommentList(val id:Int, val created_at:String, val comment: String, val article_id:Int, val user:Int, val user_name:String, val reply:Any, val replies:Any)
+
+data class CommentBodyResData(var result: CommentList)
+
+data class CommentResponseData(var header: NewsStatus, var body: CommentBodyResData )
