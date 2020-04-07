@@ -6,6 +6,8 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 import com.fafadiatech.newscout.R
 import com.fafadiatech.newscout.appconstants.AppConstant
 import com.fafadiatech.newscout.appconstants.getUniqueCode
@@ -16,6 +18,7 @@ open class BaseActivity : AppCompatActivity(), ConnectivityReceiver.Connectivity
     lateinit var connRecv: ConnectivityReceiver
     lateinit var themePreference: SharedPreferences
     var themes: Int = R.style.DefaultMedium
+    val requestOptions = RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         themePreference = getSharedPreferences(AppConstant.APPPREF, Context.MODE_PRIVATE)
