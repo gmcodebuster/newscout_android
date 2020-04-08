@@ -1,7 +1,5 @@
 package com.fafadiatech.newscout.comments
 
-import android.content.Context
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.widget.ImageView
@@ -12,19 +10,16 @@ import com.fafadiatech.newscout.R
 import com.fafadiatech.newscout.activity.BaseActivity
 import com.fafadiatech.newscout.api.ApiClient
 import com.fafadiatech.newscout.api.ApiInterface
-import com.fafadiatech.newscout.appconstants.AppConstant
 import com.fafadiatech.newscout.appconstants.URL
-import com.fafadiatech.newscout.appconstants.getImageURL
 import com.fafadiatech.newscout.application.MyApplication
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
 
 class CommentsActivity : BaseActivity(){
 
     lateinit var nApi: ApiInterface
-    lateinit var ivCapcha : ImageView
+    lateinit var ivCaptcha : ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,25 +31,25 @@ class CommentsActivity : BaseActivity(){
         val token = themePreference.getString("token value", "")
         val checkInternet = MyApplication.checkInternet
 
-        ivCapcha = findViewById(R.id.iv_capcha)
+        ivCaptcha = findViewById(R.id.iv_captcha)
 
         if(checkInternet) {
-            getCapchaImage(token)
+            getCaptchaImage(token)
         }
 
     }
 
-    fun getCapchaImage(token:String){
-        val cCall: Call<CapchaResponseData> = nApi.getCaptchaText(token)
-        cCall.enqueue(object: Callback<CapchaResponseData> {
-            override fun onFailure(call: Call<CapchaResponseData>, t: Throwable) {
-                Log.d("CapchaActivity", "Error : "+t.message)
+    fun getCaptchaImage(token:String){
+        val cCall: Call<CaptchaResponseData> = nApi.getCaptchaText(token)
+        cCall.enqueue(object: Callback<CaptchaResponseData> {
+            override fun onFailure(call: Call<CaptchaResponseData>, t: Throwable) {
+                Log.d("CaptchaActivity", "Error : "+t.message)
             }
 
-            override fun onResponse(call: Call<CapchaResponseData>, response: Response<CapchaResponseData>) {
+            override fun onResponse(call: Call<CaptchaResponseData>, response: Response<CaptchaResponseData>) {
                 //update mutable object
                 //update imageview
-                Log.d("CapchaActivity", "Data Success : ")
+                Log.d("CaptchaActivity", "Data Success : ")
                 if (response.body() != null) {
 
                     var data = response.body()!!.body.result
@@ -63,7 +58,7 @@ class CommentsActivity : BaseActivity(){
                     val new_captch_key = data.new_captch_key
                     val new_captch_image = data.new_captch_image
 
-                    Log.d("CapchaActivity", "Data : "+new_captch_key)
+                    Log.d("CaptchaActivity", "Data : "+new_captch_key)
 
                     var imageUrl = URL + new_captch_image
                     Glide.with(this@CommentsActivity).load(imageUrl).apply(requestOptions)
@@ -72,7 +67,7 @@ class CommentsActivity : BaseActivity(){
                             .diskCacheStrategy(DiskCacheStrategy.ALL)
                             .placeholder(R.drawable.image_not_found)
                             .error(R.drawable.image_not_found)
-                            .into(ivCapcha)
+                            .into(ivCaptcha)
                 }
 
             }
