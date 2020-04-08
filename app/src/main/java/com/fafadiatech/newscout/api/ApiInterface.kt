@@ -3,6 +3,7 @@ package com.fafadiatech.newscout.api
 import com.fafadiatech.newscout.BuildConfig
 import com.fafadiatech.newscout.appconstants.TRACKING_URL
 import com.fafadiatech.newscout.comments.CaptchaResponseData
+import com.fafadiatech.newscout.comments.CommentResponseData
 import com.fafadiatech.newscout.model.*
 import com.fafadiatech.newscout.model.trending.TrendingDataHeaderApi
 import retrofit2.Call
@@ -154,4 +155,7 @@ interface ApiInterface {
 
     @GET("comment-captcha/")
     fun getCaptchaText(@Header("authorization") token: String): Call<CaptchaResponseData>
+
+    @GET("comment/")
+    fun getAllComments(@Header("authorization") token:String, @Query("article_id") articleId:Int, @Query("page") page: Int): Call<CommentResponseData>
 }

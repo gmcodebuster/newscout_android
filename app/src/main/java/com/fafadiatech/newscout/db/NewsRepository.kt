@@ -12,6 +12,8 @@ import com.fafadiatech.newscout.appconstants.NEWSPAGESIZE
 import com.fafadiatech.newscout.appconstants.TRENDING_ID
 import com.fafadiatech.newscout.appconstants.TRENDING_NAME
 import com.fafadiatech.newscout.application.MyApplication
+import com.fafadiatech.newscout.comments.CommentList
+import com.fafadiatech.newscout.comments.CommentsDataSourceFactory
 import com.fafadiatech.newscout.db.dailydigest.DailyDigestEntity
 import com.fafadiatech.newscout.db.trending.TrendingData
 import com.fafadiatech.newscout.db.trending.TrendingNewsEntity
@@ -44,6 +46,8 @@ class NewsRepository(application: Application) {
     var searchPagedList: LiveData<PagedList<NewsEntity>>? = null
     lateinit var searchLiveDataSource: LiveData<PageKeyedDataSource<Int, NewsEntity>>
     lateinit var searchItemPagedList: LiveData<PagedList<NewsEntity>>
+    lateinit var comLiveDataSource : LiveData<PageKeyedDataSource<Int, CommentList>>
+    lateinit var comPagedList: LiveData<PagedList<CommentList>>
 
     init {
         this.application = application
@@ -392,5 +396,19 @@ class NewsRepository(application: Application) {
         searchPagedList = searchNetworkCall(application, query)
 
         return searchPagedList!!
+    }
+
+    fun getAllComments(token: String, articleId:Int): LiveData<PagedList<CommentList>>{
+        var itemDataSourceFactory = CommentsDataSourceFactory(application, token, articleId)
+        var PAGESIZE = 20
+
+        comLiveDataSource = itemDataSourceFactory.getCommentSourceData()
+        val pagedListConfig = PagedList.Config.Builder()
+                .setEnablePlaceholders(false)
+                .setPageSize(NEWSPAGESIZE).build()
+
+        comPagedList = LivePagedListBuilder(itemDataSourceFactory, pagedListConfig)
+                .build()
+        return comPagedList
     }
 }

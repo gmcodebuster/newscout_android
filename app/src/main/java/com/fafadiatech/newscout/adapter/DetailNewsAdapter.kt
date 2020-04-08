@@ -100,6 +100,8 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
     var height: Int = 0
     var requestOptions: RequestOptions? = null
     lateinit var itopNews: ITopNews
+    lateinit var comData: DetailNewsData
+
 
     init {
         mLayoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
@@ -165,6 +167,7 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
 
         dataVM = ViewModelProviders.of(context as FragmentActivity).get(FetchDataApiViewModel::class.java)
 
+        comData = detailList.get(position)
         newsId = detailList.get(position).article_id
         dataVM.suggestedNews(newsId, 1).observe(context as LifecycleOwner, object: Observer<List<INews>> {
             override fun onChanged(list: List<INews>?) {
@@ -426,6 +429,7 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
 
         imgBtnComment.setOnClickListener {
             val intent = Intent(context, CommentsActivity::class.java)
+            intent.putExtra("data", comData )
             context.startActivity(intent)
         }
 

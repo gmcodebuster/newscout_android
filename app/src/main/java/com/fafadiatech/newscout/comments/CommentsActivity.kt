@@ -3,6 +3,8 @@ package com.fafadiatech.newscout.comments
 import android.os.Bundle
 import android.util.Log
 import android.widget.ImageView
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
@@ -12,6 +14,9 @@ import com.fafadiatech.newscout.api.ApiClient
 import com.fafadiatech.newscout.api.ApiInterface
 import com.fafadiatech.newscout.appconstants.URL
 import com.fafadiatech.newscout.application.MyApplication
+import com.fafadiatech.newscout.model.DetailNewsData
+import com.fafadiatech.newscout.viewmodel.FetchDataApiViewModel
+import com.fafadiatech.newscout.viewmodel.ViewModelProviderFactory
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -20,22 +25,27 @@ class CommentsActivity : BaseActivity(){
 
     lateinit var nApi: ApiInterface
     lateinit var ivCaptcha : ImageView
-
+    lateinit var dataVM: FetchDataApiViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_comments)
-
+        dataVM = ViewModelProviders.of(this@CommentsActivity, ViewModelProviderFactory(application, "")).get(FetchDataApiViewModel::class.java)
 
         nApi = ApiClient.getClient().create(ApiInterface::class.java)
 //Check user is login or not
         val token = themePreference.getString("token value", "")
         val checkInternet = MyApplication.checkInternet
 
+        val data:DetailNewsData = intent.getParcelableExtra("data")
+
         ivCaptcha = findViewById(R.id.iv_captcha)
 
         if(checkInternet) {
             getCaptchaImage(token)
         }
+
+        getAllComments(token, data.article_id)
+
 
     }
 
@@ -71,6 +81,16 @@ class CommentsActivity : BaseActivity(){
                 }
 
             }
+        })
+    }
+
+    fun getAllComments(token:String, articleId:Int){
+        dataVM.getAllComment("",1).observe(this, Observer{ commentList ->
+
+            Log.d("CommentActivity", "Size : "+commentList.size)
+
+            //set adapter here
+
         })
     }
 }

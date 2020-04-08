@@ -16,6 +16,7 @@ import com.fafadiatech.newscout.api.ApiClient
 import com.fafadiatech.newscout.api.ApiInterface
 import com.fafadiatech.newscout.appconstants.NEWSPAGESIZE
 import com.fafadiatech.newscout.application.MyApplication
+import com.fafadiatech.newscout.comments.CommentList
 import com.fafadiatech.newscout.db.*
 import com.fafadiatech.newscout.db.dailydigest.DailyDigestEntity
 import com.fafadiatech.newscout.db.trending.TrendingData
@@ -24,6 +25,7 @@ import com.fafadiatech.newscout.model.*
 import com.fafadiatech.newscout.paging.NewsDataSourceFactory
 import com.fafadiatech.newscout.paging.NewsItemDataSource
 import com.fafadiatech.newscout.workmanager.*
+import org.w3c.dom.Comment
 
 
 class FetchDataApiViewModel(application: Application, mParams: String) : AndroidViewModel(application) {
@@ -51,6 +53,8 @@ class FetchDataApiViewModel(application: Application, mParams: String) : Android
 
     lateinit var sgstNewsPagedList: LiveData<PagedList<INews>>
     lateinit var searchNewsPageList: LiveData<PagedList<NewsEntity>>
+
+    lateinit var commentPagedList: LiveData<PagedList<CommentList>>
 
 
     val adsTitleVM: MutableLiveData<NewsAdsBodyData> by lazy {
@@ -324,4 +328,10 @@ class FetchDataApiViewModel(application: Application, mParams: String) : Android
         searchNewsPageList = repository.selectSearchNewsSource(query, pageNo)
         return searchNewsPageList
     }
+
+    fun getAllComment(token:String, articleId:Int): LiveData<PagedList<CommentList>>{
+        commentPagedList = repository.getAllComments(token, articleId)
+        return commentPagedList
+    }
+
 }
