@@ -42,6 +42,7 @@ val NEWSPAGESIZE = 20
 val TRENDINGPAGESIZE = 30
 const val PLATFORM = "android"
 val ADFACTOR = 10
+val CURL = "http://www.newscout.in"
 
 class AppConstant {
 

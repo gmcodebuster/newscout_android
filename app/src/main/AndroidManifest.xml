@@ -104,6 +104,7 @@
             android:screenOrientation="portrait" />
         <activity android:name=".comments.CommentsActivity"
             android:launchMode="singleTop"
+            android:windowSoftInputMode="stateHidden"
             android:screenOrientation="portrait" />
 
         <service

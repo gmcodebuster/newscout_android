@@ -42,10 +42,13 @@ class CommentsDataSource(context: Context, token:String, articleId:Int): PageKey
 
                 override fun onResponse(call: Call<CommentResponseData>, response: Response<CommentResponseData>) {
                     if(response.body() != null){
-                        var list = response.body()!!.body.result
+                        var list = response.body()!!.body.results
 
                         if(list != null && list.size > 0){
                             callback.onResult(list, null, FIRST_PAGE + 1)
+                        }else{
+                            val list = ArrayList<CommentList>()
+                            callback.onResult(list, null, null)
                         }
                     }
                 }
@@ -54,7 +57,7 @@ class CommentsDataSource(context: Context, token:String, articleId:Int): PageKey
     }
 
     override fun loadAfter(params: LoadParams<Int>, callback: LoadCallback<Int, CommentList>) {
-        var call:Call<CommentResponseData> = nApi.getAllComments(token, articleId, params.key)
+        /*var call:Call<CommentResponseData> = nApi.getAllComments(token, articleId, params.key)
         try{
             call.enqueue(object: Callback<CommentResponseData> {
                 override fun onFailure(call: Call<CommentResponseData>, t: Throwable) {
@@ -63,7 +66,7 @@ class CommentsDataSource(context: Context, token:String, articleId:Int): PageKey
 
                 override fun onResponse(call: Call<CommentResponseData>, response: Response<CommentResponseData>) {
                     if(response.body() != null){
-                        var list = response.body()!!.body.result
+                        var list = response.body()!!.body.results
 
                         if(list != null && list.size > 0){
                             callback.onResult(list, FIRST_PAGE + 1)
@@ -71,7 +74,7 @@ class CommentsDataSource(context: Context, token:String, articleId:Int): PageKey
                     }
                 }
             })
-        }catch(e:Exception){}
+        }catch(e:Exception){}*/
     }
 
     override fun loadBefore(params: LoadParams<Int>, callback: LoadCallback<Int, CommentList>) {

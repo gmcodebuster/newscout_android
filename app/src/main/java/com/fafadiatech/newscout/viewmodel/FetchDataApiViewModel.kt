@@ -17,6 +17,8 @@ import com.fafadiatech.newscout.api.ApiInterface
 import com.fafadiatech.newscout.appconstants.NEWSPAGESIZE
 import com.fafadiatech.newscout.application.MyApplication
 import com.fafadiatech.newscout.comments.CommentList
+import com.fafadiatech.newscout.comments.CommentPostResponseData
+import com.fafadiatech.newscout.comments.CommentResponseData
 import com.fafadiatech.newscout.db.*
 import com.fafadiatech.newscout.db.dailydigest.DailyDigestEntity
 import com.fafadiatech.newscout.db.trending.TrendingData
@@ -26,6 +28,9 @@ import com.fafadiatech.newscout.paging.NewsDataSourceFactory
 import com.fafadiatech.newscout.paging.NewsItemDataSource
 import com.fafadiatech.newscout.workmanager.*
 import org.w3c.dom.Comment
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 
 class FetchDataApiViewModel(application: Application, mParams: String) : AndroidViewModel(application) {
@@ -55,6 +60,7 @@ class FetchDataApiViewModel(application: Application, mParams: String) : Android
     lateinit var searchNewsPageList: LiveData<PagedList<NewsEntity>>
 
     lateinit var commentPagedList: LiveData<PagedList<CommentList>>
+    var postComment = MutableLiveData<CommentPostResponseData>()
 
 
     val adsTitleVM: MutableLiveData<NewsAdsBodyData> by lazy {
@@ -62,6 +68,7 @@ class FetchDataApiViewModel(application: Application, mParams: String) : Android
     }
 
     init {
+        nApi = ApiClient.getClient().create(ApiInterface::class.java)
         newsDatabase = NewsDatabase.getInstance(application.baseContext)
         articleNewsDao = newsDatabase!!.newsDao()
         queryTag = mParams
@@ -332,6 +339,41 @@ class FetchDataApiViewModel(application: Application, mParams: String) : Android
     fun getAllComment(token:String, articleId:Int): LiveData<PagedList<CommentList>>{
         commentPagedList = repository.getAllComments(token, articleId)
         return commentPagedList
+    }
+
+    fun sendComment(token:String, articleId:Int, comment:String, capValue:String, capKey:String) {
+        val call: Call<CommentPostResponseData> = nApi.postComment(token, articleId, comment, capValue, capKey)
+        call.enqueue(object : Callback<CommentPostResponseData>{
+            override fun onFailure(call: Call<CommentPostResponseData>, t: Throwable) {
+
+            }
+
+            override fun onResponse(call: Call<CommentPostResponseData>, response: Response<CommentPostResponseData>) {
+                if(response.body() != null){
+                    var data = response.body()
+                    var responseCode = response.code()
+                    if (responseCode >= 200 && responseCode < 400) {
+                        val bodyData = response.body()
+                        val status = response.body()?.header?.status
+                        var result = response.body()?.body!!.result
+                        data?.let {
+                            postComment.postValue(data)
+                        }
+                    } else {
+                        val converter = ApiClient.getClient().responseBodyConverter<SignUpErrorData>(
+                                SignUpErrorData::class.java, arrayOfNulls<Annotation>(0))
+
+/*                        var errorResponse: SignUpErrorData?
+                        errorResponse = converter?.convert(response.errorBody())
+                        status = errorResponse?.header?.status
+                        var resultFailed = errorResponse?.errors?.errorList!![0].field_error
+
+                        Toast.makeText(this@SignUpActivity, "Signup Error, Please try again", Toast.LENGTH_SHORT).show()*/
+                    }
+                }
+            }
+        })
+
     }
 
 }

@@ -404,8 +404,9 @@ class NewsRepository(application: Application) {
 
         comLiveDataSource = itemDataSourceFactory.getCommentSourceData()
         val pagedListConfig = PagedList.Config.Builder()
-                .setEnablePlaceholders(false)
+                .setEnablePlaceholders(true)
                 .setPageSize(NEWSPAGESIZE).build()
+
 
         comPagedList = LivePagedListBuilder(itemDataSourceFactory, pagedListConfig)
                 .build()

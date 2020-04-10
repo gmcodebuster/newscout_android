@@ -1,118 +1,238 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <androidx.cardview.widget.CardView
 
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="0dp"
+        android:id="@+id/cardView2"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:lines="2"
-        android:minLines="2"
-        android:text="TextView"
+        app:cardCornerRadius="@dimen/margin_medium"
+        app:cardElevation="@dimen/margin_medium"
+
+        app:cardPreventCornerOverlap="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <TextView
-        android:id="@+id/textView4"
-        android:layout_width="0dp"
-        android:layout_height="17dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:lines="2"
-        android:minLines="2"
-        android:text="TextView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView3" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/root_layout_news_item_alternate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/iv_captcha"
-        android:layout_width="@dimen/size_150dp"
-        android:layout_height="64dp"
-        android:layout_marginTop="36dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView4"
-        tools:srcCompat="@tools:sample/avatars" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/margin_small"
+                android:background="@color/colorPrimary"
+                app:layout_constraintBottom_toTopOf="@id/guideline_top"
+                app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
-        android:id="@+id/editText2"
-        android:layout_width="158dp"
-        android:layout_height="38dp"
-        android:layout_marginTop="48dp"
-        android:layout_marginEnd="16dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text="Name"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.245"
-        app:layout_constraintStart_toEndOf="@+id/iv_captcha"
-        app:layout_constraintTop_toBottomOf="@+id/textView4" />
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline_top"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_begin="@dimen/margin_small"
+                app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
-        android:layout_width="0dp"
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline_start2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_begin="@dimen/margin_medium"
+                app:layout_constraintTop_toBottomOf="@id/guideline_top" />
+
+            <TextView
+                android:id="@+id/tv_title"
+                style="?newsHeadColor"
+                android:layout_width="@dimen/size_0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_large"
+                android:layout_marginTop="@dimen/margin_large"
+                android:layout_marginEnd="@dimen/margin_medium"
+                android:ellipsize="end"
+                android:lineSpacingExtra="@dimen/margin_xsmall"
+                android:lines="@integer/line_3"
+                android:text="@string/read_file"
+                android:textSize="@dimen/font_small"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toRightOf="@id/news_image_alternate"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/news_image_alternate"
+                android:layout_width="@dimen/size_95dp"
+                android:layout_height="@dimen/size_95dp"
+                android:background="@drawable/rounded_corner"
+                android:minWidth="@dimen/size_95dp"
+                android:minHeight="@dimen/size_95dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/image_not_found"
+                app:layout_constraintLeft_toLeftOf="@id/guideline_start2"
+                app:layout_constraintTop_toBottomOf="@id/guideline_top"
+                app:layout_goneMarginTop="@dimen/size_10dp" />
+
+            <TextView
+                android:id="@+id/tv_source"
+                style="?newsSourceColor"
+                android:layout_width="@dimen/size_0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="@dimen/margin_small"
+                android:layout_marginRight="8dp"
+                android:ellipsize="end"
+                android:maxLines="@integer/line"
+                android:text="@string/news_source"
+                android:textSize="@dimen/font_15sp"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toRightOf="@id/news_time_alternate"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_title" />
+
+            <TextView
+                android:id="@+id/news_time_alternate"
+                style="?newsTimeColor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_small"
+                android:text="@string/news_item_time"
+                android:textSize="@dimen/font_15sp"
+                app:layout_constraintLeft_toRightOf="@id/news_image_alternate"
+                app:layout_constraintStart_toStartOf="@+id/tv_title"
+                app:layout_constraintTop_toBottomOf="@id/tv_title" />
+
+            <EditText
+                android:id="@+id/et_captcha"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="12dp"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:text="Name"
+                app:layout_constraintStart_toEndOf="@+id/iv_captcha"
+                app:layout_constraintTop_toBottomOf="@+id/news_time_alternate" />
+
+            <ImageView
+                android:id="@+id/iv_captcha"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginTop="16dp"
+                app:layout_constraintBottom_toBottomOf="@+id/et_captcha"
+                app:layout_constraintEnd_toEndOf="@+id/news_image_alternate"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/news_image_alternate"
+                app:layout_constraintTop_toBottomOf="@+id/news_image_alternate"
+                app:srcCompat="@drawable/ic_menu" />
+
+            <ImageButton
+                android:id="@+id/imgbtn_refresh"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ic_keyboard_arrow_up_black_24dp"
+                app:layout_constraintBottom_toBottomOf="@+id/et_captcha"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/et_captcha"
+                app:layout_constraintTop_toTopOf="@+id/et_captcha" />
+
+            <EditText
+                android:id="@+id/et_comment"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:gravity="start|top"
+                android:inputType="textMultiLine"
+                android:lines="3"
+                android:maxLines="3"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/btn_send"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/et_captcha" />
+
+            <Button
+                android:id="@+id/btn_send"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:text="Send"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/et_comment"
+                app:layout_constraintTop_toBottomOf="@+id/et_captcha" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/bottom_layout"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/barrier8" />
+        app:layout_constraintTop_toBottomOf="@+id/cardView2">
 
-    <EditText
-        android:id="@+id/editText3"
-        android:layout_width="260dp"
-        android:layout_height="44dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="24dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:lines="@integer/line_3"
-        android:maxLines="@integer/line_3"
-        android:text="Name"
-        app:layout_constraintBottom_toTopOf="@+id/barrier8"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/iv_captcha"
-        app:layout_constraintVertical_bias="0.0" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="12dp"
-        android:layout_marginBottom="20dp"
-        android:text="Button"
-        app:layout_constraintBottom_toTopOf="@+id/barrier8"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/editText3" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_comments"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageButton
-        android:id="@+id/imageButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.529"
-        app:layout_constraintStart_toEndOf="@+id/editText2"
-        app:layout_constraintTop_toBottomOf="@+id/textView4"
-        app:srcCompat="@drawable/ic_keyboard_arrow_down_black_24dp" />
 
-    <androidx.constraintlayout.widget.Barrier
-        android:id="@+id/barrier8"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:barrierDirection="top"
-        app:constraint_referenced_ids="editText3"
-        tools:layout_editor_absoluteX="61dp"
-        tools:layout_editor_absoluteY="257dp" />
+            <LinearLayout
+                android:id="@+id/empty_message"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
+                <TextView
+                    android:id="@+id/tv_message"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="@string/no_result_found"
+                    android:textSize="@dimen/font_large"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>
