@@ -6,6 +6,8 @@ import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.net.wifi.WifiManager
 import android.provider.Settings
+import android.text.Spannable
+import android.text.style.ForegroundColorSpan
 import android.util.Log
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatDelegate
@@ -241,6 +243,18 @@ fun getLatestNewsName(newsDao: NewsDao): String {
         LatestNewsName = ""
     }
     return LatestNewsName
+}
+
+
+fun setColorForPath(spannable: Spannable, paths: Array<String>, color: Int) {
+    for (i in paths.indices) {
+        val indexOfPath = spannable.toString().indexOf(paths[i])
+        if (indexOfPath == -1) {
+            continue
+        }
+        spannable.setSpan(ForegroundColorSpan(color), indexOfPath,
+                indexOfPath + paths[i].length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+    }
 }
 
 fun searchTrackingCallback(nApi: ApiInterface, themePreference: SharedPreferences, action:String, deviceId:String, plateform:String, type:String, sessionId:String, searchText:String){

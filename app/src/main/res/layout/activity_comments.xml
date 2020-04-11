@@ -62,12 +62,12 @@
                 android:text="@string/read_file"
                 android:textSize="@dimen/font_small"
                 android:textStyle="bold"
-                app:layout_constraintLeft_toRightOf="@id/news_image_alternate"
+                app:layout_constraintLeft_toRightOf="@id/news_image"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
-                android:id="@+id/news_image_alternate"
+                android:id="@+id/news_image"
                 android:layout_width="@dimen/size_95dp"
                 android:layout_height="@dimen/size_95dp"
                 android:background="@drawable/rounded_corner"
@@ -92,19 +92,19 @@
                 android:text="@string/news_source"
                 android:textSize="@dimen/font_15sp"
                 android:textStyle="bold"
-                app:layout_constraintLeft_toRightOf="@id/news_time_alternate"
+                app:layout_constraintLeft_toRightOf="@id/tv_time"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_title" />
 
             <TextView
-                android:id="@+id/news_time_alternate"
+                android:id="@+id/tv_time"
                 style="?newsTimeColor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/margin_small"
                 android:text="@string/news_item_time"
                 android:textSize="@dimen/font_15sp"
-                app:layout_constraintLeft_toRightOf="@id/news_image_alternate"
+                app:layout_constraintLeft_toRightOf="@id/news_image"
                 app:layout_constraintStart_toStartOf="@+id/tv_title"
                 app:layout_constraintTop_toBottomOf="@id/tv_title" />
 
@@ -112,13 +112,15 @@
                 android:id="@+id/et_captcha"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="8dp"
                 android:layout_marginTop="12dp"
+                android:layout_marginEnd="4dp"
                 android:ems="10"
+                android:hint="Enter Captcha"
                 android:inputType="textPersonName"
-                android:text="Name"
+                app:layout_constraintEnd_toStartOf="@+id/imgbtn_refresh"
                 app:layout_constraintStart_toEndOf="@+id/iv_captcha"
-                app:layout_constraintTop_toBottomOf="@+id/news_time_alternate" />
+                app:layout_constraintTop_toBottomOf="@+id/tv_time" />
 
             <ImageView
                 android:id="@+id/iv_captcha"
@@ -126,17 +128,19 @@
                 android:layout_height="0dp"
                 android:layout_marginTop="16dp"
                 app:layout_constraintBottom_toBottomOf="@+id/et_captcha"
-                app:layout_constraintEnd_toEndOf="@+id/news_image_alternate"
+                app:layout_constraintEnd_toEndOf="@+id/news_image"
                 app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="@+id/news_image_alternate"
-                app:layout_constraintTop_toBottomOf="@+id/news_image_alternate"
+                app:layout_constraintStart_toStartOf="@+id/news_image"
+                app:layout_constraintTop_toBottomOf="@+id/news_image"
                 app:srcCompat="@drawable/ic_menu" />
 
             <ImageButton
                 android:id="@+id/imgbtn_refresh"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/ic_keyboard_arrow_up_black_24dp"
+                android:layout_width="@dimen/size_24dp"
+                android:layout_height="@dimen/size_24dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/ic_refresh"
                 app:layout_constraintBottom_toBottomOf="@+id/et_captcha"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/et_captcha"
@@ -151,6 +155,7 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
                 android:gravity="start|top"
+                android:hint="Enter comment"
                 android:inputType="textMultiLine"
                 android:lines="3"
                 android:maxLines="3"
@@ -166,6 +171,7 @@
                 android:layout_marginStart="4dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
+                android:capitalize="none"
                 android:text="Send"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/et_comment"
