@@ -43,7 +43,8 @@ class CommentsDataSource(context: Context, articleId:Int): PageKeyedDataSource<I
                         var list = response.body()!!.body.results
 
                         if(list != null && list.size > 0){
-                            callback.onResult(list, null, FIRST_PAGE + 1)
+                            val oList = list as List<CommentList>
+                            callback.onResult(oList.asReversed(), null, FIRST_PAGE + 1)
                         }else{
                             val list = ArrayList<CommentList>()
                             callback.onResult(list, null, null)
