@@ -17,7 +17,6 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.fafadiatech.newscout.R
 import com.fafadiatech.newscout.activity.BaseActivity
-import com.fafadiatech.newscout.adapter.NewsAdapter
 import com.fafadiatech.newscout.api.ApiClient
 import com.fafadiatech.newscout.api.ApiInterface
 import com.fafadiatech.newscout.appconstants.CURL
@@ -40,7 +39,7 @@ class CommentsActivity : BaseActivity(){
     lateinit var nApi: ApiInterface
     lateinit var ivCaptcha : ImageView
     lateinit var dataVM: FetchDataApiViewModel
-    lateinit var adapter: CommentAdapter
+    lateinit var comAdapter: CommentAdapter
     lateinit var rvComments : RecyclerView
     lateinit var layoutManager : RecyclerView.LayoutManager
     lateinit var emptyText : LinearLayout
@@ -54,6 +53,7 @@ class CommentsActivity : BaseActivity(){
     lateinit var ivNews : ImageView
     var strDate: String? = null
     var capData = MutableLiveData<CaptchaData>()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,9 +81,9 @@ class CommentsActivity : BaseActivity(){
         emptyText.visibility = View.INVISIBLE
         layoutManager = LinearLayoutManager(this@CommentsActivity, VERTICAL, false)
 
-        adapter = CommentAdapter(this@CommentsActivity)
+        comAdapter = CommentAdapter(this@CommentsActivity)
         rvComments.layoutManager = layoutManager
-        rvComments.adapter = adapter
+        rvComments.adapter = comAdapter
 
         tvTitle.text = data.title
 
@@ -125,7 +125,7 @@ class CommentsActivity : BaseActivity(){
 
         if (data.cover_image != null && data.cover_image.length > 0) {
             var imageUrl = getImageURL(ivNews, data.cover_image)
-            Glide.with(this@CommentsActivity).load(imageUrl).apply(NewsAdapter.requestOptions)
+            Glide.with(this@CommentsActivity).load(imageUrl).apply(requestOptions)
                     .apply(RequestOptions.timeoutOf(5 * 60 * 1000))
                     .thumbnail(0.1f)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -134,7 +134,7 @@ class CommentsActivity : BaseActivity(){
                     .into(ivNews)
         } else {
 
-            Glide.with(this@CommentsActivity).load(R.drawable.image_not_found).apply(NewsAdapter.requestOptions)
+            Glide.with(this@CommentsActivity).load(R.drawable.image_not_found).apply(requestOptions)
                     .into(ivNews)
         }
 
@@ -156,7 +156,7 @@ class CommentsActivity : BaseActivity(){
 
             showEmptyList(commentList == null)
 
-            adapter.submitList(commentList)
+            comAdapter.submitList(commentList)
 
         })
 

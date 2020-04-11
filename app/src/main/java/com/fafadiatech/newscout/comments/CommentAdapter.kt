@@ -10,7 +10,11 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.fafadiatech.newscout.R
 import com.fafadiatech.newscout.db.NewsEntity
+import com.github.marlonlom.utilities.timeago.TimeAgo
+import com.github.marlonlom.utilities.timeago.TimeAgoMessages
 import org.w3c.dom.Comment
+import java.text.SimpleDateFormat
+import java.util.*
 
 class CommentAdapter(context: Context) : PagedListAdapter<CommentList, RecyclerView.ViewHolder>(DIFF_CALLBACK){
 
@@ -44,8 +48,47 @@ class CommentAdapter(context: Context) : PagedListAdapter<CommentList, RecyclerV
         val comment = getItem(position)
         comment?.let {
             comHolder.comUser.text = it.user_name
-            comHolder.newsTime.text = it.created_at
+
             comHolder.commText.text = it.comment
+
+            var dateString: String = it.created_at
+            if (dateString != null) {
+                var timeAgo: String = ""
+                try {
+                    if (dateString.endsWith("Z", false) == false) {
+                        dateString += "Z"
+                    }
+
+                    var timeZone = Calendar.getInstance().timeZone.id
+                    var dateformat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+                    dateformat.timeZone = TimeZone.getTimeZone("UTC")
+                    var date = dateformat.parse(dateString)
+
+                    dateformat = SimpleDateFormat("dd-MM-yyyy")
+                    dateformat.timeZone = TimeZone.getTimeZone(timeZone)
+
+                    val strDate = dateformat.format(date)
+                    comHolder.newsTime.text = strDate
+                } catch (e: Exception) {
+
+                    try {
+                        var timeZone = Calendar.getInstance().timeZone.id
+                        var dateformat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'")
+                        dateformat.timeZone = TimeZone.getTimeZone("UTC")
+                        var date = dateformat.parse(dateString)
+
+                        dateformat = SimpleDateFormat("dd-MM-yyyy")
+                        dateformat.timeZone = TimeZone.getTimeZone(timeZone)
+                        val strDate = dateformat.format(date)
+                        comHolder.newsTime.text = strDate
+                    } catch (exception: Exception) {
+                        comHolder.newsTime.text = ""
+                    }
+                }
+            } else {
+                comHolder.newsTime.text = ""
+            }
+
         }
     }
 
