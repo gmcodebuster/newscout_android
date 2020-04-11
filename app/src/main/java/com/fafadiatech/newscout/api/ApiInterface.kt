@@ -158,8 +158,7 @@ interface ApiInterface {
     fun getCaptchaText(@Header("authorization") token: String): Call<CaptchaResponseData>
 
     @GET("comment/")
-    fun getAllComments(@Header("authorization") token:String,
-                       @Query("article_id") articleId:Int,
+    fun getAllComments(@Query("article_id") articleId:Int,
                        @Query("page") page: Int): Call<CommentResponseData>
     @FormUrlEncoded
     @POST("comment/")

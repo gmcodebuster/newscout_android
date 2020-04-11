@@ -336,8 +336,8 @@ class FetchDataApiViewModel(application: Application, mParams: String) : Android
         return searchNewsPageList
     }
 
-    fun getAllComment(token:String, articleId:Int): LiveData<PagedList<CommentList>>{
-        commentPagedList = repository.getAllComments(token, articleId)
+    fun getAllComment(articleId:Int): LiveData<PagedList<CommentList>>{
+        commentPagedList = repository.getAllComments(articleId)
         return commentPagedList
     }
 

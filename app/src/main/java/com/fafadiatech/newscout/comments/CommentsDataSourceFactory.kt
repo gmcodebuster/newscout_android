@@ -6,21 +6,19 @@ import androidx.paging.DataSource
 import androidx.paging.PageKeyedDataSource
 
 
-class CommentsDataSourceFactory(context: Context, token:String, articleId:Int) : DataSource.Factory<Int, CommentList>() {
+class CommentsDataSourceFactory(context: Context, articleId:Int) : DataSource.Factory<Int, CommentList>() {
 
     val comLiveDataSource = MutableLiveData<PageKeyedDataSource<Int, CommentList>>()
     var mContext: Context
-    var token:String
     var articleId:Int
 
     init{
         mContext = context
-        this.token = token
         this.articleId = articleId
     }
 
     override fun create(): DataSource<Int, CommentList> {
-        var comDataSource = CommentsDataSource(mContext, token, articleId)
+        var comDataSource = CommentsDataSource(mContext, articleId)
         comLiveDataSource.postValue(comDataSource)
         return comDataSource
     }

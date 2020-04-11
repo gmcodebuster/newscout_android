@@ -148,17 +148,8 @@ class CommentsActivity : BaseActivity(){
             getCaptchaImage(token)
         }
 
-        //getAllComments(token, data.article_id)
+        getAllComments(data.article_id)
 
-        dataVM.getAllComment(token,data.article_id).observe(this, Observer{ commentList ->
-
-            Log.d("CommentActivity", "Size : "+commentList?.size)
-
-            showEmptyList(commentList == null)
-
-            comAdapter.submitList(commentList)
-
-        })
 
         btnSend.setOnClickListener(View.OnClickListener {
             val comment = etComment.text.toString()
@@ -183,7 +174,9 @@ class CommentsActivity : BaseActivity(){
                 //blank etCaptcha
                 etCaptcha.setText("")
                 //refresh captcha
+                getCaptchaImage(token)
                 //update recyclerview
+                getAllComments(data.article_id)
             }
         })
 
@@ -229,7 +222,16 @@ class CommentsActivity : BaseActivity(){
         })
     }
 
-    fun getAllComments(token:String, articleId:Int){
+    fun getAllComments(articleId:Int){
+        dataVM.getAllComment(articleId).observe(this, Observer{ commentList ->
+
+            Log.d("CommentActivity", "Size : "+commentList?.size)
+
+            showEmptyList(commentList == null)
+
+            comAdapter.submitList(commentList)
+
+        })
 
     }
 

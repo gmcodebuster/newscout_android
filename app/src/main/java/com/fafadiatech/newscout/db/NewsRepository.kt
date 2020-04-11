@@ -398,8 +398,8 @@ class NewsRepository(application: Application) {
         return searchPagedList!!
     }
 
-    fun getAllComments(token: String, articleId:Int): LiveData<PagedList<CommentList>>{
-        var itemDataSourceFactory = CommentsDataSourceFactory(application, token, articleId)
+    fun getAllComments(articleId:Int): LiveData<PagedList<CommentList>>{
+        var itemDataSourceFactory = CommentsDataSourceFactory(application, articleId)
         var PAGESIZE = 20
 
         comLiveDataSource = itemDataSourceFactory.getCommentSourceData()
