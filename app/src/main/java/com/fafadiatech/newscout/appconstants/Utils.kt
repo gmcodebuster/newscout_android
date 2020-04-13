@@ -1,6 +1,9 @@
 package com.fafadiatech.newscout.appconstants
 
+import android.app.Activity
 import android.content.Context
+import android.content.DialogInterface
+import android.content.Intent
 import android.content.SharedPreferences
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
@@ -10,7 +13,10 @@ import android.text.Spannable
 import android.text.style.ForegroundColorSpan
 import android.util.Log
 import android.widget.ImageView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDelegate
+import com.fafadiatech.newscout.R
+import com.fafadiatech.newscout.activity.SignInActivity
 import com.fafadiatech.newscout.api.ApiClient
 import com.fafadiatech.newscout.api.ApiInterface
 import com.fafadiatech.newscout.application.MyApplication
@@ -255,6 +261,42 @@ fun setColorForPath(spannable: Spannable, paths: Array<String>, color: Int) {
         spannable.setSpan(ForegroundColorSpan(color), indexOfPath,
                 indexOfPath + paths[i].length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
     }
+}
+
+fun showMessage(context: Context, msg:String, code:Int){
+    val msgDialog = AlertDialog.Builder(context)
+            .setTitle("Newscout")
+            .setMessage(msg)
+            .setIcon(R.mipmap.ic_newscout_launcher)
+            .setPositiveButton("OK", DialogInterface.OnClickListener{
+                dialog, id -> (
+                when (id) {
+                    in 200..299 -> {
+                        dialog.dismiss()
+                        //(context as Activity).finish()
+                    }
+
+                    900 -> {
+                        dialog.dismiss()
+                    }
+
+                    401 -> {
+                        dialog.dismiss()
+                    }
+
+                    404 -> {
+                        dialog.dismiss()
+                    }
+
+                    500 -> {
+                        dialog.dismiss()
+                    }
+                }
+                )
+            })
+            .create()
+
+    msgDialog.show()
 }
 
 fun searchTrackingCallback(nApi: ApiInterface, themePreference: SharedPreferences, action:String, deviceId:String, plateform:String, type:String, sessionId:String, searchText:String){

@@ -10,8 +10,12 @@ data class CommentResponseData(var header: NewsStatus, var body: CommentBodyResD
 
 data class CommentPostBodyResData(var result: CommentList)
 
-data class CommentPostResponseData(var header: NewsStatus, var body: CommentPostBodyResData )
+data class CommentPostResponseData(var header: NewsStatus, var body: CommentPostBodyResData, var errors: ErrorData )
 
 data class CommentErrorData(var header: NewsStatus, var errors: ErrorData)
 
-data class ErrorData(var errorList: String)
+data class ErrorData(var error: String)
+
+data class CPError(var Msg : ArrayList<String>)
+
+data class CommentPostErrorData(var header: NewsStatus, var errors: CPError)

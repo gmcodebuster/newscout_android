@@ -22,6 +22,7 @@ import com.fafadiatech.newscout.api.ApiInterface
 import com.fafadiatech.newscout.appconstants.CURL
 import com.fafadiatech.newscout.appconstants.getImageURL
 import com.fafadiatech.newscout.appconstants.setColorForPath
+import com.fafadiatech.newscout.appconstants.showMessage
 import com.fafadiatech.newscout.application.MyApplication
 import com.fafadiatech.newscout.model.DetailNewsData
 import com.fafadiatech.newscout.viewmodel.FetchDataApiViewModel
@@ -31,26 +32,27 @@ import com.github.marlonlom.utilities.timeago.TimeAgoMessages
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import retrofit2.http.HTTP
 import java.text.SimpleDateFormat
 import java.util.*
 
-class CommentsActivity : BaseActivity(){
+class CommentsActivity : BaseActivity() {
 
     lateinit var nApi: ApiInterface
-    lateinit var ivCaptcha : ImageView
+    lateinit var ivCaptcha: ImageView
     lateinit var dataVM: FetchDataApiViewModel
     lateinit var comAdapter: CommentAdapter
-    lateinit var rvComments : RecyclerView
-    lateinit var layoutManager : RecyclerView.LayoutManager
-    lateinit var emptyText : LinearLayout
-    lateinit var btnSend : Button
+    lateinit var rvComments: RecyclerView
+    lateinit var layoutManager: RecyclerView.LayoutManager
+    lateinit var emptyText: LinearLayout
+    lateinit var btnSend: Button
     lateinit var etCaptcha: EditText
-    lateinit var etComment : EditText
-    lateinit var ibtnRefresh : ImageButton
-    lateinit var tvTitle : TextView
-    lateinit var tvSource : TextView
-    lateinit var tvTime : TextView
-    lateinit var ivNews : ImageView
+    lateinit var etComment: EditText
+    lateinit var ibtnRefresh: ImageButton
+    lateinit var tvTitle: TextView
+    lateinit var tvSource: TextView
+    lateinit var tvTime: TextView
+    lateinit var ivNews: ImageView
     var strDate: String? = null
     var capData = MutableLiveData<CaptchaData>()
 
@@ -63,8 +65,8 @@ class CommentsActivity : BaseActivity(){
         nApi = ApiClient.getClient().create(ApiInterface::class.java)
 
         val token = themePreference.getString("token value", "")
-        val checkInternet = MyApplication.checkInternet
-        val data:DetailNewsData = intent.getParcelableExtra("data")
+
+        val data: DetailNewsData = intent.getParcelableExtra("data")
 
         ivCaptcha = findViewById(R.id.iv_captcha)
         rvComments = findViewById(R.id.rv_comments)
@@ -90,7 +92,7 @@ class CommentsActivity : BaseActivity(){
         if (data.published_on != null) {
             var timeAgo: String = ""
             try {
-                  strDate = data.published_on
+                strDate = data.published_on
 
                 if (strDate?.endsWith("Z", false) == false) {
                     strDate += "Z"
@@ -144,39 +146,83 @@ class CommentsActivity : BaseActivity(){
             tvSource.text = spannable
         }
 
-        if(checkInternet) {
-            getCaptchaImage(token)
-        }
+        getCaptchaImage(token)
 
         getAllComments(data.article_id)
 
-
-        btnSend.setOnClickListener(View.OnClickListener {
+        btnSend.setOnClickListener(View.OnClickListener gotoTop@{
             val comment = etComment.text.toString()
-            if(comment.isNotBlank() && capData.value != null){
+            if(etCaptcha.text.toString().isNullOrBlank()){
+                showMessage(this@CommentsActivity, "Please enter captcha.", 900)
+                return@gotoTop
+            }
+
+            if(comment.isNullOrBlank()){
+                showMessage(this@CommentsActivity, "Please enter comment.", 900)
+                return@gotoTop
+            }
+
+            if (comment.isNotBlank() && capData.value != null) {
+                val checkInternet = MyApplication.checkInternet
+                if (!checkInternet) {
+                    showMessage(this@CommentsActivity, "No Internet Connection.", 900)
+                    return@gotoTop
+                }
                 //call API
                 val cData = capData.value
-                 dataVM.sendComment(token, data.article_id, comment, etCaptcha.text.toString(),cData!!.new_captch_key)
+                dataVM.sendComment(token, data.article_id, comment, etCaptcha.text.toString(), cData!!.new_captch_key)
 
                 // display progressbar
-                //update recyclerview
+
             }
         })
 
         dataVM.postComment.observe(this, Observer {
             it?.let {
+                try {
+                    var resCode = it.code()
+                    if (resCode >= 200 && resCode < 400) {
+                        val status = it.body()?.header?.status
+                        if (status == 1) {
+                            if (it.body() != null) {
+                                Log.d("Comment Fetch", "Code : " + resCode)
+                                getAllComments(data.article_id)
+                                Toast.makeText(this@CommentsActivity, "Comment posted successfully.", Toast.LENGTH_LONG).show()
+                            }
+                        } else {
+
+                            it.body()?.errors.let {
+                                val errMsg = it?.error
+                                showMessage(this@CommentsActivity, errMsg?:"Something went wrong, Please try again.", 200)
+                            }
+                            showMessage(this@CommentsActivity,
+                                     "Something went wrong, Please try again", 900)
+
+                        }
+                    } else if(resCode == 401){
+                        val converter = ApiClient.getClient().responseBodyConverter<CommentPostErrorData>(
+                                CommentPostErrorData::class.java, arrayOfNulls<Annotation>(0))
+                        var errorResponse: CommentPostErrorData?
+                        errorResponse = converter?.convert(it.errorBody())
+                        val status = errorResponse?.header?.status
+                        var errMsg = errorResponse?.errors?.Msg?.get(0)?:" Article Id not entered."
+
+                        showMessage(this@CommentsActivity, errMsg, 900)
+                    } else{
+                        showMessage(this@CommentsActivity, "Something went wrong, Please try again", 900)
+                    }
+                } catch (e: java.lang.Exception) {
+                    showMessage(this@CommentsActivity, "Something went wrong, Please try again", 900)
+                }
+
+
                 // hide progressbar
-                // Display Toast message sucess /
-                Toast.makeText(this@CommentsActivity, "Comment posted successfully.", Toast.LENGTH_LONG
-                ).show()
-                //blank etComment
+
                 etComment.setText("")
-                //blank etCaptcha
+
                 etCaptcha.setText("")
-                //refresh captcha
+
                 getCaptchaImage(token)
-                //update recyclerview
-                getAllComments(data.article_id)
             }
         })
 
@@ -185,47 +231,79 @@ class CommentsActivity : BaseActivity(){
         }
     }
 
-    fun getCaptchaImage(token:String){
+    fun getCaptchaImage(token: String) {
+
+        val checkInternet = MyApplication.checkInternet
+        if (!checkInternet) {
+            showMessage(this@CommentsActivity, "No Internet Connection", 900)
+            return
+        }
         val cCall: Call<CaptchaResponseData> = nApi.getCaptchaText(token)
-        cCall.enqueue(object: Callback<CaptchaResponseData> {
+        cCall.enqueue(object : Callback<CaptchaResponseData> {
             override fun onFailure(call: Call<CaptchaResponseData>, t: Throwable) {
-                Log.d("CaptchaActivity", "Error : "+t.message)
+                showMessage(this@CommentsActivity, "No Internet Connection", 900)
             }
 
             override fun onResponse(call: Call<CaptchaResponseData>, response: Response<CaptchaResponseData>) {
-                //update mutable object
-                //update imageview
-                Log.d("CaptchaActivity", "Data Success : ")
-                if (response.body() != null) {
+                try {
+                    var resCode = response.code()
+                    if (response.body() != null) {
 
-                    var data = response.body()!!.body.result
-                    capData.postValue(data)
-                    val status = data.status
-                    val new_captch_key = data.new_captch_key
-                    val new_captch_image = data.new_captch_image
+                        if (resCode == 200) {
 
-                    Log.d("CaptchaActivity", "Data : "+new_captch_key)
+                            var statusCode = response.body()!!.header.status
+                            var data = response.body()!!.body.result
+                            capData.postValue(data)
+                            val status = data.status
+                            val new_captch_key = data.new_captch_key
+                            val new_captch_image = data.new_captch_image
 
-                    var imageUrl = CURL + new_captch_image
-                    Glide.with(this@CommentsActivity).load(imageUrl).apply(requestOptions)
-                            .apply(RequestOptions.timeoutOf(5 * 60 * 1000))
-                            .thumbnail(0.1f)
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
-                            .placeholder(R.drawable.image_not_found)
-                            .error(R.drawable.image_not_found)
-                            .into(ivCaptcha)
-                }else{
-                    Log.d("CaptchaActivity", "Data Fail : ")
+                            var imageUrl = CURL + new_captch_image
+                            Glide.with(this@CommentsActivity).load(imageUrl).apply(requestOptions)
+                                    .apply(RequestOptions.timeoutOf(5 * 60 * 1000))
+                                    .thumbnail(0.1f)
+                                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                    .placeholder(R.drawable.image_not_found)
+                                    .error(R.drawable.image_not_found)
+                                    .into(ivCaptcha)
+
+                        } else {
+                            showMessage(this@CommentsActivity, "No data found", 900)
+                        }
+
+                    } else {
+
+                        if (resCode == 401) {
+                            showMessage(this@CommentsActivity, "Please login to send comment", 401)
+
+                        } else if (resCode == 404) {
+                            showMessage(this@CommentsActivity, "No data found, please try again.", 900)
+
+                        } else if (resCode == 500) {
+                            showMessage(this@CommentsActivity, "No data found, please try again.", 900)
+
+                        } else {
+                            showMessage(this@CommentsActivity, "No data found", 900)
+                        }
+                        showMessage(this@CommentsActivity, "No data found", 900)
+                    }
+                } catch (e: Exception) {
+                    showMessage(this@CommentsActivity, "No data found", 900)
                 }
 
             }
         })
     }
 
-    fun getAllComments(articleId:Int){
-        dataVM.getAllComment(articleId).observe(this, Observer{ commentList ->
+    fun getAllComments(articleId: Int) {
+        val checkInternet = MyApplication.checkInternet
+        if (!checkInternet) {
+            showMessage(this@CommentsActivity, "No Internet Connection", 900)
+            return
+        }
+        dataVM.getAllComment(articleId).observe(this, Observer { commentList ->
 
-            Log.d("CommentActivity", "Size : "+commentList?.size)
+            Log.d("CommentActivity", "Size : " + commentList?.size)
 
             showEmptyList(commentList == null)
 

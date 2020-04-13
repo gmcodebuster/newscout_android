@@ -1,6 +1,7 @@
 package com.fafadiatech.newscout.viewmodel
 
 import android.app.Application
+import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -15,17 +16,19 @@ import androidx.work.WorkManager
 import com.fafadiatech.newscout.api.ApiClient
 import com.fafadiatech.newscout.api.ApiInterface
 import com.fafadiatech.newscout.appconstants.NEWSPAGESIZE
+
 import com.fafadiatech.newscout.application.MyApplication
+
 import com.fafadiatech.newscout.comments.CommentList
 import com.fafadiatech.newscout.comments.CommentPostResponseData
-import com.fafadiatech.newscout.comments.CommentResponseData
+
 import com.fafadiatech.newscout.db.*
 import com.fafadiatech.newscout.db.dailydigest.DailyDigestEntity
 import com.fafadiatech.newscout.db.trending.TrendingData
 import com.fafadiatech.newscout.db.trending.TrendingNewsEntity
 import com.fafadiatech.newscout.model.*
 import com.fafadiatech.newscout.paging.NewsDataSourceFactory
-import com.fafadiatech.newscout.paging.NewsItemDataSource
+
 import com.fafadiatech.newscout.workmanager.*
 import org.w3c.dom.Comment
 import retrofit2.Call
@@ -47,7 +50,7 @@ class FetchDataApiViewModel(application: Application, mParams: String) : Android
     var categoryList = ArrayList<String>()
     var workManager: WorkManager = WorkManager.getInstance()
     private val repository = NewsRepository(application)
-    var queryTag:String = ""
+    var queryTag: String = ""
     var itemPagedList: LiveData<PagedList<INews>>
     var liveDataSource: LiveData<PageKeyedDataSource<Int, INews>>
     var detailList = ArrayList<DetailNewsData>()
@@ -60,7 +63,7 @@ class FetchDataApiViewModel(application: Application, mParams: String) : Android
     lateinit var searchNewsPageList: LiveData<PagedList<NewsEntity>>
 
     lateinit var commentPagedList: LiveData<PagedList<CommentList>>
-    var postComment = MutableLiveData<CommentPostResponseData>()
+    var postComment = MutableLiveData<Response<CommentPostResponseData>>()
 
 
     val adsTitleVM: MutableLiveData<NewsAdsBodyData> by lazy {
@@ -272,10 +275,10 @@ class FetchDataApiViewModel(application: Application, mParams: String) : Android
     fun setCurrentListNews(mList: List<INews>) {
         this.detailList.clear()
 
-        for(data in mList){
-            if(data is NewsEntity){
+        for (data in mList) {
+            if (data is NewsEntity) {
                 val d = data as NewsEntity
-                var mData = DetailNewsData(d.id, d.title, d.source, d.category, d.source_url, d.cover_image, d.blurb!!, d.published_on, 0, 0,d.article_score)
+                var mData = DetailNewsData(d.id, d.title, d.source, d.category, d.source_url, d.cover_image, d.blurb!!, d.published_on, 0, 0, d.article_score)
                 this.detailList.add(mData)
             }
         }
@@ -316,13 +319,13 @@ class FetchDataApiViewModel(application: Application, mParams: String) : Android
         return result
     }
 
-    fun setAdsTitle(data:NewsAdsBodyData?){
-        if (data != null){
+    fun setAdsTitle(data: NewsAdsBodyData?) {
+        if (data != null) {
             adsTitleVM.postValue(data)
         }
     }
 
-    fun getAdsTitle():MutableLiveData<NewsAdsBodyData>{
+    fun getAdsTitle(): MutableLiveData<NewsAdsBodyData> {
         return adsTitleVM
     }
 
@@ -331,46 +334,32 @@ class FetchDataApiViewModel(application: Application, mParams: String) : Android
         return sgstNewsPagedList
     }
 
-    fun initSearchNews(query: String, pageNo: Int) : LiveData<PagedList<NewsEntity>>{
+    fun initSearchNews(query: String, pageNo: Int): LiveData<PagedList<NewsEntity>> {
         searchNewsPageList = repository.selectSearchNewsSource(query, pageNo)
         return searchNewsPageList
     }
 
-    fun getAllComment(articleId:Int): LiveData<PagedList<CommentList>>{
+    fun getAllComment(articleId: Int): LiveData<PagedList<CommentList>> {
         commentPagedList = repository.getAllComments(articleId)
         return commentPagedList
     }
 
-    fun sendComment(token:String, articleId:Int, comment:String, capValue:String, capKey:String) {
+    fun sendComment(token: String, articleId: Int, comment: String, capValue: String, capKey: String) {
         val call: Call<CommentPostResponseData> = nApi.postComment(token, articleId, comment, capValue, capKey)
-        call.enqueue(object : Callback<CommentPostResponseData>{
+        call.enqueue(object : Callback<CommentPostResponseData> {
             override fun onFailure(call: Call<CommentPostResponseData>, t: Throwable) {
 
             }
 
             override fun onResponse(call: Call<CommentPostResponseData>, response: Response<CommentPostResponseData>) {
-                if(response.body() != null){
-                    var data = response.body()
-                    var responseCode = response.code()
-                    if (responseCode >= 200 && responseCode < 400) {
-                        val bodyData = response.body()
-                        val status = response.body()?.header?.status
-                        var result = response.body()?.body!!.result
-                        data?.let {
-                            postComment.postValue(data)
-                        }
-                    } else {
-                        val converter = ApiClient.getClient().responseBodyConverter<SignUpErrorData>(
-                                SignUpErrorData::class.java, arrayOfNulls<Annotation>(0))
 
-/*                        var errorResponse: SignUpErrorData?
-                        errorResponse = converter?.convert(response.errorBody())
-                        status = errorResponse?.header?.status
-                        var resultFailed = errorResponse?.errors?.errorList!![0].field_error
-
-                        Toast.makeText(this@SignUpActivity, "Signup Error, Please try again", Toast.LENGTH_SHORT).show()*/
-                    }
+                var resCode = response.code()
+                var data = response.body()
+                data?.let {
+                    postComment.postValue(response)
                 }
+
+
             }
         })
 

@@ -427,18 +427,18 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
 
         }
 
-        imgBtnComment.setOnClickListener {
-            token = themePreference.getString("token value", "")
-            if (token == "") {
-                var intent = Intent(context, SignInActivity::class.java)
-                intent.putExtra("detail_news_item_position", position)
-                (context as Activity).startActivity(intent)
-            }else {
-                comData = detailList.get(position)
-                val intent = Intent(context, CommentsActivity::class.java)
-                intent.putExtra("data", comData)
-                context.startActivity(intent)
+        imgBtnComment.setOnClickListener gotoTop@{
+            val checkInternet = MyApplication.checkInternet
+            if (!checkInternet) {
+                showMessage(context, "No Internet Connection, Please connect to internet.", 900)
+                return@gotoTop
             }
+
+            comData = detailList.get(position)
+            val intent = Intent(context, CommentsActivity::class.java)
+            intent.putExtra("data", comData)
+            context.startActivity(intent)
+
         }
 
         container.addView(view)
