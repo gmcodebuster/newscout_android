@@ -322,6 +322,7 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
                 try {
                     call.enqueue(object : Callback<BookmarkArticleData> {
                         override fun onFailure(call: Call<BookmarkArticleData>, t: Throwable) {
+                            Log.d("DetailAdapter", "Bookmark API Fail.")
                         }
 
                         override fun onResponse(call: Call<BookmarkArticleData>, response: Response<BookmarkArticleData>) {
@@ -371,7 +372,7 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
                         }
                     })
                 } catch (e: Throwable) {
-
+                    Log.d("DetailAdapter", "Bookmark API Error.")
                 }
             } else if (MyApplication.checkInternet == false) {
                 BaseAlertDialog.showAlertDialog(context, "No Internet Connection")
