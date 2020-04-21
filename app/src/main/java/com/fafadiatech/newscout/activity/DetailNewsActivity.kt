@@ -73,6 +73,7 @@ class DetailNewsActivity : BaseActivity(), VerticalViewPager.SwiperListener, ITo
                 override fun onChanged(list: List<DetailNewsData>?) {
                     daList = list as ArrayList<DetailNewsData>
                     detailNewsAdpt.setData(daList)
+                    detailNewsAdpt.notifyDataSetChanged()
                     vPagerDetail.currentItem = index
                 }
             })
@@ -81,9 +82,10 @@ class DetailNewsActivity : BaseActivity(), VerticalViewPager.SwiperListener, ITo
                 override fun onChanged(list: List<DetailNewsData>?) {
                     daList = list as ArrayList<DetailNewsData>
                     detailNewsAdpt.setData(daList)
-
+                    detailNewsAdpt.notifyDataSetChanged()
                     if (index == daList.size) {
                         index = index - 1
+                        vPagerDetail.currentItem = index
                     } else {
                         vPagerDetail.currentItem = index
                     }
@@ -93,6 +95,7 @@ class DetailNewsActivity : BaseActivity(), VerticalViewPager.SwiperListener, ITo
 
             var list = dataVM.getDetailSearchNewsFromDb() as ArrayList<DetailNewsData>
             detailNewsAdpt.setData(list)
+            detailNewsAdpt.notifyDataSetChanged()
             vPagerDetail.currentItem = index
         } else if (strCategory == "Source") {
             var list = intent.getParcelableArrayListExtra<NewsEntity>("source_list") as ArrayList<NewsEntity>
@@ -106,6 +109,7 @@ class DetailNewsActivity : BaseActivity(), VerticalViewPager.SwiperListener, ITo
 
 
             detailNewsAdpt.setData(detailList)
+            detailNewsAdpt.notifyDataSetChanged()
             vPagerDetail.currentItem = index
         } else if (strCategory == "Trending") {
             var clusterId = intent.getIntExtra("cluster_id", 0)
@@ -114,6 +118,7 @@ class DetailNewsActivity : BaseActivity(), VerticalViewPager.SwiperListener, ITo
                 override fun onChanged(list: List<DetailNewsData>?) {
                     var trendingList = list as ArrayList<DetailNewsData>
                     detailNewsAdpt.setData(trendingList)
+                    detailNewsAdpt.notifyDataSetChanged()
                     vPagerDetail.currentItem = index
                 }
             })
@@ -122,6 +127,7 @@ class DetailNewsActivity : BaseActivity(), VerticalViewPager.SwiperListener, ITo
                 override fun onChanged(list: List<DetailNewsData>?) {
                     daList = list as ArrayList<DetailNewsData>
                     detailNewsAdpt.setData(daList)
+                    detailNewsAdpt.notifyDataSetChanged()
                     vPagerDetail.currentItem = index
                 }
             })
@@ -137,6 +143,7 @@ class DetailNewsActivity : BaseActivity(), VerticalViewPager.SwiperListener, ITo
                 daList = list as ArrayList<DetailNewsData>
             }
             detailNewsAdpt.setData(daList)
+            detailNewsAdpt.notifyDataSetChanged()
             vPagerDetail.currentItem = index
         }
 
@@ -185,10 +192,12 @@ class DetailNewsActivity : BaseActivity(), VerticalViewPager.SwiperListener, ITo
         daList = intent.getParcelableArrayListExtra<DetailNewsData>("arrayList") ?: arrayListOf()
         if (daList != null) {
             detailNewsAdpt.setData(daList)
+            detailNewsAdpt.notifyDataSetChanged()
             detailNewsAdpt.setCategory(strCategory!!)
         } else {
             daList = ArrayList<DetailNewsData>()
             detailNewsAdpt.setData(daList)
+            detailNewsAdpt.notifyDataSetChanged()
             detailNewsAdpt.setCategory(strCategory!!)
         }
     }

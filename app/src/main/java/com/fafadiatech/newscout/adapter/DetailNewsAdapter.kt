@@ -326,49 +326,61 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
                         }
 
                         override fun onResponse(call: Call<BookmarkArticleData>, response: Response<BookmarkArticleData>) {
-                            if (isBookmark == 0) {
-                                it as ImageButton
-                                it.setBackgroundResource(R.drawable.ic_bookmark_fill)
-                                Toast.makeText(context, "Article bookmarked", Toast.LENGTH_SHORT).show()
-                                isBookmark = 1
-                                detailList.get(position).bookmark_status = 1
-                                var obj = detailList.get(position)
-                                var id = obj.article_id
-                                var category = obj.category?.let { it } ?: ""
-                                var title = obj.title
-                                var source = obj.source
+                            //check book mark response
+                            val resCode = response.code()
+
+                            if(response.isSuccessful){
+                                val resBody = response.body()
+                                val status = resBody?.header?.status
+                                if(status == 1){
+                                    if (isBookmark == 0) {
+                                        isBookmark = 1
+                                        dataVM.startBookmarkWorkManager(token, isBookmark, newsId)
+                                        it as ImageButton
+                                        it.setBackgroundResource(R.drawable.ic_bookmark_fill)
+                                        Toast.makeText(context, "Article bookmarked", Toast.LENGTH_SHORT).show()
+
+                                        detailList.get(position).bookmark_status = 1
+                                        var obj = detailList.get(position)
+                                        var id = obj.article_id
+                                        var category = obj.category?.let { it } ?: ""
+                                        var title = obj.title
+                                        var source = obj.source
 
 
 
-                                if (categoryName.equals("Search")) {
+                                        if (categoryName.equals("Search")) {
 
-                                    var sourceUrl = obj.source_url
-                                    var desc = obj.description
-                                    var publishedOn = obj.published_on
-                                    var coverImage = obj.cover_image
-                                    var hasTags = ArrayList<String>()
-                                    var articleScore = obj.article_score
-                                    var newsEntity = NewsEntity(id, 0, title, source, category, sourceUrl, coverImage, desc, publishedOn, hasTags, articleScore.toString())
-                                    newsDao.insertNewsEntity(newsEntity)
+                                            var sourceUrl = obj.source_url
+                                            var desc = obj.description
+                                            var publishedOn = obj.published_on
+                                            var coverImage = obj.cover_image
+                                            var hasTags = ArrayList<String>()
+                                            var articleScore = obj.article_score
+                                            var newsEntity = NewsEntity(id, 0, title, source, category, sourceUrl, coverImage, desc, publishedOn, hasTags, articleScore.toString())
+                                            newsDao.insertNewsEntity(newsEntity)
+                                        }
+
+
+                                        var deviceId = themePreference.getString("device_token", "")
+                                        val sessionId = getUniqueCode(context, themePreference)
+                                        val cId = MyApplication.categoryIdHashMap.get(category) ?: 0
+                                        trackingCallback(nApi, themePreference, id, title, cId, category, "", ActionType.BOOKMARK.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, source, 0)
+
+
+                                        //notifyDataSetChanged()
+                                    } else if (isBookmark == 1) {
+                                        it.setBackgroundResource(R.drawable.ic_bookmark_empty)
+                                        Toast.makeText(context, "Article removed from bookmark", Toast.LENGTH_SHORT).show()
+                                        isBookmark = 0
+                                        detailList.get(position).bookmark_status = 0
+                                        var newsId = detailList.get(position).article_id
+                                        dataVM.startBookmarkWorkManager(token, isBookmark, newsId)
+                                        //notifyDataSetChanged()
+                                    }
                                 }
-
-
-                                var deviceId = themePreference.getString("device_token", "")
-                                val sessionId = getUniqueCode(context, themePreference)
-                                val cId = MyApplication.categoryIdHashMap.get(category) ?: 0
-                                trackingCallback(nApi, themePreference, id, title, cId, category, "", ActionType.BOOKMARK.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, source, 0)
-
-                                dataVM.startBookmarkWorkManager(token, isBookmark, newsId)
-                                notifyDataSetChanged()
-                            } else if (isBookmark == 1) {
-                                it.setBackgroundResource(R.drawable.ic_bookmark_empty)
-                                Toast.makeText(context, "Article removed from bookmark", Toast.LENGTH_SHORT).show()
-                                isBookmark = 0
-                                detailList.get(position).bookmark_status = 0
-                                var newsId = detailList.get(position).article_id
-                                dataVM.startBookmarkWorkManager(token, isBookmark, newsId)
-                                notifyDataSetChanged()
                             }
+
                         }
                     })
                 } catch (e: Throwable) {
@@ -454,7 +466,7 @@ class DetailNewsAdapter(val context: Context) : PagerAdapter() {
     fun setData(list: ArrayList<DetailNewsData>) {
         detailList.clear()
         this.detailList = list
-        notifyDataSetChanged()
+        //notifyDataSetChanged()
     }
 
     fun setCategory(category: String) {
