@@ -14,6 +14,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.text.HtmlCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProviders
 import androidx.paging.PagedListAdapter
@@ -109,7 +110,7 @@ class DDNewsAdapter(context: Context) : PagedListAdapter<DailyDigestEntity, Recy
                         rightItemViewholder.newsSource.text = spannable
                     }
 
-                    rightItemViewholder.newsTitle.text = it?.title
+                    rightItemViewholder.newsTitle.text = HtmlCompat.fromHtml(it?.title, HtmlCompat.FROM_HTML_MODE_LEGACY)
 
                     if (android.os.Build.VERSION.SDK_INT >= 21) {
                         rightItemViewholder.newsImage.clipToOutline = true
@@ -214,7 +215,7 @@ class DDNewsAdapter(context: Context) : PagedListAdapter<DailyDigestEntity, Recy
                         leftItemViewholder.newsSourceLeft.text = spannable
                     }
 
-                    leftItemViewholder.newsTitleLeft.text = it?.title
+                    leftItemViewholder.newsTitleLeft.text = HtmlCompat.fromHtml(it?.title, HtmlCompat.FROM_HTML_MODE_LEGACY)
                     if (android.os.Build.VERSION.SDK_INT >= 21) {
                         leftItemViewholder.newsImageLeft.clipToOutline = true
                     } else {

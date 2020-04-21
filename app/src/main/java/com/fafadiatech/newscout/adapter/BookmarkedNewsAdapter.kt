@@ -14,6 +14,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.text.HtmlCompat
+import androidx.core.text.HtmlCompat.FROM_HTML_MODE_LEGACY
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -85,7 +87,7 @@ class BookmarkedNewsAdapter(var con: Context, var category: String) : RecyclerVi
                     rightItemViewholder.newsSource.text = spannable
                 }
 
-                rightItemViewholder.newsTitle.text = bookmarkedList.get(position)?.title
+                rightItemViewholder.newsTitle.text = HtmlCompat.fromHtml(bookmarkedList.get(position)?.title, FROM_HTML_MODE_LEGACY)
 
                 if (android.os.Build.VERSION.SDK_INT >= 21) {
                     rightItemViewholder.newsImage.clipToOutline = true
@@ -178,7 +180,7 @@ class BookmarkedNewsAdapter(var con: Context, var category: String) : RecyclerVi
                     setColorForPath(spannable, arrayOf(bookmarkedList.get(position).source), ContextCompat.getColor(con, R.color.colorPrimary))
                     leftItemViewholder.newsSourceLeft.text = spannable
                 }
-                leftItemViewholder.newsTitleLeft.text = bookmarkedList.get(position)?.title
+                leftItemViewholder.newsTitleLeft.text = HtmlCompat.fromHtml(bookmarkedList.get(position)?.title, HtmlCompat.FROM_HTML_MODE_LEGACY)
                 if (android.os.Build.VERSION.SDK_INT >= 21) {
                     leftItemViewholder.newsImageLeft.clipToOutline = true
                 } else {

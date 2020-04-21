@@ -17,6 +17,8 @@ import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.text.HtmlCompat
+import androidx.core.text.HtmlCompat.FROM_HTML_MODE_LEGACY
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.*
 import androidx.lifecycle.Observer
@@ -146,8 +148,7 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<INews, 
                         setColorForPath(spannable, arrayOf(it.source), ContextCompat.getColor(con, R.color.colorPrimary))
                         rightItemViewholder.newsSource.text = spannable
                     }
-                    rightItemViewholder.newsTitle.text = it?.title
-
+                    rightItemViewholder.newsTitle.text = HtmlCompat.fromHtml(it?.title, FROM_HTML_MODE_LEGACY)
                     if (android.os.Build.VERSION.SDK_INT >= 21) {
                         rightItemViewholder.newsImage.clipToOutline = true
                     } else {
@@ -260,7 +261,7 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<INews, 
                         leftItemViewholder.newsSourceLeft.text = spannable
                     }
 
-                    leftItemViewholder.newsTitleLeft.text = it?.title
+                    leftItemViewholder.newsTitleLeft.text = HtmlCompat.fromHtml(it?.title, FROM_HTML_MODE_LEGACY)
 
                     if (android.os.Build.VERSION.SDK_INT >= 21) {
                         leftItemViewholder.newsImageLeft.clipToOutline = true
@@ -368,7 +369,7 @@ class NewsAdapter(context: Context, category: String) : PagedListAdapter<INews, 
                 var adsViewholder = holder as AdsItemViewHolder
                 dataVM.getAdsTitle().observeOnce(con as LifecycleOwner, Observer<NewsAdsBodyData> {
                     if (it != null) {
-                        holder?.adsTitle?.text = it?.ad_text
+                        holder?.adsTitle?.text = HtmlCompat.fromHtml(it?.ad_text, FROM_HTML_MODE_LEGACY)
                         val adsurl = it?.ad_url
                         if (it?.media != null && it.media.length > 0) {
 

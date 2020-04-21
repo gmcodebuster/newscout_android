@@ -14,6 +14,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -76,7 +77,7 @@ class TrendingNewsAdapter(context: Context, category: String) : RecyclerView.Ada
                     rightItemViewholder.newsSource.text = spannable
                 }
 
-                rightItemViewholder.newsTitle.text = trendingList.get(position)?.title
+                rightItemViewholder.newsTitle.text =  HtmlCompat.fromHtml(trendingList.get(position)?.title, HtmlCompat.FROM_HTML_MODE_LEGACY)
 
                 if (android.os.Build.VERSION.SDK_INT >= 21) {
                     rightItemViewholder.newsImage.clipToOutline = true
@@ -168,7 +169,7 @@ class TrendingNewsAdapter(context: Context, category: String) : RecyclerView.Ada
                     leftItemViewholder.newsSourceLeft.text = spannable
                 }
 
-                leftItemViewholder.newsTitleLeft.text = trendingList.get(position)?.title
+                leftItemViewholder.newsTitleLeft.text = HtmlCompat.fromHtml(trendingList.get(position)?.title, HtmlCompat.FROM_HTML_MODE_LEGACY)
                 if (android.os.Build.VERSION.SDK_INT >= 21) {
                     leftItemViewholder.newsImageLeft.clipToOutline = true
                 } else {
