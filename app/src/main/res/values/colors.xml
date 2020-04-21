@@ -81,5 +81,6 @@
     <color name="pbcentercolor">#BEED1C24</color>
     <color name="pbendcolor">#A6ED1C24</color>
     <color name="menu_selector_color">#80E0E0E0</color>
+    <color name="search_hint_color">#E6000000</color>
 
 </resources>

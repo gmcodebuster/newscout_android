@@ -36,5 +36,6 @@
     <color name="popupBackground">#000000</color>
     <color name="nav_background">#121212</color>
     <color name="menu_selector_color">#80E0E0E0</color>
+    <color name="search_hint_color">#F2FFFFFF</color>
 
 </resources>

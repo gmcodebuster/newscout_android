@@ -84,6 +84,7 @@ class SearchActivity : AppCompatActivity(), ProgressBarListener {
         var btnCross: ImageView = this.searchView.findViewById(androidx.appcompat.R.id.search_close_btn)
 
         var searchEditText: EditText = this.searchView.findViewById(androidx.appcompat.R.id.search_src_text)
+        searchEditText.setHintTextColor(ContextCompat.getColor(this@SearchActivity, R.color.search_hint_color))
         rvNews = findViewById(R.id.news_item_search)
         fabReturnTop = findViewById(R.id.fab_return_top)
         fabReturnTop.visibility = View.GONE
