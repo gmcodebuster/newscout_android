@@ -12,29 +12,29 @@ class UrlEncodeInterceptor : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val original = chain.request()
-        val body = original.body()
+        val body = original.body
         var requestBody: RequestBody? = null
 
         if (body != null) {
-            val postBody = bodyToString(original.body()!!)
+            val postBody = bodyToString(original.body!!)
             val newPostBody = URLDecoder.decode(postBody, "UTF-8")
 
-            requestBody = RequestBody.create(original.body()!!.contentType(), newPostBody);
+            requestBody = RequestBody.create(original.body!!.contentType(), newPostBody)
         }
 
         var request: Request
-        if (original.method().equals("post")) {
+        if (original.method.equals("post")) {
             request = original.newBuilder()
-                    .method(original.method(), original.body())
-                    .post(requestBody)
+                    .method(original.method, original.body)
+                    .post(requestBody!!)
                     .build();
-        } else if (original.method().equals("put")) {
+        } else if (original.method.equals("put")) {
             request = original.newBuilder()
-                    .method(original.method(), original.body())
-                    .put(requestBody)
+                    .method(original.method, original.body)
+                    .put(requestBody!!)
                     .build();
         } else {
-            var stringUrl = original.url().toString()
+            var stringUrl = original.url.toString()
             stringUrl = stringUrl/*.replace("%26", "&")*/.replace("%3D", "=").replace("%20", " ")
             val time = Date()
             request = original.newBuilder().url(stringUrl)
@@ -48,7 +48,7 @@ class UrlEncodeInterceptor : Interceptor {
             val copy: RequestBody = request
             val buffer: okio.Buffer = okio.Buffer()
             if (copy != null)
-                copy.writeTo(buffer);
+                copy.writeTo(buffer)
             else {
                 val stringType: String = ""
                 return stringType

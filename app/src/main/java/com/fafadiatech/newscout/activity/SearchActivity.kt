@@ -34,9 +34,11 @@ import com.fafadiatech.newscout.customcomponent.BaseAlertDialog
 import com.fafadiatech.newscout.customcomponent.MyItemDecoration
 import com.fafadiatech.newscout.db.NewsEntity
 import com.fafadiatech.newscout.interfaces.ProgressBarListener
+import com.fafadiatech.newscout.model.GenericDataModel
+import com.fafadiatech.newscout.model.SuggestResponse
 import com.fafadiatech.newscout.paging.SearchDataSourceFactory
-import com.fafadiatech.newscout.paging.SearchItemDataSource
 import com.fafadiatech.newscout.viewmodel.FetchDataApiViewModel
+import kotlinx.coroutines.*
 
 class SearchActivity : AppCompatActivity(), ProgressBarListener {
 
@@ -60,6 +62,8 @@ class SearchActivity : AppCompatActivity(), ProgressBarListener {
     lateinit var animFadeout : Animation
     var lessThenTen = false
     var moreThenTen = true
+    private var apiJob: Job? = null
+    lateinit var suggestionAdapter : ArrayAdapter<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -95,6 +99,9 @@ class SearchActivity : AppCompatActivity(), ProgressBarListener {
                 as SearchView.SearchAutoComplete
         searchAutoComplete.threshold = 0
 
+        suggestionAdapter = ArrayAdapter<String>(this@SearchActivity, android.R.layout.simple_dropdown_item_1line)
+        searchAutoComplete.setAdapter(suggestionAdapter)
+
         rvNews?.addOnScrollListener(object: RecyclerView.OnScrollListener(){
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
@@ -126,8 +133,8 @@ class SearchActivity : AppCompatActivity(), ProgressBarListener {
         dataVM.getSearchSuggestedData().observe(this, object : androidx.lifecycle.Observer<List<String>> {
             override fun onChanged(list: List<String>?) {
                 suggestionList = list as ArrayList<String>
-                val suggestionAdapter = ArrayAdapter(this@SearchActivity, android.R.layout.simple_dropdown_item_1line, suggestionList)
-                searchAutoComplete.setAdapter(suggestionAdapter)
+
+
 
             }
         })
@@ -221,14 +228,17 @@ class SearchActivity : AppCompatActivity(), ProgressBarListener {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                if (newText!!.length >= 2) {
+                /*if (newText!!.length >= 2) {
                     var query = newText + "%"
                     var titleList = dataVM.getTitleBySearch(query)
                     val suggestionAdapter = ArrayAdapter(this@SearchActivity, android.R.layout.simple_dropdown_item_1line, titleList)
                     searchAutoComplete.setAdapter(suggestionAdapter)
 
                 }
-                return false
+                return false*/
+                apiJob?.cancel()
+                startSearching(newText)
+                return true
             }
         })
 
@@ -287,6 +297,45 @@ class SearchActivity : AppCompatActivity(), ProgressBarListener {
         } else {
             emptyText.visibility = View.GONE
             rvNews.visibility = View.VISIBLE
+        }
+    }
+
+    private fun startSearching(searchQuery: String?){
+        apiJob = CoroutineScope(Dispatchers.IO).launch{
+            dataVM.getSearchResult(searchQuery)
+            withContext(Dispatchers.Main){
+                dataVM.searchResultLiveData.observe(
+                        this@SearchActivity,
+                        Observer{
+                            genericDataModel: GenericDataModel<SuggestResponse>? ->
+                            run{
+                                if(genericDataModel?.isSucess == true){
+                                    val data = genericDataModel.data
+                                    if(data?.header?.status == 1){
+                                        suggestionList.clear()
+                                          val result = data?.body?.result
+                                        suggestionList.clear()
+                                            for(r in result){
+                                                suggestionList.add(r.value)
+                                            }
+                                          suggestionAdapter.addAll(suggestionList)
+//                                        resultTextView?.text = data.toString()
+//                                        resultTextview?.visibility = View.VISIBLE
+//                                        progressLoading?.visibility = View.GONE
+                                        Log.d("DATA Result: ", data.toString())
+                                    } else {
+
+                                    }
+                                } else{
+//                                    resultTextView?.text = "No Data"
+//                                    resultTextView?.visibility = View.VISIBLE
+//                                    progressLoading?.visibility = View.GONE
+                                    Log.d("DATA Result: ", "No Data")
+                                }
+                            }
+                        }
+                )
+            }
         }
     }
 }

@@ -1,7 +1,6 @@
 package com.fafadiatech.newscout.viewmodel
 
 import android.app.Application
-import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -30,7 +29,6 @@ import com.fafadiatech.newscout.model.*
 import com.fafadiatech.newscout.paging.NewsDataSourceFactory
 
 import com.fafadiatech.newscout.workmanager.*
-import org.w3c.dom.Comment
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -363,6 +361,18 @@ class FetchDataApiViewModel(application: Application, mParams: String) : Android
             }
         })
 
+    }
+
+    var searchResultLiveData: MutableLiveData<GenericDataModel<SuggestResponse>?> = MutableLiveData()
+    suspend fun getSearchResult(searchQuery: String?){
+        searchResultLiveData.postValue(null)
+        val result = nApi?.getResult(searchQuery)
+        val genericDataModel = GenericDataModel(
+                result?.isSuccessful,
+                result?.body(),
+                result?.message()
+        )
+        searchResultLiveData.postValue(genericDataModel)
     }
 
 }

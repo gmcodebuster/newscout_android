@@ -8,6 +8,7 @@ import com.fafadiatech.newscout.comments.CommentResponseData
 import com.fafadiatech.newscout.model.*
 import com.fafadiatech.newscout.model.trending.TrendingDataHeaderApi
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.*
 
 interface ApiInterface {
@@ -167,4 +168,11 @@ interface ApiInterface {
                     @Field("comment") comment:String,
                     @Field("captcha_value") cap_value:String,
                     @Field("captcha_key") cap_key:String) : Call<CommentPostResponseData>
+
+
+
+
+    @GET("suggest/" + BuildConfig.DOMAIN_NAME) //@GET("https://demo.dataverse.org/api/search")
+    suspend fun getResult(
+            @Query("q") query: String?): Response<SuggestResponse?>
 }
