@@ -63,8 +63,8 @@ class TestSearchActivity : AppCompatActivity(), ProgressBarListener {
     lateinit var animFadeout : Animation
     var lessThenTen = false
     var moreThenTen = true
-    private var apiJob: Job? = null
-    lateinit var suggestionAdapter : ArrayAdapter<String>
+    //private var apiJob: Job? = null
+    var suggestionAdapter : ArrayAdapter<String>? = null
     lateinit var edtSearch : AutoCompleteTextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -88,9 +88,8 @@ class TestSearchActivity : AppCompatActivity(), ProgressBarListener {
         pBar = findViewById(R.id.progressBar_searchScreen)
         emptyText = findViewById(R.id.empty_message)
         edtSearch = findViewById(R.id.search_repo)
+        edtSearch.setThreshold(1)
 
-        suggestionAdapter = ArrayAdapter<String>(this@TestSearchActivity, android.R.layout.simple_dropdown_item_1line)
-        edtSearch.setAdapter(suggestionAdapter)
 
         rvNews = findViewById(R.id.news_item_search)
         fabReturnTop = findViewById(R.id.fab_return_top)
@@ -138,11 +137,12 @@ class TestSearchActivity : AppCompatActivity(), ProgressBarListener {
 
         rvNews.visibility = View.GONE
         emptyText.visibility = View.INVISIBLE
-
+        //edtSearch.showDropDown()
         edtSearch.addTextChangedListener(object: TextWatcher{
+            private var apiJob: Job? = null
             override fun afterTextChanged(p0: Editable?) {
                 apiJob?.cancel()
-                startSearching(p0.toString())
+                apiJob = startSearching(p0.toString())
                 Log.d("TestSearchActivity", "Aft TxtChg : "+p0.toString())
             }
 
@@ -155,99 +155,48 @@ class TestSearchActivity : AppCompatActivity(), ProgressBarListener {
             }
         })
 
-//        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-//            override fun onQueryTextSubmit(queryText: String?): Boolean {
-//
-//                query = queryText!!
-//                query = queryText.trim()
-//                if (query.length == 0) {
-//                    BaseAlertDialog.showAlertDialog(this@TestSearchActivity, "Please enter some words")
-//                } else {
-//
-//                    var deviceId = themePreference.getString("device_token", "")
-//                    dataVM.startSearchSuggestionWorkManager(query)
-//                    //trackUserSearch(nApi, "search", deviceId, "android", query)
-//
-//                    pBar.visibility = View.VISIBLE
-//                    dataVM.deleteSearchTableWork()
-//
-//                    var searchAdapter = SearchAdapter(this@TestSearchActivity, "Search", progressBarListener)
-//                    val itemDataSourceFactory = SearchDataSourceFactory(this@TestSearchActivity, query)
-//
-//                    rvNews.adapter = searchAdapter
-//                    liveDataSource = itemDataSourceFactory.itemLiveDataSource
-//
-//                    val pagedListConfig = PagedList.Config.Builder()
-//                            .setEnablePlaceholders(false)
-//                            .setPageSize(NEWSPAGESIZE)
-//                            .build()
-//                    itemPagedList = LivePagedListBuilder(itemDataSourceFactory, pagedListConfig)
-//                            .build()
-//
-//
-//                    itemPagedList.observe(this@TestSearchActivity, Observer<PagedList<NewsEntity>> {
-//                        pBar.visibility = View.VISIBLE
-//                        Log.d("Search Activity", "Paged List :"+ it.size)
-//
-//                        Log.d("Search Activity", "Paged List snapshot :"+ it.snapshot().size)
-//                        showEmptyList(it?.size == 0)
-//                        searchAdapter.submitList(it)
-//
-//                        it.addWeakCallback(null, object:PagedList.Callback(){
-//                            override fun onChanged(position: Int, count: Int) {
-//                                Log.d("TestSearchActivity", "onChanged Size : "+count)
-//                                if(count == 0){
-//                                    Log.d("","")
-//                                    pBar.visibility = View.GONE
-//                                    emptyText.visibility = View.VISIBLE
-//                                    //emptyText.text = "No data found"
-//                                }else{
-//                                    pBar.visibility = View.VISIBLE
-//                                    emptyText.visibility = View.GONE
-//                                }
-//                            }
-//
-//                            override fun onInserted(position: Int, count: Int) {
-//                                Log.d("TestSearchActivity", "onInserted Size : "+count)
-//                                if(count == 0){
-//                                    pBar.visibility = View.GONE
-//                                    emptyText.visibility = View.VISIBLE
-//                                    //emptyText.text = "No data found"
-//                                }else{
-//                                    pBar.visibility = View.GONE
-//                                    rvNews.visibility = View.VISIBLE
-//                                    emptyText.visibility = View.GONE
-//                                }
-//                            }
-//
-//                            override fun onRemoved(position: Int, count: Int) {
-//
-//                            }
-//                        })
-//
-//                    })
-//                    val sessionId = getUniqueCode(this@TestSearchActivity, themePreference)
-//                    trackingCallback(nApi, themePreference, 0, queryText, 0, "", "", ActionType.SEARCHQUERY.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId,"",0)
-//
-//                }
-//                return false
-//            }
-//
-//            override fun onQueryTextChange(newText: String?): Boolean {
-//                /*if (newText!!.length >= 2) {
-//                    var query = newText + "%"
-//                    var titleList = dataVM.getTitleBySearch(query)
-//                    val suggestionAdapter = ArrayAdapter(this@TestSearchActivity, android.R.layout.simple_dropdown_item_1line, titleList)
-//                    searchAutoComplete.setAdapter(suggestionAdapter)
-//
-//                }
-//                return false*/
-//                apiJob?.cancel()
-//                startSearching(newText)
-//                return true
-//            }
-//        })
+        dataVM.searchResultLiveData.observe(
+                this@TestSearchActivity,
+                Observer{
+                    genericDataModel: GenericDataModel<SuggestResponse>? ->
+                    run{
+                        var suggestionList = ArrayList<String>()
+                        //Log.d("Test SearchActivity", "Key : $searchQuery")
+                        if(genericDataModel?.isSucess == true){
+                            suggestionList.clear()
+                            suggestionAdapter?.clear()
+                            val data = genericDataModel.data
+                            if(data?.header?.status == 1){
 
+                                val result = data?.body?.result
+                                for(r in result){
+                                    suggestionList.add(r.value)
+                                }
+                                suggestionAdapter = ArrayAdapter<String>(this@TestSearchActivity, android.R.layout.simple_dropdown_item_1line, suggestionList)
+                                edtSearch.setAdapter(suggestionAdapter)
+                                edtSearch.threshold = 1
+                                //suggestionAdapter.addAll(suggestionList)
+                                //suggestionAdapter.notifyDataSetChanged()
+//                                        resultTextView?.text = data.toString()
+//                                        resultTextview?.visibility = View.VISIBLE
+//                                        progressLoading?.visibility = View.GONE
+                                Log.d("DATA Success : ", data.toString())
+                            } else {
+                                suggestionList.clear()
+                                suggestionAdapter?.clear()
+                            }
+                        } else{
+                            //suggestionList.clear()
+                            suggestionAdapter?.clear()
+//                                    resultTextView?.text = "No Data"
+//                                    resultTextView?.visibility = View.VISIBLE
+//                                    progressLoading?.visibility = View.GONE
+                            Log.d("DATA Result: ", "No Data")
+                        }
+                    }
+                }
+        )
+        
         /*btnCross.setOnClickListener {
             searchEditText.text.clear()
             emptyText.visibility = View.INVISIBLE
@@ -306,14 +255,15 @@ class TestSearchActivity : AppCompatActivity(), ProgressBarListener {
         }
     }
 
-    private fun startSearching(searchQuery: String?){
-        Log.d("TestSearchActivity", ": $searchQuery ")
-        Log.d("Coroutine Job : ","Job Active: "+apiJob?.isActive)
-        apiJob = CoroutineScope(Dispatchers.IO).launch{
-            ensureActive()
+    private fun startSearching(searchQuery: String?) : Job{
+        Log.d("TestSearchActivity", "Arg : $searchQuery ")
+        //Log.d("Coroutine Job : ","Job Active: "+apiJob?.isActive)
+        val job = CoroutineScope(Dispatchers.IO).launch{
             dataVM.getSearchResult(searchQuery)
             withContext(Dispatchers.Main){
-                dataVM.searchResultLiveData.observe(
+                Log.d("TestSearchActivity", "WithContext() : $searchQuery")
+
+                /*dataVM.searchResultLiveData.observe(
                         this@TestSearchActivity,
                         Observer{
                             genericDataModel: GenericDataModel<SuggestResponse>? ->
@@ -350,8 +300,9 @@ class TestSearchActivity : AppCompatActivity(), ProgressBarListener {
                                 }
                             }
                         }
-                )
+                )*/
             }
         }
+        return job
     }
 }

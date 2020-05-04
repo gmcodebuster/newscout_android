@@ -402,7 +402,7 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
                 val sessionId = getUniqueCode(this@MainActivity, themePreference)
                 trackingCallback(nApi, themePreference, 0, "", 0, "", "", ActionType.SEARCHMENUCLICK.type, deviceId
                         ?: "", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, ", 0")
-                val intent = Intent(this, SearchActivity::class.java)
+                val intent = Intent(this, TestSearchActivity::class.java)
                 startActivity(intent)
             }
 
