@@ -1,0 +1,357 @@
+package com.fafadiatech.newscout.activity
+
+import android.content.Context
+import android.content.SharedPreferences
+import android.content.res.Resources
+import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.DisplayMetrics
+import android.util.Log
+import android.view.View
+import android.view.WindowManager
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
+import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.widget.SearchView
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import androidx.paging.LivePagedListBuilder
+import androidx.paging.PageKeyedDataSource
+import androidx.paging.PagedList
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.fafadiatech.newscout.R
+import com.fafadiatech.newscout.adapter.SearchAdapter
+import com.fafadiatech.newscout.api.ApiClient
+import com.fafadiatech.newscout.api.ApiInterface
+import com.fafadiatech.newscout.appconstants.*
+import com.fafadiatech.newscout.customcomponent.BaseAlertDialog
+import com.fafadiatech.newscout.customcomponent.MyItemDecoration
+import com.fafadiatech.newscout.db.NewsEntity
+import com.fafadiatech.newscout.interfaces.ProgressBarListener
+import com.fafadiatech.newscout.model.GenericDataModel
+import com.fafadiatech.newscout.model.SuggestResponse
+import com.fafadiatech.newscout.paging.SearchDataSourceFactory
+import com.fafadiatech.newscout.viewmodel.FetchDataApiViewModel
+import kotlinx.coroutines.*
+
+class TestSearchActivity : AppCompatActivity(), ProgressBarListener {
+
+    lateinit var rvNews: RecyclerView
+    lateinit var query: String
+    lateinit var nApi: ApiInterface
+    lateinit var pBar: ProgressBar
+    lateinit var themePreference: SharedPreferences
+    lateinit var dataVM: FetchDataApiViewModel
+    lateinit var emptyText: LinearLayout
+    var emptyTextFlag: Boolean = false
+    var deviceWidthDp: Float = 0f
+    lateinit var layoutManager: RecyclerView.LayoutManager
+    lateinit var liveDataSource: LiveData<PageKeyedDataSource<Int, NewsEntity>>
+    lateinit var itemPagedList: LiveData<PagedList<NewsEntity>>
+    lateinit var progressBarListener: ProgressBarListener
+    //var suggestionList = ArrayList<String>()
+    lateinit var fabReturnTop: com.github.clans.fab.FloatingActionButton
+    lateinit var animFadein: Animation
+    lateinit var animFadeout : Animation
+    var lessThenTen = false
+    var moreThenTen = true
+    private var apiJob: Job? = null
+    lateinit var suggestionAdapter : ArrayAdapter<String>
+    lateinit var edtSearch : AutoCompleteTextView
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val displayMetrics = DisplayMetrics()
+        val windowmanager = this.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        windowmanager.defaultDisplay.getMetrics(displayMetrics)
+        val deviceWidth = displayMetrics.widthPixels
+        deviceWidthDp = deviceWidth / Resources.getSystem().getDisplayMetrics().density
+        themePreference = this.getSharedPreferences(AppConstant.APPPREF, Context.MODE_PRIVATE)
+        progressBarListener = this as ProgressBarListener
+        val defaultNightMode = themePreference.getInt("night_mode", AppCompatDelegate.MODE_NIGHT_NO)
+        getDelegate().setLocalNightMode(defaultNightMode)
+        var themes: Int = themePreference.getInt("theme", R.style.DefaultMedium)
+        var isNightModeEnable = themePreference.getBoolean("night mode enable", false)
+        dataVM = ViewModelProviders.of(this).get(FetchDataApiViewModel::class.java)
+        this.setTheme(themes)
+        setContentView(R.layout.test_activity_search)
+        var toolbarText = findViewById<TextView>(R.id.toolbar_title)
+
+        pBar = findViewById(R.id.progressBar_searchScreen)
+        emptyText = findViewById(R.id.empty_message)
+        edtSearch = findViewById(R.id.search_repo)
+
+        suggestionAdapter = ArrayAdapter<String>(this@TestSearchActivity, android.R.layout.simple_dropdown_item_1line)
+        edtSearch.setAdapter(suggestionAdapter)
+
+        rvNews = findViewById(R.id.news_item_search)
+        fabReturnTop = findViewById(R.id.fab_return_top)
+        fabReturnTop.visibility = View.GONE
+        fabReturnTop.isClickable = false
+        animFadein = AnimationUtils.loadAnimation(this@TestSearchActivity, R.anim.fade_in)
+        animFadeout = AnimationUtils.loadAnimation(this@TestSearchActivity, R.anim.fade_out)
+
+        rvNews?.addOnScrollListener(object: RecyclerView.OnScrollListener(){
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+            }
+
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+
+                if(lastVisibleItemPosition > 10){
+                    if(moreThenTen) {
+                        fabReturnTop.isClickable = true
+                        fabReturnTop.startAnimation(animFadein)
+                        fabReturnTop.visibility = View.VISIBLE
+                        moreThenTen = false
+                        lessThenTen = true
+                    }
+                } else{
+                    if(lessThenTen) {
+                        fabReturnTop.isClickable = false
+                        fabReturnTop.visibility = View.GONE
+                        fabReturnTop.startAnimation(animFadeout)
+                        moreThenTen = true
+                        lessThenTen = false
+                    }
+                }
+            }
+        })
+
+        dataVM.getSearchSuggestedData().observe(this, object : androidx.lifecycle.Observer<List<String>> {
+            override fun onChanged(list: List<String>?) {
+                //suggestionList = list as ArrayList<String>
+
+
+
+            }
+        })
+
+        rvNews.visibility = View.GONE
+        emptyText.visibility = View.INVISIBLE
+
+        edtSearch.addTextChangedListener(object: TextWatcher{
+            override fun afterTextChanged(p0: Editable?) {
+                apiJob?.cancel()
+                startSearching(p0.toString())
+                Log.d("TestSearchActivity", "Aft TxtChg : "+p0.toString())
+            }
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+        })
+
+//        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+//            override fun onQueryTextSubmit(queryText: String?): Boolean {
+//
+//                query = queryText!!
+//                query = queryText.trim()
+//                if (query.length == 0) {
+//                    BaseAlertDialog.showAlertDialog(this@TestSearchActivity, "Please enter some words")
+//                } else {
+//
+//                    var deviceId = themePreference.getString("device_token", "")
+//                    dataVM.startSearchSuggestionWorkManager(query)
+//                    //trackUserSearch(nApi, "search", deviceId, "android", query)
+//
+//                    pBar.visibility = View.VISIBLE
+//                    dataVM.deleteSearchTableWork()
+//
+//                    var searchAdapter = SearchAdapter(this@TestSearchActivity, "Search", progressBarListener)
+//                    val itemDataSourceFactory = SearchDataSourceFactory(this@TestSearchActivity, query)
+//
+//                    rvNews.adapter = searchAdapter
+//                    liveDataSource = itemDataSourceFactory.itemLiveDataSource
+//
+//                    val pagedListConfig = PagedList.Config.Builder()
+//                            .setEnablePlaceholders(false)
+//                            .setPageSize(NEWSPAGESIZE)
+//                            .build()
+//                    itemPagedList = LivePagedListBuilder(itemDataSourceFactory, pagedListConfig)
+//                            .build()
+//
+//
+//                    itemPagedList.observe(this@TestSearchActivity, Observer<PagedList<NewsEntity>> {
+//                        pBar.visibility = View.VISIBLE
+//                        Log.d("Search Activity", "Paged List :"+ it.size)
+//
+//                        Log.d("Search Activity", "Paged List snapshot :"+ it.snapshot().size)
+//                        showEmptyList(it?.size == 0)
+//                        searchAdapter.submitList(it)
+//
+//                        it.addWeakCallback(null, object:PagedList.Callback(){
+//                            override fun onChanged(position: Int, count: Int) {
+//                                Log.d("TestSearchActivity", "onChanged Size : "+count)
+//                                if(count == 0){
+//                                    Log.d("","")
+//                                    pBar.visibility = View.GONE
+//                                    emptyText.visibility = View.VISIBLE
+//                                    //emptyText.text = "No data found"
+//                                }else{
+//                                    pBar.visibility = View.VISIBLE
+//                                    emptyText.visibility = View.GONE
+//                                }
+//                            }
+//
+//                            override fun onInserted(position: Int, count: Int) {
+//                                Log.d("TestSearchActivity", "onInserted Size : "+count)
+//                                if(count == 0){
+//                                    pBar.visibility = View.GONE
+//                                    emptyText.visibility = View.VISIBLE
+//                                    //emptyText.text = "No data found"
+//                                }else{
+//                                    pBar.visibility = View.GONE
+//                                    rvNews.visibility = View.VISIBLE
+//                                    emptyText.visibility = View.GONE
+//                                }
+//                            }
+//
+//                            override fun onRemoved(position: Int, count: Int) {
+//
+//                            }
+//                        })
+//
+//                    })
+//                    val sessionId = getUniqueCode(this@TestSearchActivity, themePreference)
+//                    trackingCallback(nApi, themePreference, 0, queryText, 0, "", "", ActionType.SEARCHQUERY.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId,"",0)
+//
+//                }
+//                return false
+//            }
+//
+//            override fun onQueryTextChange(newText: String?): Boolean {
+//                /*if (newText!!.length >= 2) {
+//                    var query = newText + "%"
+//                    var titleList = dataVM.getTitleBySearch(query)
+//                    val suggestionAdapter = ArrayAdapter(this@TestSearchActivity, android.R.layout.simple_dropdown_item_1line, titleList)
+//                    searchAutoComplete.setAdapter(suggestionAdapter)
+//
+//                }
+//                return false*/
+//                apiJob?.cancel()
+//                startSearching(newText)
+//                return true
+//            }
+//        })
+
+        /*btnCross.setOnClickListener {
+            searchEditText.text.clear()
+            emptyText.visibility = View.INVISIBLE
+            dataVM.deleteSearchTableWork()
+            emptyTextFlag = false
+            val suggestionAdapter = ArrayAdapter(this@TestSearchActivity, android.R.layout.simple_dropdown_item_1line, suggestionList)
+            searchAutoComplete.setAdapter(suggestionAdapter)
+
+        }*/
+
+        nApi = ApiClient.getClient().create(ApiInterface::class.java)
+        val itemDecorator = DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
+        if (deviceWidthDp < 600) {
+            layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
+        } else {
+            layoutManager = GridLayoutManager(this, 3, RecyclerView.VERTICAL, false)
+            var divider = MyItemDecoration(ContextCompat.getDrawable(this, R.drawable.item_decorator_divider)!!)
+        }
+
+        rvNews.layoutManager = layoutManager
+//        query = searchView.query.toString()
+
+        fabReturnTop.setOnClickListener {
+            rvNews.smoothScrollToPosition(0)
+        }
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        dataVM.deleteSearchTableWork()
+    }
+
+    override fun showProgress() {
+        pBar.visibility = View.GONE
+    }
+
+    override fun onResume() {
+        super.onResume()
+    }
+
+    override fun onStop() {
+        super.onStop()
+    }
+
+    private val lastVisibleItemPosition: Int
+        get() = (rvNews!!.layoutManager!! as LinearLayoutManager).findLastVisibleItemPosition()
+
+    private fun showEmptyList(show: Boolean) {
+        pBar.visibility = View.GONE
+        if (show) {
+            emptyText.visibility = View.VISIBLE
+            rvNews.visibility = View.GONE
+        } else {
+            emptyText.visibility = View.GONE
+            rvNews.visibility = View.VISIBLE
+        }
+    }
+
+    private fun startSearching(searchQuery: String?){
+        Log.d("TestSearchActivity", ": $searchQuery ")
+        Log.d("Coroutine Job : ","Job Active: "+apiJob?.isActive)
+        apiJob = CoroutineScope(Dispatchers.IO).launch{
+            ensureActive()
+            dataVM.getSearchResult(searchQuery)
+            withContext(Dispatchers.Main){
+                dataVM.searchResultLiveData.observe(
+                        this@TestSearchActivity,
+                        Observer{
+                            genericDataModel: GenericDataModel<SuggestResponse>? ->
+                            run{
+                                var suggestionList = ArrayList<String>()
+                                Log.d("Test SearchActivity", "Key : $searchQuery")
+                                if(genericDataModel?.isSucess == true){
+                                    suggestionList.clear()
+                                    suggestionAdapter.clear()
+                                    val data = genericDataModel.data
+                                    if(data?.header?.status == 1){
+
+                                        val result = data?.body?.result
+                                        for(r in result){
+                                            suggestionList.add(r.value)
+                                        }
+                                        suggestionAdapter.addAll(suggestionList)
+                                        suggestionAdapter.notifyDataSetChanged()
+//                                        resultTextView?.text = data.toString()
+//                                        resultTextview?.visibility = View.VISIBLE
+//                                        progressLoading?.visibility = View.GONE
+                                        Log.d("DATA Result: ", data.toString())
+                                    } else {
+                                        suggestionList.clear()
+                                        suggestionAdapter.clear()
+                                    }
+                                } else{
+                                    //suggestionList.clear()
+                                    suggestionAdapter.clear()
+//                                    resultTextView?.text = "No Data"
+//                                    resultTextView?.visibility = View.VISIBLE
+//                                    progressLoading?.visibility = View.GONE
+                                    Log.d("DATA Result: ", "No Data")
+                                }
+                            }
+                        }
+                )
+            }
+        }
+    }
+}
