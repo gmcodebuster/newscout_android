@@ -8,17 +8,21 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.DisplayMetrics
 import android.util.Log
+import android.view.KeyEvent
 import android.view.View
 import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import android.view.inputmethod.EditorInfo
 import android.widget.*
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProviders
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PageKeyedDataSource
@@ -37,8 +41,11 @@ import com.fafadiatech.newscout.customcomponent.MyItemDecoration
 import com.fafadiatech.newscout.db.NewsEntity
 import com.fafadiatech.newscout.interfaces.ProgressBarListener
 import com.fafadiatech.newscout.model.GenericDataModel
+import com.fafadiatech.newscout.model.INews
 import com.fafadiatech.newscout.model.SuggestResponse
+import com.fafadiatech.newscout.paging.NewsDataSourceFactory
 import com.fafadiatech.newscout.paging.SearchDataSourceFactory
+import com.fafadiatech.newscout.paging.SourceDataSourceFactory
 import com.fafadiatech.newscout.viewmodel.FetchDataApiViewModel
 import kotlinx.coroutines.*
 
@@ -98,6 +105,17 @@ class TestSearchActivity : AppCompatActivity(), ProgressBarListener {
         animFadein = AnimationUtils.loadAnimation(this@TestSearchActivity, R.anim.fade_in)
         animFadeout = AnimationUtils.loadAnimation(this@TestSearchActivity, R.anim.fade_out)
 
+        if (deviceWidthDp < 600) {
+            layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
+        } else {
+            layoutManager = GridLayoutManager(this, 3, RecyclerView.VERTICAL, false)
+            var divider = MyItemDecoration(ContextCompat.getDrawable(this, R.drawable.item_decorator_divider)!!)
+        }
+        rvNews.layoutManager = layoutManager
+
+
+        var searchAdapter = SearchAdapter(this@TestSearchActivity, "Search", progressBarListener)
+        rvNews.adapter = searchAdapter
         rvNews?.addOnScrollListener(object: RecyclerView.OnScrollListener(){
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
@@ -126,16 +144,8 @@ class TestSearchActivity : AppCompatActivity(), ProgressBarListener {
             }
         })
 
-        dataVM.getSearchSuggestedData().observe(this, object : androidx.lifecycle.Observer<List<String>> {
-            override fun onChanged(list: List<String>?) {
-                //suggestionList = list as ArrayList<String>
 
-
-
-            }
-        })
-
-        rvNews.visibility = View.GONE
+        rvNews.visibility = View.VISIBLE
         emptyText.visibility = View.INVISIBLE
         //edtSearch.showDropDown()
         edtSearch.addTextChangedListener(object: TextWatcher{
@@ -196,7 +206,7 @@ class TestSearchActivity : AppCompatActivity(), ProgressBarListener {
                     }
                 }
         )
-        
+
         /*btnCross.setOnClickListener {
             searchEditText.text.clear()
             emptyText.visibility = View.INVISIBLE
@@ -209,19 +219,66 @@ class TestSearchActivity : AppCompatActivity(), ProgressBarListener {
 
         nApi = ApiClient.getClient().create(ApiInterface::class.java)
         val itemDecorator = DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
-        if (deviceWidthDp < 600) {
-            layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
-        } else {
-            layoutManager = GridLayoutManager(this, 3, RecyclerView.VERTICAL, false)
-            var divider = MyItemDecoration(ContextCompat.getDrawable(this, R.drawable.item_decorator_divider)!!)
-        }
 
-        rvNews.layoutManager = layoutManager
+
+
 //        query = searchView.query.toString()
 
         fabReturnTop.setOnClickListener {
             rvNews.smoothScrollToPosition(0)
         }
+
+        edtSearch.setOnEditorActionListener { p0, p1, p2 ->
+            var handle = false
+            if(p1 == EditorInfo.IME_ACTION_SEARCH){
+                Toast.makeText(this@TestSearchActivity, "Search ${p0?.text}", Toast.LENGTH_SHORT).show()
+            }
+            true
+        }
+
+        val obvSearch = Observer<PagedList<NewsEntity>>{
+            Log.d("Search Activity", "Paged List :"+ it.size)
+            Log.d("Search Activity", "Paged List snapshot :"+ it.snapshot().size)
+
+            searchAdapter.submitList(it)
+        }
+
+        dataVM.initSearchNews("China",1)?.observe(this@TestSearchActivity, Observer<PagedList<NewsEntity>>{
+            Log.d("Search Activity", "Paged List :"+ it.size)
+            Log.d("Search Activity", "Paged List snapshot :"+ it.snapshot().size)
+
+            searchAdapter.submitList(it)
+        })
+
+        /*dataVM.initializeNews("Banking", 1)
+        dataVM.newsItemPagedList.observe(this, Observer<PagedList<INews>> {
+
+            val newsList = it
+            Log.d("Search Activity", "Paged List :"+ newsList.size)
+            Log.d("Search Activity", "Paged List snapshot :"+ newsList.snapshot().size)
+        })*/
+
+
+        edtSearch.setOnEditorActionListener(object: TextView.OnEditorActionListener{
+            override fun onEditorAction(p0: TextView?, p1: Int, p2: KeyEvent?): Boolean {
+                var handle = false
+                if(p1 == EditorInfo.IME_ACTION_SEARCH){
+                    Toast.makeText(this@TestSearchActivity, "Search ${p0?.text}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@TestSearchActivity, "Search ${p0?.text}", Toast.LENGTH_SHORT).show()
+
+                    //Call search API
+                    /*dataVM.initSearchNews(p0!!.text.toString(),1)?.observe(this@TestSearchActivity, Observer<PagedList<NewsEntity>>{
+                        Log.d("Search Activity", "Paged List :"+ it.size)
+                        Log.d("Search Activity", "Paged List snapshot :"+ it.snapshot().size)
+
+                        searchAdapter.submitList(it)
+                    })*/
+
+                }
+                return true
+            }
+        })
+
     }
 
     override fun onBackPressed() {
@@ -263,46 +320,12 @@ class TestSearchActivity : AppCompatActivity(), ProgressBarListener {
             withContext(Dispatchers.Main){
                 Log.d("TestSearchActivity", "WithContext() : $searchQuery")
 
-                /*dataVM.searchResultLiveData.observe(
-                        this@TestSearchActivity,
-                        Observer{
-                            genericDataModel: GenericDataModel<SuggestResponse>? ->
-                            run{
-                                var suggestionList = ArrayList<String>()
-                                Log.d("Test SearchActivity", "Key : $searchQuery")
-                                if(genericDataModel?.isSucess == true){
-                                    suggestionList.clear()
-                                    suggestionAdapter.clear()
-                                    val data = genericDataModel.data
-                                    if(data?.header?.status == 1){
-
-                                        val result = data?.body?.result
-                                        for(r in result){
-                                            suggestionList.add(r.value)
-                                        }
-                                        suggestionAdapter.addAll(suggestionList)
-                                        suggestionAdapter.notifyDataSetChanged()
-//                                        resultTextView?.text = data.toString()
-//                                        resultTextview?.visibility = View.VISIBLE
-//                                        progressLoading?.visibility = View.GONE
-                                        Log.d("DATA Result: ", data.toString())
-                                    } else {
-                                        suggestionList.clear()
-                                        suggestionAdapter.clear()
-                                    }
-                                } else{
-                                    //suggestionList.clear()
-                                    suggestionAdapter.clear()
-//                                    resultTextView?.text = "No Data"
-//                                    resultTextView?.visibility = View.VISIBLE
-//                                    progressLoading?.visibility = View.GONE
-                                    Log.d("DATA Result: ", "No Data")
-                                }
-                            }
-                        }
-                )*/
             }
         }
         return job
+    }
+
+    fun getSerachResult(){
+
     }
 }

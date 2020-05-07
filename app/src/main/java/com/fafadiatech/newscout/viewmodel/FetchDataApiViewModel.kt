@@ -58,7 +58,7 @@ class FetchDataApiViewModel(application: Application, mParams: String) : Android
     lateinit var ddnewsItemPagedList: LiveData<PagedList<DailyDigestEntity>>
 
     lateinit var sgstNewsPagedList: LiveData<PagedList<INews>>
-    lateinit var searchNewsPageList: LiveData<PagedList<NewsEntity>>
+    var searchNewsPageList: LiveData<PagedList<NewsEntity>>? = null
 
     lateinit var commentPagedList: LiveData<PagedList<CommentList>>
     var postComment = MutableLiveData<Response<CommentPostResponseData>>()
@@ -332,7 +332,7 @@ class FetchDataApiViewModel(application: Application, mParams: String) : Android
         return sgstNewsPagedList
     }
 
-    fun initSearchNews(query: String, pageNo: Int): LiveData<PagedList<NewsEntity>> {
+    fun initSearchNews(query: String, pageNo: Int): LiveData<PagedList<NewsEntity>>? {
         searchNewsPageList = repository.selectSearchNewsSource(query, pageNo)
         return searchNewsPageList
     }

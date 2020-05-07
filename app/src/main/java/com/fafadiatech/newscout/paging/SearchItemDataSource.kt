@@ -19,6 +19,7 @@ class SearchItemDataSource(context: Context, queryTag: String) : PageKeyedDataSo
     lateinit var nApi: ApiInterface
     var query: String
     var newsList = ArrayList<SearchDataEntity>()
+    var articleList = ArrayList<NewsEntity>()
     var newsDatabase: NewsDatabase? = null
     var newsDao: NewsDao
 
@@ -44,8 +45,15 @@ class SearchItemDataSource(context: Context, queryTag: String) : PageKeyedDataSo
             }
 
             override fun onResponse(call: Call<NewsDataApi>, response: Response<NewsDataApi>) {
+                Log.d("SearchDataSource", "URL : "+call.request().url.toString())
+                articleList.clear()
                 if (response.body() != null) {
                     var list = response.body()!!.body.results
+                    if (response.body()!!.body.next != null) {
+                        key = FIRST_PAGE + 1
+                    } else {
+                        key = null
+                    }
                     for (i in 0 until list.size) {
                         var obj = list.get(i)
                         val newsId: Int = obj.id
@@ -58,15 +66,21 @@ class SearchItemDataSource(context: Context, queryTag: String) : PageKeyedDataSo
                         val description: String = obj.blurb
                         val publishedOn: String = obj.published_on
                         val hashTags = obj.hash_tags
+                        var articleScore = obj.article_score.toString()
 
                         var entityObj =
                                 SearchDataEntity(newsId, categoryId, title, source, category, url, urlToImage, description, publishedOn, hashTags!!)
+                        var entityObj1 =
+                                      NewsEntity(newsId, categoryId, title, source, category, url, urlToImage, description, publishedOn, hashTags!!, articleScore)
+
                         newsList.add(entityObj)
+                        articleList.add(entityObj1)
+                        Log.d("SearchItemDataSource", "Size : ${articleList.size}")
                     }
                     try {
-                        newsDao.insertSearchNews(newsList)
-                        var list = newsDao.getSearchNewsFromDb()
-                        callback.onResult(list, null, SearchItemDataSource.FIRST_PAGE + 1)
+                        //newsDao.insertSearchNews(newsList)
+                        //var list = newsDao.getSearchNewsFromDb()
+                        callback.onResult(articleList, null, key)
                     } catch (e: Throwable) {
                         Log.d("SearchItemDataSource", e.message)
                     }
@@ -82,9 +96,13 @@ class SearchItemDataSource(context: Context, queryTag: String) : PageKeyedDataSo
             }
 
             override fun onResponse(call: Call<NewsDataApi>, response: Response<NewsDataApi>) {
+                Log.d("SearchDataSource", "URL : "+call.request().url.toString())
+                articleList.clear()
                 if (response.body() != null) {
                     var list = response.body()!!.body.results
                     if (response.body()!!.body.next != null) {
+                        Log.d("SearchDataSource", "Next Key : "+response.body()!!.body.next)
+                        Log.d("SearchDataSource", "Params Key : "+params.key)
                         key = params.key + 1
                     } else {
                         key = null
@@ -103,15 +121,20 @@ class SearchItemDataSource(context: Context, queryTag: String) : PageKeyedDataSo
                         val description: String = obj.blurb
                         val publishedOn: String = obj.published_on
                         val hashTags = obj.hash_tags
+                        var articleScore = obj.article_score.toString()
 
                         var entityObj =
                                 SearchDataEntity(newsId, categoryId, title, source, category, url, urlToImage, description, publishedOn, hashTags!!)
+                        var entityObj1 =
+                                NewsEntity(newsId, categoryId, title, source, category, url, urlToImage, description, publishedOn, hashTags!!, articleScore)
                         newsList.add(entityObj)
+                        articleList.add(entityObj1)
                     }
                     try {
-                        newsDao.insertSearchNews(newsList)
-                        var list = newsDao.getSearchNewsFromDb()
-                        callback.onResult(list, key)
+                        //newsDao.insertSearchNews(newsList)
+                        //var list = newsDao.getSearchNewsFromDb()
+                        Log.d("SearchDataSource", "Next Params Key : "+key)
+                        callback.onResult(articleList, key)
                     } catch (e: Throwable) {
                         Log.d("SearchItemDataSource", e.message)
                     }

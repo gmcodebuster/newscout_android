@@ -60,9 +60,10 @@ class SearchAdapter(context: Context, category: String, var progressBarListener:
             }
 
             override fun areContentsTheSame(oldData: NewsEntity, newData: NewsEntity): Boolean {
-                return oldData.equals(newData)
+                return oldData == newData
             }
         }
+        
     }
 
     init {
