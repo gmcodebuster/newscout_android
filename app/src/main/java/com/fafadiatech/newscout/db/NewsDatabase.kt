@@ -13,7 +13,7 @@ import com.fafadiatech.newscout.db.trending.TrendingNewsEntity
 import com.fafadiatech.newscout.typeconverter.ArticleListConverter
 
 @TypeConverters(ArticleListConverter::class)
-@Database(entities = arrayOf(NewsEntity::class, CategoryEntity::class, CategorySelectedEntity::class, LikeEntity::class, BookmarkEntity::class, SearchDataEntity::class, RecommendedDataEntity::class, HashTagEntity::class, ArticleMediaEntity::class, HeadingEntity::class, SubMenuEntity::class, SubMenuHashTagEntity::class, TrendingEntity::class, SearchSuggestionEntity::class, TrendingNewsEntity::class, TrendingData::class, DailyDigestEntity::class, DDArticleMediaEntity::class, DDHashTagEntity::class, SourceNewsEntity::class), version = 8)
+@Database(entities = arrayOf(NewsEntity::class, CategoryEntity::class, CategorySelectedEntity::class, LikeEntity::class, BookmarkEntity::class, SearchDataEntity::class, RecommendedDataEntity::class, HashTagEntity::class, ArticleMediaEntity::class, HeadingEntity::class, SubMenuEntity::class, SubMenuHashTagEntity::class, TrendingEntity::class, SearchSuggestionEntity::class, TrendingNewsEntity::class, TrendingData::class, DailyDigestEntity::class, DDArticleMediaEntity::class, DDHashTagEntity::class, SourceNewsEntity::class), version = 9)
 
 abstract class NewsDatabase : RoomDatabase() {
 
