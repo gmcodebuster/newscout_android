@@ -59,6 +59,7 @@ class SearchItemDataSource(context: Context, queryTag: String) : PageKeyedDataSo
                         val newsId: Int = obj.id
                         val categoryId = obj.category_id
                         val title: String = obj.title
+                        Log.d("SearchDataSource", "ID : $newsId - Title : $title")
                         val source: String = obj.source
                         val category: String = obj.category.let { it }
                         val url: String = obj.source_url
@@ -114,6 +115,7 @@ class SearchItemDataSource(context: Context, queryTag: String) : PageKeyedDataSo
                         val newsId: Int = obj.id
                         val categoryId = obj.category_id
                         val title: String = obj.title
+                        Log.d("SearchDataSource", "ID : $newsId -- Title : $title")
                         val source: String = obj.source
                         val category: String = obj.category.let { it }
                         val url: String = obj.source_url

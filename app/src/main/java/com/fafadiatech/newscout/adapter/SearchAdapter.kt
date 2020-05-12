@@ -63,7 +63,7 @@ class SearchAdapter(context: Context, category: String, var progressBarListener:
                 return oldData == newData
             }
         }
-        
+
     }
 
     init {

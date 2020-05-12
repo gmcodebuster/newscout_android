@@ -20,10 +20,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.*
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PageKeyedDataSource
 import androidx.paging.PagedList
@@ -87,7 +84,8 @@ class TestSearchActivity : AppCompatActivity(), ProgressBarListener {
         getDelegate().setLocalNightMode(defaultNightMode)
         var themes: Int = themePreference.getInt("theme", R.style.DefaultMedium)
         var isNightModeEnable = themePreference.getBoolean("night mode enable", false)
-        dataVM = ViewModelProviders.of(this).get(FetchDataApiViewModel::class.java)
+        //dataVM = ViewModelProviders.of(this).get(FetchDataApiViewModel::class.java)
+        dataVM = ViewModelProvider(this).get(FetchDataApiViewModel::class.java)
         this.setTheme(themes)
         setContentView(R.layout.test_activity_search)
         var toolbarText = findViewById<TextView>(R.id.toolbar_title)
@@ -114,7 +112,7 @@ class TestSearchActivity : AppCompatActivity(), ProgressBarListener {
         rvNews.layoutManager = layoutManager
 
 
-        var searchAdapter = SearchAdapter(this@TestSearchActivity, "Search", progressBarListener)
+        var searchAdapter = SearchAdapter(this@TestSearchActivity, "", progressBarListener)
         rvNews.adapter = searchAdapter
         rvNews?.addOnScrollListener(object: RecyclerView.OnScrollListener(){
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -228,38 +226,53 @@ class TestSearchActivity : AppCompatActivity(), ProgressBarListener {
             rvNews.smoothScrollToPosition(0)
         }
 
+        val obvSearch = Observer<PagedList<NewsEntity>>{
+            Log.d("Search Activity", "Paged List :"+ it.size)
+            Log.d("Search Activity", "Paged List snapshot :"+ it.snapshot().size)
+
+            //searchAdapter.submitList(it)
+        }
+
+
+
         edtSearch.setOnEditorActionListener { p0, p1, p2 ->
             var handle = false
             if(p1 == EditorInfo.IME_ACTION_SEARCH){
+                //create new adapter object and delete old
+
                 Toast.makeText(this@TestSearchActivity, "Search ${p0?.text}", Toast.LENGTH_SHORT).show()
             }
             true
         }
 
-        val obvSearch = Observer<PagedList<NewsEntity>>{
+        /*val obvSearch = Observer<PagedList<NewsEntity>>{
             Log.d("Search Activity", "Paged List :"+ it.size)
             Log.d("Search Activity", "Paged List snapshot :"+ it.snapshot().size)
 
             searchAdapter.submitList(it)
-        }
+        }*/
+
+        /*dataVM.searchNewsPageList?.observe(this@TestSearchActivity, Observer<PagedList<NewsEntity>>{
+            Log.d("Search Activity", "Paged List :"+ it.size)
+            Log.d("Search Activity", "Paged List snapshot :"+ it.snapshot().size)
+
+            searchAdapter.submitList(it)
+        })*/
 
         dataVM.initSearchNews("China",1)?.observe(this@TestSearchActivity, Observer<PagedList<NewsEntity>>{
             Log.d("Search Activity", "Paged List :"+ it.size)
             Log.d("Search Activity", "Paged List snapshot :"+ it.snapshot().size)
 
+            val dataList = it.toList()
+            for(data in dataList){
+                Log.d("SearchItemDataSource", "ID : ${data.id} * Title : ${data.title}")
+            }
             searchAdapter.submitList(it)
         })
 
-        /*dataVM.initializeNews("Banking", 1)
-        dataVM.newsItemPagedList.observe(this, Observer<PagedList<INews>> {
-
-            val newsList = it
-            Log.d("Search Activity", "Paged List :"+ newsList.size)
-            Log.d("Search Activity", "Paged List snapshot :"+ newsList.snapshot().size)
-        })*/
 
 
-        edtSearch.setOnEditorActionListener(object: TextView.OnEditorActionListener{
+        /*edtSearch.setOnEditorActionListener(object: TextView.OnEditorActionListener{
             override fun onEditorAction(p0: TextView?, p1: Int, p2: KeyEvent?): Boolean {
                 var handle = false
                 if(p1 == EditorInfo.IME_ACTION_SEARCH){
@@ -267,17 +280,17 @@ class TestSearchActivity : AppCompatActivity(), ProgressBarListener {
                     Toast.makeText(this@TestSearchActivity, "Search ${p0?.text}", Toast.LENGTH_SHORT).show()
 
                     //Call search API
-                    /*dataVM.initSearchNews(p0!!.text.toString(),1)?.observe(this@TestSearchActivity, Observer<PagedList<NewsEntity>>{
+                    *//*dataVM.initSearchNews(p0!!.text.toString(),1)?.observe(this@TestSearchActivity, Observer<PagedList<NewsEntity>>{
                         Log.d("Search Activity", "Paged List :"+ it.size)
                         Log.d("Search Activity", "Paged List snapshot :"+ it.snapshot().size)
 
                         searchAdapter.submitList(it)
-                    })*/
+                    })*//*
 
                 }
                 return true
             }
-        })
+        })*/
 
     }
 

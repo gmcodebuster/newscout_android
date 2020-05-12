@@ -121,8 +121,8 @@ interface NewsDao {
     @Query("SELECT a.article_id, a.title, a.source, a.category, a.source_url, a.cover_image, " +
             "            a.description, a.published_on, a.article_score, COALESCE(c.is_like, '2') AS like_status," +
             "            b.status AS bookmark_status" +
-            "            FROM BookmarkData b " +
-            "            LEFT JOIN ArticlesData a " +
+            "            FROM  ArticlesData a" +
+            "            LEFT JOIN BookmarkData b" +
             "            ON b.article_id = a.article_id " +
             "            LEFT JOIN LikeData c " +
             "            ON c.article_id = a.article_id " +
@@ -131,8 +131,8 @@ interface NewsDao {
             "SELECT d.article_id, d.title, d.source, d.category, d.source_url, d.cover_image, " +
             "            d.description, d.published_on, d.article_score, COALESCE(f.is_like, '2') AS like_status," +
             "            e.status AS bookmark_status" +
-            "            FROM BookmarkData e " +
-            "            LEFT JOIN TrendingArticlesData d " +
+            "            FROM  TrendingArticlesData d" +
+            "            LEFT JOIN BookmarkData e" +
             "            ON e.article_id = d.article_id " +
             "            LEFT JOIN LikeData f " +
             "            ON f.article_id = d.article_id " +
@@ -141,8 +141,8 @@ interface NewsDao {
             "SELECT g.article_id, g.title, g.source, g.category, g.source_url, g.cover_image, " +
             "            g.description, g.published_on, g.article_score, COALESCE(i.is_like, '2') AS like_status," +
             "            h.status AS bookmark_status" +
-            "            FROM BookmarkData h " +
-            "            LEFT JOIN Dailydigest g " +
+            "            FROM  Dailydigest g" +
+            "            LEFT JOIN  BookmarkData h" +
             "            ON h.article_id = g.article_id " +
             "            LEFT JOIN LikeData i " +
             "            ON i.article_id = g.article_id " +
@@ -150,10 +150,16 @@ interface NewsDao {
             "            ORDER BY published_on DESC")
     fun getbookmarkedNewsFromDb(): LiveData<List<DetailNewsData>>*/
 
+    @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
+    @Query("SELECT a.article_id, title, source, category, source_url, cover_image, description, published_on, article_score, COALESCE(c.is_like, '2') AS like_status, b.status AS bookmark_status FROM ArticlesData a LEFT JOIN  BookmarkData b ON b.article_id = a.article_id LEFT JOIN LikeData c ON c.article_id = a.article_id WHERE a.article_id IS NOT NULL AND b.status = 1 union SELECT a.article_id, title, source, category, source_url, cover_image, description, published_on, article_score, COALESCE(c.is_like, '2') AS like_status, b.status AS bookmark_status FROM TrendingArticlesData a LEFT JOIN  BookmarkData b ON b.article_id = a.article_id LEFT JOIN LikeData c ON c.article_id = a.article_id WHERE a.article_id IS NOT NULL AND b.status = 1")
+    fun getbookmarkedNewsFromDb1(): LiveData<List<DetailNewsData>>
+
     /*@SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
     @Query("select a.article_id, a.title, a.source, a.category, a.source_url, a.cover_image, a.description, a.published_on, a.article_score from ArticlesData a, BookmarkData d where a.article_id = d.article_id union select b.article_id, b.title, b.source, b.category, b.source_url, b.cover_image, b.description, b.published_on, b.article_score from TrendingArticlesData b, BookmarkData e where b.article_id = e.article_id union select c.article_id, c.title, c.source, c.category, c.source_url, c.cover_image, c.description, c.published_on, c.article_score from Dailydigest c, BookmarkData f where c.article_id = f.article_id order by c.article_id")
     fun getbookmarkedNewsFromDb(): LiveData<List<DetailNewsData>>
     */
+
+
     @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
     @Query("SELECT a.article_id, a.title, a.source, a.category, a.source_url, a.cover_image, a.description, a.published_on, a.article_score, COALESCE(c.is_like, '2') AS like_status,b.status AS bookmark_status FROM BookmarkData  b LEFT JOIN SearchData a ON a.article_id=b.article_id LEFT JOIN LikeData c ON c.article_id=b.article_id WHERE a.article_id IS NOT NULL AND b.status=1 ORDER BY a.published_on DESC")
     fun getbookmarkedNewsSearchFromDb(): List<DetailNewsData>

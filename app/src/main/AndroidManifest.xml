@@ -63,7 +63,7 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.TestSearchActivity"
+            android:name=".activity.SearchActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <activity

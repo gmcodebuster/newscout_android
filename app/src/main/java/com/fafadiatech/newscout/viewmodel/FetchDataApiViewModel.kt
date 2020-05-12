@@ -62,7 +62,7 @@ class FetchDataApiViewModel(application: Application, mParams: String) : Android
 
     lateinit var commentPagedList: LiveData<PagedList<CommentList>>
     var postComment = MutableLiveData<Response<CommentPostResponseData>>()
-
+    var postSearchResult : MutableLiveData<PagedList<NewsEntity>> = MutableLiveData()
 
     val adsTitleVM: MutableLiveData<NewsAdsBodyData> by lazy {
         MutableLiveData<NewsAdsBodyData>()
@@ -334,6 +334,7 @@ class FetchDataApiViewModel(application: Application, mParams: String) : Android
 
     fun initSearchNews(query: String, pageNo: Int): LiveData<PagedList<NewsEntity>>? {
         searchNewsPageList = repository.selectSearchNewsSource(query, pageNo)
+        postSearchResult.postValue(searchNewsPageList?.value)
         return searchNewsPageList
     }
 
