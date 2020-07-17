@@ -34,6 +34,7 @@ import com.fafadiatech.newscout.api.ApiInterface
 import com.fafadiatech.newscout.appconstants.*
 import com.fafadiatech.newscout.application.MyApplication
 import com.fafadiatech.newscout.broadcast.DataNotFoundReceiver
+import com.fafadiatech.newscout.searchcomponent.NewsSearchActivity
 import com.fafadiatech.newscout.db.NewsDao
 import com.fafadiatech.newscout.db.NewsDatabase
 import com.fafadiatech.newscout.fragment.DailyDigestFragment
@@ -402,7 +403,7 @@ class MainActivity : BaseActivity(), MenuHeaderClickListener, NavigationView.OnN
                 val sessionId = getUniqueCode(this@MainActivity, themePreference)
                 trackingCallback(nApi, themePreference, 0, "", 0, "", "", ActionType.SEARCHMENUCLICK.type, deviceId
                         ?: "", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, ", 0")
-                val intent = Intent(this, SearchActivity::class.java)
+                val intent = Intent(this, NewsSearchActivity::class.java)
                 startActivity(intent)
             }
 

@@ -139,6 +139,10 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".searchcomponent.NewsSearchActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+
         <receiver
             android:name=".broadcast.NSConnectivityReceiver"
             android:enabled="true">
