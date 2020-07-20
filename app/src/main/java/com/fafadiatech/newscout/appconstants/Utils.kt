@@ -10,15 +10,21 @@ import android.net.NetworkInfo
 import android.net.wifi.WifiManager
 import android.provider.Settings
 import android.text.Spannable
+import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.util.Log
+import android.view.ViewTreeObserver
 import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.ContextCompat
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 import com.fafadiatech.newscout.R
 import com.fafadiatech.newscout.activity.SignInActivity
 import com.fafadiatech.newscout.api.ApiClient
 import com.fafadiatech.newscout.api.ApiInterface
+import com.fafadiatech.newscout.application.GlideRequests
 import com.fafadiatech.newscout.application.MyApplication
 import com.fafadiatech.newscout.db.NewsDao
 import com.fafadiatech.newscout.db.NewsDatabase
@@ -27,9 +33,12 @@ import com.fafadiatech.newscout.model.AdsData
 import com.fafadiatech.newscout.model.DetailNewsData
 import com.fafadiatech.newscout.model.INews
 import com.fafadiatech.newscout.model.SubMenuResultData
+import com.github.marlonlom.utilities.timeago.TimeAgo
+import com.github.marlonlom.utilities.timeago.TimeAgoMessages
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -297,6 +306,84 @@ fun showMessage(context: Context, msg:String, code:Int){
             .create()
 
     msgDialog.show()
+}
+
+fun spannableSource(context: Context, source: String?): SpannableString {
+    source?.let {
+        var spannable = SpannableString(" via $source")
+        setColorForPath(spannable, arrayOf(source), ContextCompat.getColor(context, R.color.colorPrimary))
+        return spannable
+    }
+    return SpannableString("")
+}
+
+fun publishDate(date: String?): String{
+    var timeAgo: String = ""
+    date?.let {
+        var strDate = date
+        try {
+
+            strDate.endsWith("Z",false)?: strDate+"Z"
+
+            var timeZone = Calendar.getInstance().timeZone.id
+            var dateformat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+            dateformat.timeZone = TimeZone.getTimeZone("UTC")
+            var date = dateformat.parse(strDate)
+            dateformat.timeZone = TimeZone.getTimeZone(timeZone)
+            dateformat.format(date)
+            timeAgo = TimeAgo.using(date.time, TimeAgoMessages.Builder().defaultLocale().build())
+            return timeAgo
+        } catch (e: Exception) {
+            try {
+                var timeZone = Calendar.getInstance().timeZone.id
+                var dateformat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'")
+                dateformat.timeZone = TimeZone.getTimeZone("UTC")
+                var date = dateformat.parse(strDate)
+                dateformat.timeZone = TimeZone.getTimeZone(timeZone)
+                dateformat.format(date)
+
+                timeAgo = TimeAgo.using(date.time, TimeAgoMessages.Builder().defaultLocale().build())
+                return timeAgo
+            } catch (exception: Exception) {
+                return ""
+            }
+        }
+    }
+    return timeAgo
+}
+
+fun newsCoverImage(context: Context, glide: GlideRequests, newsImage:ImageView, coverImage: String?){
+    coverImage?.let {
+        if (android.os.Build.VERSION.SDK_INT >= 21) {
+            newsImage.clipToOutline = true
+        } else {
+            newsImage.background = ContextCompat.getDrawable(context, R.drawable.round_outline)
+        }
+
+        val vto = newsImage.viewTreeObserver
+        vto.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
+            override fun onPreDraw(): Boolean {
+                newsImage.viewTreeObserver.removeOnPreDrawListener(this)
+                var imageUrl = getImageURL(newsImage,coverImage)
+
+                if (coverImage.isNotEmpty()) {
+                    glide.load(imageUrl)
+                            .apply(RequestOptions.timeoutOf(5 * 60 * 1000))
+                            .thumbnail(0.1f)
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .placeholder(R.drawable.image_not_found)
+                            .error(R.drawable.image_not_found)
+                            .into(newsImage)
+                } else {
+                    glide.load(R.drawable.image_not_found)
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .into(newsImage)
+                }
+
+                return true
+            }
+        })
+    }
 }
 
 fun searchTrackingCallback(nApi: ApiInterface, themePreference: SharedPreferences, action:String, deviceId:String, plateform:String, type:String, sessionId:String, searchText:String){

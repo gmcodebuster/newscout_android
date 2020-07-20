@@ -6,21 +6,25 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.fafadiatech.newscout.R
+import com.fafadiatech.newscout.appconstants.newsCoverImage
+import com.fafadiatech.newscout.appconstants.publishDate
+import com.fafadiatech.newscout.appconstants.spannableSource
 import com.fafadiatech.newscout.application.GlideRequests
 import com.fafadiatech.newscout.model.ArticlesData
 
-class GNewsItemViewHolder(view: View,
+class GNewsItemViewHolder(private val view: View,
                           private val glide: GlideRequests) : RecyclerView.ViewHolder(view) {
 
     private var item: ArticlesData? = null
 
     private val itemRootView:ConstraintLayout  = view.findViewById<ConstraintLayout>(R.id.root_layout_news_item)
-    private val newsSourceLeft: TextView = view.findViewById<TextView>(R.id.news_source_main)
-    private val newsTitleLeft: TextView = view.findViewById<TextView>(R.id.news_title_main)
-    private val newsImageLeft: ImageView = view.findViewById<ImageView>(R.id.news_image_main)
-    private val newsTimeLeft: TextView = view.findViewById<TextView>(R.id.news_time_main)
+    private val newsSource: TextView = view.findViewById<TextView>(R.id.news_source_main)
+    private val newsTitle: TextView = view.findViewById<TextView>(R.id.news_title_main)
+    private val newsImage: ImageView = view.findViewById<ImageView>(R.id.news_image_main)
+    private val newsTime: TextView = view.findViewById<TextView>(R.id.news_time_main)
 
     init {
         view.setOnClickListener {
@@ -33,19 +37,10 @@ class GNewsItemViewHolder(view: View,
 
     fun bind(item: ArticlesData?) {
         this.item = item
-        newsSourceLeft.text = item?.source
-        newsTitleLeft.text = item?.title
-        newsTimeLeft.text = item?.published_on
-        /*if (item?.cover_image?.startsWith("http") == true) {
-
-            glide.load(item.avatarUrl)
-                    .centerCrop()
-                    .placeholder(R.drawable.ic_placeholder)
-                    .into(thumbnail)
-        } else {
-
-            glide.clear(thumbnail)
-        }*/
+        newsSource.text = spannableSource( view.context, item?.source)
+        newsTitle.text = item?.let { HtmlCompat.fromHtml(item.title, HtmlCompat.FROM_HTML_MODE_LEGACY) }
+        newsTime.text = publishDate(item?.published_on)
+        newsCoverImage(view.context, glide, newsImage, item?.cover_image)
     }
 
     companion object {

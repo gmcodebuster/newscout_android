@@ -27,6 +27,9 @@ class NewsSearchAdapter(
         return when (viewType) {
             R.layout.news_item_main ->{ GNewsItemViewHolder.create(parent, glideRequests)
             }
+            R.layout.news_item_alternate -> {
+                GNewsItemRightViewHolder.create(parent, glideRequests)
+            }
             R.layout.network_state_item -> NetworkStateItemViewHolder.create(parent, retryCallback)
             else -> throw IllegalArgumentException("unknown view type $viewType")
         }
@@ -35,6 +38,7 @@ class NewsSearchAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (getItemViewType(position)) {
             R.layout.news_item_main -> (holder as GNewsItemViewHolder).bind(getItem(position))
+            R.layout.news_item_alternate -> (holder as GNewsItemRightViewHolder).bind(getItem(position))
             R.layout.network_state_item -> (holder as NetworkStateItemViewHolder).bind(networkState)
         }
     }
@@ -44,9 +48,18 @@ class NewsSearchAdapter(
 
     override fun getItemViewType(position: Int): Int {
         return if (hasExtraRow() && position == itemCount - 1) {
+
             R.layout.network_state_item
         } else {
-            R.layout.news_item_main
+            if(getItem(position) is ArticlesData){
+                if(position % 2 == 0){
+                    return R.layout.news_item_alternate  //Right
+                }else{
+                    return R.layout.news_item_main  //Left
+                }
+            } else{
+                return R.layout.news_item_main //ADVERTISE VIEW
+            }
         }
     }
 
