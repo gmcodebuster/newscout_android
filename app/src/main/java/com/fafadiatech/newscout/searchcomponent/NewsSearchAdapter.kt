@@ -15,6 +15,7 @@ import com.fafadiatech.newscout.model.ArticlesData
 
 class NewsSearchAdapter(
         private val glideRequests: GlideRequests,
+        private val cellClickListener: OnNewsItemClickListener,
         private val retryCallback: () -> Unit
 ) : PagedListAdapter<ArticlesData, RecyclerView.ViewHolder>(ITEM_COMPARATOR) {
 
@@ -37,8 +38,12 @@ class NewsSearchAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (getItemViewType(position)) {
-            R.layout.news_item_main -> (holder as GNewsItemViewHolder).bind(getItem(position))
-            R.layout.news_item_alternate -> (holder as GNewsItemRightViewHolder).bind(getItem(position))
+            R.layout.news_item_main -> {(holder as GNewsItemViewHolder).bind(getItem(position))
+                (holder as GNewsItemViewHolder).itemView.setOnClickListener { cellClickListener.onItemClick(getItem(position), position) }
+            }
+            R.layout.news_item_alternate -> { (holder as GNewsItemRightViewHolder).bind(getItem(position))
+                (holder as GNewsItemRightViewHolder).itemView.setOnClickListener { cellClickListener.onItemClick(getItem(position), position) }
+            }
             R.layout.network_state_item -> (holder as NetworkStateItemViewHolder).bind(networkState)
         }
     }
@@ -83,13 +88,6 @@ class NewsSearchAdapter(
         }
     }
 
-    class LeftItemViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val itemRootView = view.findViewById<ConstraintLayout>(R.id.root_layout_news_item_alternate)
-        var newsSourceLeft = view.findViewById<TextView>(R.id.news_source_alternate)
-        var newsTitleLeft = view.findViewById<TextView>(R.id.news_title_alternate)
-        var newsImageLeft = view.findViewById<ImageView>(R.id.news_image_alternate)
-        var newsTimeLeft = view.findViewById<TextView>(R.id.news_time_alternate)
-    }
 
     companion object {
         private val ITEM_COMPARATOR = object : DiffUtil.ItemCallback<ArticlesData>() {

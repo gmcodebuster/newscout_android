@@ -4,12 +4,14 @@ import androidx.annotation.MainThread
 import androidx.lifecycle.Transformations.switchMap
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
+import com.fafadiatech.newscout.db.NewsDatabase
 import com.fafadiatech.newscout.model.ArticlesData
 import java.util.concurrent.Executor
 
 class InMemoryByPageKeyRepository(
         private val gnewsApi: GNewsApiService,
-        private val networkExecutor: Executor
+        private val networkExecutor: Executor,
+        private val database : NewsDatabase?
 ) : GNewsRepository {
 
     @MainThread
@@ -30,7 +32,7 @@ class InMemoryByPageKeyRepository(
     }
 
     private fun gNewsDataSourceFactory(searchQuery: String): GNewsDataSourceFactory {
-        return GNewsDataSourceFactory(searchQuery, gnewsApi, networkExecutor)
+        return GNewsDataSourceFactory(searchQuery, gnewsApi, networkExecutor, database)
     }
 
     private fun pagedListConfig(pageSize: Int): PagedList.Config {

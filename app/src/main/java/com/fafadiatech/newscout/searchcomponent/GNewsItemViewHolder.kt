@@ -33,6 +33,8 @@ class GNewsItemViewHolder(private val view: View,
 //                view.context.startActivity(intent)
             }
         }
+
+
     }
 
     fun bind(item: ArticlesData?) {

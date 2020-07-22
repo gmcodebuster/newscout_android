@@ -37,10 +37,7 @@ class GNewsItemRightViewHolder(private val view: View,
 
     init {
         view.setOnClickListener {
-            item?.id?.let { url ->
-//                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-//                view.context.startActivity(intent)
-            }
+
         }
     }
 

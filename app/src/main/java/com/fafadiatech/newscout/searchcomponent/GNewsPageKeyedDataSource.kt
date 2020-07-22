@@ -1,7 +1,11 @@
 package com.fafadiatech.newscout.searchcomponent
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.PageKeyedDataSource
+import com.fafadiatech.newscout.db.NewsDatabase
+import com.fafadiatech.newscout.db.NewsEntity
+import com.fafadiatech.newscout.db.SearchDataEntity
 import com.fafadiatech.newscout.model.ArticlesData
 import com.fafadiatech.newscout.model.NewsDataApi
 import java.util.concurrent.Executor
@@ -9,7 +13,8 @@ import java.util.concurrent.Executor
 class GNewsPageKeyedDataSource(
         private val searchQuery: String,
         private val apiService: GNewsApiService,
-        private val retryExecutor: Executor
+        private val retryExecutor: Executor,
+        private val database : NewsDatabase?
 ) : PageKeyedDataSource<Int, ArticlesData>() {
 
     var retry: (() -> Any)? = null
@@ -27,13 +32,13 @@ class GNewsPageKeyedDataSource(
         val currentPage = 1
         val nextPage = currentPage + 1
 
-        makeLoadInitialRequest(params, callback, currentPage, nextPage)
+        makeLoadInitialRequest(params, callback, currentPage, nextPage, database)
     }
 
     private fun makeLoadInitialRequest(params: LoadInitialParams<Int>,
                                        callback: LoadInitialCallback<Int, ArticlesData>,
                                        currentPage: Int,
-                                       nextPage: Int) {
+                                       nextPage: Int, database: NewsDatabase?) {
 
         // triggered by a refresh, we better execute sync
         apiService.searchUsersSync(
@@ -46,6 +51,36 @@ class GNewsPageKeyedDataSource(
                 onSuccess = { responseBody ->
                     val items = (responseBody as NewsDataApi)?.body?.results ?: ArrayList<ArticlesData>()//emptyList()
                     retry = null
+                    //insert into db
+                    var newsList = ArrayList<SearchDataEntity>()
+                   val newsDao = database?.newsDao()
+
+                    for (i in 0 until items.size) {
+                        var obj = items.get(i)
+                        val newsId: Int = obj.id
+                        val categoryId = obj.category_id
+                        val title: String = obj.title
+                        Log.d("SearchDataSource", "ID : $newsId - Title : $title")
+                        val source: String = obj.source
+                        val category: String = obj.category.let { it }
+                        val url: String = obj.source_url
+                        val urlToImage: String = obj.cover_image
+                        val description: String = obj.blurb
+                        val publishedOn: String = obj.published_on
+                        val hashTags = obj.hash_tags
+                        var articleScore = obj.article_score.toString()
+
+                        var entityObj =
+                                SearchDataEntity(newsId, categoryId, title, source, category, url, urlToImage, description, publishedOn, hashTags!!)
+                        newsList.add(entityObj)
+
+                        Log.d("SearchItemDataSource", "Size : ${newsList.size}")
+                    }
+                    try {
+                        newsDao?.insertSearchNews(newsList)
+                    } catch (e: Throwable) {
+                        Log.d("SearchItemDataSource", e.message)
+                    }
                     postInitialState(NetworkState.LOADED)
                     callback.onResult(items, null, nextPage)
                 },
@@ -81,6 +116,36 @@ class GNewsPageKeyedDataSource(
                 onSuccess = { responseBody ->
                     val items = (responseBody as NewsDataApi)?.body?.results ?: ArrayList<ArticlesData>()//emptyList()
                     retry = null
+                    //insert into db
+                    var newsList = ArrayList<SearchDataEntity>()
+                    val newsDao = database?.newsDao()
+
+                    for (i in 0 until items.size) {
+                        var obj = items.get(i)
+                        val newsId: Int = obj.id
+                        val categoryId = obj.category_id
+                        val title: String = obj.title
+                        Log.d("SearchDataSource", "ID : $newsId - Title : $title")
+                        val source: String = obj.source
+                        val category: String = obj.category.let { it }
+                        val url: String = obj.source_url
+                        val urlToImage: String = obj.cover_image
+                        val description: String = obj.blurb
+                        val publishedOn: String = obj.published_on
+                        val hashTags = obj.hash_tags
+                        var articleScore = obj.article_score.toString()
+
+                        var entityObj =
+                                SearchDataEntity(newsId, categoryId, title, source, category, url, urlToImage, description, publishedOn, hashTags!!)
+                        newsList.add(entityObj)
+
+                        Log.d("SearchItemDataSource", "Size : ${newsList.size}")
+                    }
+                    try {
+                        newsDao?.insertSearchNews(newsList)
+                    } catch (e: Throwable) {
+                        Log.d("SearchItemDataSource", e.message)
+                    }
                     callback.onResult(items, nextPage)
                     postAfterState(NetworkState.LOADED)
                 },

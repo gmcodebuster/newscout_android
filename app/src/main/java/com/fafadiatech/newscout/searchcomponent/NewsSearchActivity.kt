@@ -1,23 +1,34 @@
 package com.fafadiatech.newscout.searchcomponent
 
+import android.content.Context
+import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.RecyclerView
 import com.fafadiatech.newscout.R
+import com.fafadiatech.newscout.activity.DetailNewsActivity
+import com.fafadiatech.newscout.api.ApiClient
+import com.fafadiatech.newscout.api.ApiInterface
+import com.fafadiatech.newscout.appconstants.*
 import com.fafadiatech.newscout.application.GlideApp
+import com.fafadiatech.newscout.db.NewsDatabase
 import com.fafadiatech.newscout.model.ArticlesData
+import com.fafadiatech.newscout.viewmodel.FetchDataApiViewModel
 import kotlinx.android.synthetic.main.test_activity_search_git.*
 import java.util.concurrent.Executors
 
-class NewsSearchActivity: AppCompatActivity() {
+class NewsSearchActivity: AppCompatActivity(), OnNewsItemClickListener {
 
     companion object {
         const val KEY_NEWS_SEARCH = "github_user"
@@ -30,10 +41,16 @@ class NewsSearchActivity: AppCompatActivity() {
     lateinit var toolbar: Toolbar
     private val NETWORK_IO = Executors.newFixedThreadPool(5)
 
+    lateinit var nApi: ApiInterface
+    lateinit var themePreference: SharedPreferences
+    lateinit var dataVM: FetchDataApiViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.test_activity_search_git)
+        dataVM = ViewModelProviders.of(this).get(FetchDataApiViewModel::class.java)
+        nApi = ApiClient.getClient().create(ApiInterface::class.java)
+        themePreference = getSharedPreferences(AppConstant.APPPREF, Context.MODE_PRIVATE)
         toolbar = findViewById(R.id.toolbar_home_sc)
         setSupportActionBar(toolbar)
         list = findViewById(R.id.list)
@@ -50,7 +67,7 @@ class NewsSearchActivity: AppCompatActivity() {
     }
 
     private fun provideGithubRepository(): GNewsRepository {
-        return InMemoryByPageKeyRepository(provideGNewsApiService(), NETWORK_IO)
+        return InMemoryByPageKeyRepository(provideGNewsApiService(), NETWORK_IO, getDatabase())
     }
 
     fun provideViewModelFactory(): ViewModelProvider.Factory {
@@ -63,7 +80,7 @@ class NewsSearchActivity: AppCompatActivity() {
     }
 
     private fun initAdapter() {
-        val adapter = NewsSearchAdapter(glideRequests) {
+        val adapter = NewsSearchAdapter(glideRequests, this) {
             model.retry()
         }
         list.adapter = adapter
@@ -134,6 +151,10 @@ class NewsSearchActivity: AppCompatActivity() {
         }
     }
 
+    private fun getDatabase(): NewsDatabase? {
+        return NewsDatabase.getInstance(this@NewsSearchActivity)
+    }
+
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         return when (item?.itemId) {
             R.id.action_search -> true
@@ -144,5 +165,29 @@ class NewsSearchActivity: AppCompatActivity() {
     override fun onDestroy() {
         onQueryTextListener = null
         super.onDestroy()
+    }
+
+    override fun onItemClick(item: ArticlesData?, position: Int) {
+        item?.let {
+
+            var id = item.id
+//            dataVM.startRecommendNewsWorkManager(id)
+
+            var itemTitle = item.title
+            var deviceId = themePreference.getString("device_token", "")
+
+            val sessionId = getUniqueCode(this, themePreference)
+            val title = item.title
+            val cName = item.category
+            val categoryId = item.category_id
+            val source = item.source
+            trackingCallback(nApi, themePreference, id, title, categoryId, cName, "", ActionType.ARTICLESEARCHDETAIL.type, deviceId?:"", PLATFORM, ViewType.ENGAGEVIEW.type, sessionId, source, 0)
+
+            var detailIntent = Intent(this, DetailNewsActivity::class.java)
+            detailIntent.putExtra("indexPosition", position)
+            detailIntent.putExtra("category_of_newslist", "Search")
+            detailIntent.putExtra("category_id", categoryId)
+            startActivity(detailIntent)
+        }
     }
 }
