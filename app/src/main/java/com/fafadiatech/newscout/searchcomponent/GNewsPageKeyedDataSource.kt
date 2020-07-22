@@ -97,14 +97,14 @@ class GNewsPageKeyedDataSource(
         val currentPage = params.key
         val nextPage = currentPage + 1
 
-        makeLoadAfterRequest(params, callback, currentPage, nextPage)
+        makeLoadAfterRequest(params, callback, currentPage, nextPage, database)
     }
 
 
     private fun makeLoadAfterRequest(params: LoadParams<Int>,
                                      callback: LoadCallback<Int, ArticlesData>,
                                      currentPage: Int,
-                                     nextPage: Int) {
+                                     nextPage: Int, database: NewsDatabase?) {
 
         apiService.searchUsersAsync(
                 query = searchQuery,
