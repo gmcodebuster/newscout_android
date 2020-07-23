@@ -4,12 +4,17 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
+import android.view.View
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -24,8 +29,11 @@ import com.fafadiatech.newscout.appconstants.*
 import com.fafadiatech.newscout.application.GlideApp
 import com.fafadiatech.newscout.db.NewsDatabase
 import com.fafadiatech.newscout.model.ArticlesData
+import com.fafadiatech.newscout.model.GenericDataModel
+import com.fafadiatech.newscout.model.SuggestResponse
 import com.fafadiatech.newscout.viewmodel.FetchDataApiViewModel
 import kotlinx.android.synthetic.main.test_activity_search_git.*
+import kotlinx.coroutines.*
 import java.util.concurrent.Executors
 
 class NewsSearchActivity: AppCompatActivity(), OnNewsItemClickListener {
@@ -37,6 +45,7 @@ class NewsSearchActivity: AppCompatActivity(), OnNewsItemClickListener {
 
     private lateinit var list: RecyclerView
     private lateinit var model: SearchViewModel
+    private lateinit var autoSearch: SearchView
     private val glideRequests by lazy { GlideApp.with(this) }
     lateinit var toolbar: Toolbar
     private val NETWORK_IO = Executors.newFixedThreadPool(5)
@@ -44,22 +53,61 @@ class NewsSearchActivity: AppCompatActivity(), OnNewsItemClickListener {
     lateinit var nApi: ApiInterface
     lateinit var themePreference: SharedPreferences
     lateinit var dataVM: FetchDataApiViewModel
+    lateinit var suggestionAdapter : ArrayAdapter<String>
+    private var apiJob: Job? = null
+    var suggestionList = ArrayList<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.test_activity_search_git)
+        setContentView(R.layout.test_activity_search)
         dataVM = ViewModelProviders.of(this).get(FetchDataApiViewModel::class.java)
         nApi = ApiClient.getClient().create(ApiInterface::class.java)
         themePreference = getSharedPreferences(AppConstant.APPPREF, Context.MODE_PRIVATE)
         toolbar = findViewById(R.id.toolbar_home_sc)
-        setSupportActionBar(toolbar)
-        list = findViewById(R.id.list)
 
+        list = findViewById(R.id.list)
+        autoSearch = findViewById(R.id.search_repo)
         model = viewModel()
+        initAutoCompleteView()
         initAdapter()
         initSwipeToRefresh()
         val searchQuery = savedInstanceState?.getString(KEY_NEWS_SEARCH) ?: DEFAULT_USER
 //        model.showSearchResults(searchQuery)
+    }
+
+    private fun initAutoCompleteView(){
+        var btnCross: ImageView = autoSearch.findViewById(androidx.appcompat.R.id.search_close_btn)
+
+        var searchEditText: EditText = autoSearch.findViewById(androidx.appcompat.R.id.search_src_text)
+        searchEditText.setHintTextColor(ContextCompat.getColor(this@NewsSearchActivity, R.color.search_hint_color))
+
+        val searchAutoComplete = autoSearch.findViewById(androidx.appcompat.R.id.search_src_text)
+                as SearchView.SearchAutoComplete
+        searchAutoComplete.threshold = 0
+
+        suggestionAdapter = ArrayAdapter<String>(this@NewsSearchActivity, android.R.layout.simple_dropdown_item_1line)
+        searchAutoComplete.setAdapter(suggestionAdapter)
+        autoSearch.setOnQueryTextListener(onQueryTextListener)
+
+        dataVM.getSearchSuggestedData().observe(this, object : androidx.lifecycle.Observer<List<String>> {
+            override fun onChanged(list: List<String>?) {
+                suggestionList = list as ArrayList<String>
+            }
+        })
+
+        searchAutoComplete.setOnItemClickListener { parent, view, position, id ->
+            var queryString = parent.getItemAtPosition(position) as String
+            searchAutoComplete.setText(queryString)
+            searchEditText.setSelection(queryString.length)
+        }
+
+        btnCross.setOnClickListener {
+            searchEditText.text.clear()
+            dataVM.deleteSearchTableWork()
+            val suggestionAdapter = ArrayAdapter(this@NewsSearchActivity, android.R.layout.simple_dropdown_item_1line, suggestionList)
+            searchAutoComplete.setAdapter(suggestionAdapter)
+
+        }
     }
 
     private fun provideGNewsApiService(): GNewsApiService {
@@ -118,16 +166,19 @@ class NewsSearchActivity: AppCompatActivity(), OnNewsItemClickListener {
         }
 
         override fun onQueryTextChange(newText: String): Boolean {
-            // do nothing
+            // do nothing call suggestion api and display list
+            apiJob?.cancel()
+            startSearching(newText)
+
             return true
         }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_search, menu)
-        searchView = searchView(menu)
-        searchView?.queryHint = getString(R.string.search)
-        searchView?.setOnQueryTextListener(onQueryTextListener)
+//        menuInflater.inflate(R.menu.menu_search, menu)
+//        searchView = searchView(menu)
+//        searchView?.queryHint = getString(R.string.search)
+//        searchView?.setOnQueryTextListener(onQueryTextListener)
         return true
     }
 
@@ -188,6 +239,45 @@ class NewsSearchActivity: AppCompatActivity(), OnNewsItemClickListener {
             detailIntent.putExtra("category_of_newslist", "Search")
             detailIntent.putExtra("category_id", categoryId)
             startActivity(detailIntent)
+        }
+    }
+
+    private fun startSearching(searchQuery: String?){
+        apiJob = CoroutineScope(Dispatchers.IO).launch{
+            dataVM.getSearchResult(searchQuery)
+            withContext(Dispatchers.Main){
+                dataVM.searchResultLiveData.observe(
+                        this@NewsSearchActivity,
+                        Observer{
+                            genericDataModel: GenericDataModel<SuggestResponse>? ->
+                            run{
+                                if(genericDataModel?.isSucess == true){
+                                    val data = genericDataModel.data
+                                    if(data?.header?.status == 1){
+                                        suggestionList.clear()
+                                        val result = data?.body?.result
+                                        suggestionList.clear()
+                                        for(r in result){
+                                            suggestionList.add(r.value)
+                                        }
+                                        suggestionAdapter.addAll(suggestionList)
+//                                        resultTextView?.text = data.toString()
+//                                        resultTextview?.visibility = View.VISIBLE
+//                                        progressLoading?.visibility = View.GONE
+                                        Log.d("DATA Result: ", data.toString())
+                                    } else {
+
+                                    }
+                                } else{
+//                                    resultTextView?.text = "No Data"
+//                                    resultTextView?.visibility = View.VISIBLE
+//                                    progressLoading?.visibility = View.GONE
+                                    Log.d("DATA Result: ", "No Data")
+                                }
+                            }
+                        }
+                )
+            }
         }
     }
 }
